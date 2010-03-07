@@ -320,8 +320,6 @@ line? Returns `t' or `nil'. See the README for more details."
       ;; If we found an indenter, return `t'.
       (or indenter-at-bol indenter-at-eol))))
 
-(define-key global-map (kbd "A-d") 'coffee-line-wants-indent)
-
 (defun coffee-previous-line-is-comment ()
   "Returns `t' if the previous line is a CoffeeScript comment."
   (save-excursion

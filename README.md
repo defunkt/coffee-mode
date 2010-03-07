@@ -98,6 +98,8 @@ In other words, the level of indentation is maintained. This
 applies to comments as well. Combined with the `TAB` you should be
 able to get things where you want them pretty easily.
 
+### Indenters
+
 `class`, `for`, `if`, and possibly other keywords cause the next line
 to be indented automatically, however.
 
