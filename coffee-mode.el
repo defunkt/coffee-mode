@@ -165,7 +165,7 @@ print the compiled JavaScript.")
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
-;; Unused
+;; Regular Expressions
 (defvar coffee-regexp-regexp "\\/.+?\\/")
 
 ;; JavaScript Keywords
@@ -226,7 +226,7 @@ For detail, see `comment-dwim'."
 ;; Indentation
 ;;
 
-;; The theory is explained in the README.
+;;; The theory is explained in the README.
 
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript."
