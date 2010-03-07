@@ -1,6 +1,42 @@
+;;
 ;; Major thanks to http://xahlee.org/emacs/elisp_syntax_coloring.html
 ;; the instructions.
 
+;;
+;; Commands
+;;
+
+(defvar coffee-command "coffee"
+  "The CoffeeScript command used for evaluating code. Must be in your
+path.")
+
+(defvar coffee-js-mode 'js2-mode
+  "The mode to use when viewing compiled JavaScript.")
+
+(defvar coffee-compiled-buffer-name "*coffee-compiled*"
+  "The name of the scratch buffer used when compiling CoffeeScript.")
+
+(defun coffee-compile-buffer ()
+  "Compiles the current buffer and displays the JS in the other buffer."
+  (interactive)
+  (save-excursion
+    (coffee-compile-region (point-min) (point-max))))
+
+(defun coffee-compile-region (start end)
+  "Compiles a region and displays the JS in the other buffer."
+  (interactive "r")
+
+  (let ((buffer (get-buffer coffee-compiled-buffer-name)))
+    (when buffer
+      (kill-buffer buffer)))
+
+  (call-process-region start end coffee-command nil
+                       (get-buffer-create coffee-compiled-buffer-name)
+                       nil
+                       "-s" "-p" "--no-wrap")
+  (switch-to-buffer-other-frame (get-buffer coffee-compiled-buffer-name))
+  (funcall coffee-js-mode)
+  (beginning-of-buffer))
 
 ;;
 ;; Define Language Syntax
@@ -58,7 +94,6 @@
         ;; otherwise the keyword "state" in the function "state_entry"
         ;; would be highlighted.
         ))
-
 
 ;;
 ;; Helper Functions
@@ -136,11 +171,12 @@ For detail, see `comment-dwim'."
   "coffee-mode"
   "Major mode for editing CoffeeScript..."
 
+  (define-key coffee-mode-map (kbd "A-r") 'coffee-compile-buffer)
+;;   (define-key coffee-mode-map (kbd "A-R") 'coffee-execute-line)
+  (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
+
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
-
-  ;; modify the keymap
-  (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
 
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
