@@ -30,7 +30,7 @@
 (setq coffee-type-regexp ".+?:")
 
 ;; Instance variables (implicit this)
-(setq coffee-constant-regexp "@\\w+")
+(setq coffee-constant-regexp "@\\w+\\|this")
 
 ;; Unused
 (setq coffee-events '(""))
