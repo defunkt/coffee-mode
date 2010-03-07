@@ -280,17 +280,13 @@ For detail, see `comment-dwim'."
   "Keywords or syntax whose presence at the start of a line means the
 next line should probably be indented.")
 
-(defvar coffee-indenters-eol '("->" "=>" "\\{" "\\[")
-  "Keywords or syntax whose presence at the end of a line means the
-next line should probably be indented.")
-
 (defun coffee-indenters-bol-regexp ()
   "Builds a regexp out of `coffee-indenters-bol' words."
   (concat "^" (regexp-opt coffee-indenters-bol 'words)))
 
-(defun coffee-indenters-eol-regexp ()
-  "Builds a regexp out of `coffee-indenters-eol' words."
-  (regexp-opt coffee-indenters-eol 'words))
+(defvar coffee-indenters-eol '(?> ?{ ?\[)
+  "Single characters at the end of a line that mean the next line
+should probably be indented.")
 
 (defun coffee-line-wants-indent ()
   "Does the current line want to be indented deeper than the previous
@@ -325,22 +321,16 @@ Ready and waiting at the proper level of indentation."
         (setq indenter-at-bol t))
 
       ;; If that didn't match, go to the back of the line and check to
-      ;; see if the last few characters match one of our indenter
-      ;; keywords.
+      ;; see if the last character matches one of our indenter
+      ;; characters.
       (when (not indenter-at-bol)
         (end-of-line)
 
-        ;; Optimized for speed.
-        ;; Check for -> or => by checking for >
-        (when (= (char-before) ?>)
-          (setq indenter-at-eol t))
-
-        ;; If not an arrow, check the rest of the options.
-        (when (and (not indenter-at-eol)
-                   (looking-back (coffee-indenters-eol-regexp)))
+        ;; Optimized for speed - checks only the last character.
+        (when (select coffee-indenters-eol
+                      (lambda (char)
+                        (= (char-before) char)))
           (setq indenter-at-eol t)))
-
-      (message "indenter-at-eol: %s" indenter-at-eol)
 
       ;; If we found an indenter, return `t'.
       (or indenter-at-bol indenter-at-eol))))
