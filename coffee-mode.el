@@ -58,7 +58,7 @@
 (defconst coffee-mode-version "0.1.0"
   "The version of this `coffee-mode'.")
 
-(defvar coffee-debug-mode t
+(defvar coffee-debug-mode nil
   "Whether to run in debug mode or not. Logs to `*Messages*'.")
 
 (defvar coffee-mode-hook nil
