@@ -245,3 +245,10 @@ For detail, see `comment-dwim'."
   (setq coffee-constants-regexp nil)
   (setq coffee-events-regexp nil)
   (setq coffee-functions-regexp nil))
+
+;;
+;; On Load
+;;
+
+;; Run coffee-mode for files ending in .coffee.
+(add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
