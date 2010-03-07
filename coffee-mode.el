@@ -263,6 +263,29 @@ For detail, see `comment-dwim'."
         (backward-to-indentation 0)
         (delete-region (point-at-bol) (point))))))
 
+(defun coffee-newline-and-indent ()
+  "Inserts a newline and indents it to the same level as the previous line."
+  (interactive)
+
+  (let ((prev-indent (current-indentation)))
+    (newline)
+    (insert-tab (/ prev-indent tab-width)))
+
+  (when (coffee-previous-line-is-comment)
+    (insert "# ")))
+
+(defun coffee-previous-line-is-comment ()
+  "Returns `t' if the previous line is a CoffeeScript comment."
+  (save-excursion
+    (forward-line -1)
+    (coffee-line-is-comment)))
+
+(defun coffee-line-is-comment ()
+  "Returns `t' if the current line is a CoffeeScript comment."
+  (save-excursion
+    (backward-to-indentation 0)
+    (= (char-after) (string-to-char "#"))))
+
 ;;
 ;; Define Major Mode
 ;;
@@ -275,6 +298,7 @@ For detail, see `comment-dwim'."
   (define-key coffee-mode-map (kbd "A-R") 'coffee-execute-line)
   (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
+  (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
