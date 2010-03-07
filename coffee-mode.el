@@ -198,20 +198,17 @@ print the compiled JavaScript.")
                                  coffee-cs-keywords) 'words))
 
 
-;; Create the list for font-lock.
-;; Each class of keyword is given a particular face
+;; Create the list for font-lock. Each class of keyword is given a
+;; particular face.
 (defvar coffee-font-lock-keywords
-      `(
-        (,coffee-this-regexp . font-lock-variable-name-face)
-        (,coffee-assign-regexp . font-lock-type-face)
-        (,coffee-regexp-regexp . font-lock-constant-face)
-        (,coffee-boolean-regexp . font-lock-constant-face)
-        (,coffee-keywords-regexp . font-lock-keyword-face)
-
-        ;; note: order above matters. `coffee-keywords-regexp' goes last because
-        ;; otherwise the keyword "state" in the function "state_entry"
-        ;; would be highlighted.
-        ))
+  ;; *Note*: order below matters. `coffee-keywords-regexp' goes last
+  ;; because otherwise the keyword "state" in the function
+  ;; "state_entry" would be highlighted.
+  `((,coffee-this-regexp . font-lock-variable-name-face)
+    (,coffee-assign-regexp . font-lock-type-face)
+    (,coffee-regexp-regexp . font-lock-constant-face)
+    (,coffee-boolean-regexp . font-lock-constant-face)
+    (,coffee-keywords-regexp . font-lock-keyword-face)))
 
 ;;
 ;; Helper Functions
