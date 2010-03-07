@@ -251,6 +251,22 @@ For detail, see `comment-dwim'."
         (backward-to-indentation 0)
         (delete-region (point-at-bol) (point))))))
 
+(defvar coffee-indenters-bol '("class" "for" "if")
+  "Keywords or syntax whose presence at the start of a line means the
+next line should probably be indented.")
+
+(defvar coffee-indenters-eol '("->" "=>" "{" "[")
+  "Keywords or syntax whose presence at the end of a line means the
+next line should probably be indented.")
+
+(defun coffee-indenters-bol-regexp ()
+  "Builds a regexp out of `coffee-indenters-bol' words."
+  (concat "^" (regexp-opt coffee-indenters-bol 'words)))
+
+(defun coffee-indenters-eol-regexp ()
+  "Builds a regexp out of `coffee-indenters-eol' words."
+  (concat (regexp-opt coffee-indenters-eol 'words) "$"))
+
 (defun coffee-newline-and-indent ()
   "Inserts a newline and indents it to the same level as the previous line."
   (interactive)
