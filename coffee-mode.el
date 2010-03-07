@@ -6,9 +6,20 @@
 ;; Commands
 ;;
 
+(defvar coffee-mode-version "0.1.0"
+  "The version of this `coffee-mode'.")
+
 (defvar coffee-command "coffee"
   "The CoffeeScript command used for evaluating code. Must be in your
 path.")
+
+(defvar coffee-command-args '("-s" "-p" "--no-wrap")
+  "The command line arguments to pass to `coffee-command' to get it to
+print the compiled JavaScript.")
+
+(defun coffee-command-full ()
+  "The full `coffee-command' complete with args."
+  (mapconcat 'identity (append (list coffee-command) coffee-command-args) " "))
 
 (defvar coffee-js-mode 'js2-mode
   "The mode to use when viewing compiled JavaScript.")
@@ -37,6 +48,30 @@ path.")
   (switch-to-buffer-other-frame (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
   (beginning-of-buffer))
+
+(defun coffee-show-version ()
+  "Prints the `coffee-mode' version."
+  (interactive)
+  (message (concat "coffee-mode v" coffee-mode-version)))
+
+(defun coffee-open-github ()
+  "Open `coffee-mode' on GithHub."
+  (interactive)
+  (browse-url "http://github.com/defunkt/coffee-mode"))
+
+;;
+;; Menubar
+;;
+
+(easy-menu-define coffee-mode-menu coffee-mode-map
+  "Menu for CoffeeScript mode"
+  '("CoffeeScript"
+    ["Compile Buffer" coffee-compile-buffer]
+    ["Compile Region" coffee-compile-region]
+    "---"
+    ["Open on GitHub" coffee-open-github]
+    ["Version" coffee-show-version]
+    ))
 
 ;;
 ;; Define Language Syntax
