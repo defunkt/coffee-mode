@@ -64,6 +64,9 @@
   "The CoffeeScript command used for evaluating code. Must be in your
 path.")
 
+(defvar coffee-repl-args '("-i")
+  "The command line arguments to pass to `coffee-command' to start a REPL.")
+
 (defvar coffee-command-args '("-s" "-p" "--no-wrap")
   "The command line arguments to pass to `coffee-command' to get it to
 print the compiled JavaScript.")
@@ -85,6 +88,16 @@ print the compiled JavaScript.")
 ;; Commands
 ;;
 
+(defun coffee-repl ()
+  "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
+  (interactive)
+
+  (unless (comint-check-proc "*CoffeeScript*")
+    (set-buffer
+     (apply 'make-comint "CoffeeScript"
+            coffee-command nil coffee-repl-args)))
+
+  (pop-to-buffer "*CoffeeScript*"))
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JS in the other buffer."
