@@ -35,6 +35,9 @@ print the compiled JavaScript.")
 (defvar coffee-compiled-buffer-name "*coffee-compiled*"
   "The name of the scratch buffer used when compiling CoffeeScript.")
 
+(defvar coffee-mode-map (make-keymap)
+  "Keymap for CoffeeScript major mode.")
+
 ;;
 ;; Commands
 ;;
@@ -226,7 +229,8 @@ For detail, see `comment-dwim'."
   "Major mode for editing CoffeeScript..."
 
   (define-key coffee-mode-map (kbd "A-r") 'coffee-compile-buffer)
-;;   (define-key coffee-mode-map (kbd "A-R") 'coffee-execute-line)
+  (define-key coffee-mode-map (kbd "A-R") 'coffee-execute-line)
+  (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
 
   ;; code for syntax highlighting
