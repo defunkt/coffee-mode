@@ -22,10 +22,9 @@
                                  coffee-js-keywords
                                  coffee-cs-keywords) 'words))
 
-(setq coffee-types '(""))
-(defvar coffee-type-regexp (regexp-opt coffee-types 'words))
+(setq coffee-type-regexp "\\b.+:")
 
-(defvar coffee-constant-regexp "")
+(setq coffee-constant-regexp "@\\w+")
 
 (setq coffee-events '(""))
 (defvar coffee-event-regexp (regexp-opt coffee-events 'words))
@@ -35,7 +34,7 @@
 
 ;; create the list for font-lock.
 ;; each class of keyword is given a particular face
-(defvar coffee-font-lock-keywords
+(setq coffee-font-lock-keywords
       `(
         (,coffee-type-regexp . font-lock-type-face)
         (,coffee-constant-regexp . font-lock-constant-face)
@@ -76,6 +75,11 @@ For detail, see `comment-dwim'."
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
+  ;; regular expressions
+  (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
+  (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
+
+  ;; comments
   (setq comment-start "#")
 
   ;; clear memory
