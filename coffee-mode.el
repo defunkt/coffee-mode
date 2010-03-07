@@ -76,6 +76,8 @@ For detail, see `comment-dwim'."
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
+  (setq comment-start "#")
+
   ;; clear memory
   (setq coffee-keywords-regexp nil)
   (setq coffee-types-regexp nil)
