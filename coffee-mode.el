@@ -1,6 +1,23 @@
 ;; Major thanks to http://xahlee.org/emacs/elisp_syntax_coloring.html
 ;; the instructions.
 
+
+;;
+;; Define Language Syntax
+;;
+
+;; Assignment
+(setq coffee-type-regexp ".+?:")
+
+;; Instance variables (implicit this)
+(setq coffee-constant-regexp "@\\w+\\|this")
+
+;; Unused
+(setq coffee-event-regexp "")
+
+;; Unused
+(setq coffee-functions-regexp "")
+
 ;; JavaScript Keywords
 (setq coffee-js-keywords
       '("if" "else" "true" "false" "new" "return" "try" "catch"
@@ -26,19 +43,6 @@
                                  coffee-js-keywords
                                  coffee-cs-keywords) 'words))
 
-;; Assignment
-(setq coffee-type-regexp ".+?:")
-
-;; Instance variables (implicit this)
-(setq coffee-constant-regexp "@\\w+\\|this")
-
-;; Unused
-(setq coffee-events '(""))
-(setq coffee-event-regexp (regexp-opt coffee-events 'words))
-
-;; Unused
-(setq coffee-functions '(""))
-(setq coffee-functions-regexp (regexp-opt coffee-functions 'words))
 
 ;; Create the list for font-lock.
 ;; Each class of keyword is given a particular face
@@ -55,6 +59,11 @@
         ;; would be highlighted.
         ))
 
+
+;;
+;; Helper Functions
+;;
+
 ;; The command to comment/uncomment text
 (defun coffee-comment-dwim (arg)
   "Comment or uncomment current line or region in a smart way.
@@ -64,7 +73,11 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
-;; CoffeeScript.
+
+;;
+;; Define Major Mode
+;;
+
 (define-derived-mode coffee-mode fundamental-mode
   "coffee-mode"
   "Major mode for editing CoffeeScript..."
