@@ -46,9 +46,10 @@ Another example of this hook is given further down.
 
 ### TAB Theory
 
-When you press `TAB`, indent the line unless doing so would make the
-current line more than two indentation levels deepers than the
-previous line. If that's the case, remove all indentation.
+It goes like this: when you press `TAB`, we indent the line unless
+doing so would make the current line more than two indentation levels
+deepers than the previous line. If that's the case, remove all
+indentation.
 
 Consider this code, with point at the position indicated by the
 caret:
@@ -73,12 +74,12 @@ Pressing `TAB` again will produce this code:
        ^
 
 And so on. I think this is a pretty good way of getting decent
-indentation with a whitespace-sensitive
+indentation with a whitespace-sensitive language.
 
 ### Newline and Indent
 
-As for indentation after newlines, given this code and cursor
-position:
+We all love hitting `RET` and having the next line indented
+properly. Given this code and cursor position:
 
     line1()
       line2()
@@ -101,7 +102,7 @@ able to get things where you want them pretty easily.
 ### Indenters
 
 `class`, `for`, `if`, and possibly other keywords cause the next line
-to be indented automatically, however.
+to be indented a level deeper automatically.
 
 For example, given this code and cursor position::
 
