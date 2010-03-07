@@ -1,3 +1,6 @@
+;; Major thanks to http://xahlee.org/emacs/elisp_syntax_coloring.html
+;; the instructions.
+
 ;; JavaScript Keywords
 (setq coffee-js-keywords
       '("if" "else" "true" "false" "new" "return" "try" "catch"
@@ -16,24 +19,29 @@
       '("then" "unless" "yes" "no" "on" "off" "and" "or" "is"
         "isnt" "not" "of" "by" "where" "when"))
 
+;; Regular expression combining the above three lists.
 (setq coffee-keywords-regexp (regexp-opt
                                 (append
                                  coffee-js-reserved
                                  coffee-js-keywords
                                  coffee-cs-keywords) 'words))
 
+;; Assignment
 (setq coffee-type-regexp ".+?:")
 
+;; Instance variables (implicit this)
 (setq coffee-constant-regexp "@\\w+")
 
+;; Unused
 (setq coffee-events '(""))
 (setq coffee-event-regexp (regexp-opt coffee-events 'words))
 
+;; Unused
 (setq coffee-functions '(""))
 (setq coffee-functions-regexp (regexp-opt coffee-functions 'words))
 
-;; create the list for font-lock.
-;; each class of keyword is given a particular face
+;; Create the list for font-lock.
+;; Each class of keyword is given a particular face
 (setq coffee-font-lock-keywords
       `(
         (,coffee-type-regexp . font-lock-type-face)
@@ -47,7 +55,7 @@
         ;; would be highlighted.
         ))
 
-;; the command to comment/uncomment text
+;; The command to comment/uncomment text
 (defun coffee-comment-dwim (arg)
   "Comment or uncomment current line or region in a smart way.
 For detail, see `comment-dwim'."
@@ -56,7 +64,7 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
-;; define the mode
+;; CoffeeScript.
 (define-derived-mode coffee-mode fundamental-mode
   "coffee-mode"
   "Major mode for editing CoffeeScript..."
@@ -70,6 +78,7 @@ For detail, see `comment-dwim'."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
+  (setq comment-start "#")
 
   ;; single quote strings
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
@@ -78,9 +87,6 @@ For detail, see `comment-dwim'."
   ;; regular expressions
   (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
   (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
-
-  ;; comments
-  (setq comment-start "#")
 
   ;; clear memory
   (setq coffee-keywords-regexp nil)
