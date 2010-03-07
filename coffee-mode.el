@@ -73,7 +73,37 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
+;;
 ;; Indentation
+;;
+
+;; The theory here is simple:
+;; When you press TAB, indent the line unless doing so would make the
+;; current line more than two indentation levels deepers than the
+;; previous line. If that's the case, remove all indentation.
+;;
+;; Consider this code, with point at the position indicated by the
+;; carot:
+;;
+;; line1()
+;;   line2()
+;;   line3()
+;;      ^
+;; Pressing TAB will produce the following code:
+;;
+;; line1()
+;;   line2()
+;;     line3()
+;;        ^
+;;
+;; Pressing TAB again will produce this code:
+;;
+;; line1()
+;;   line2()
+;; line3()
+;;    ^
+;;
+;; And so on.
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript"
   (interactive)
