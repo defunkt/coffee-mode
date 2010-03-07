@@ -7,37 +7,37 @@
 ;;
 
 ;; Assignment
-(setq coffee-type-regexp ".+?:")
+(defvar coffee-type-regexp ".+?:")
 
 ;; Instance variables (implicit this)
-(setq coffee-constant-regexp "@\\w*\\|this")
+(defvar coffee-constant-regexp "@\\w*\\|this")
 
 ;; Booleans
-(setq coffee-functions-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
+(defvar coffee-functions-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
 ;; Unused
-(setq coffee-event-regexp "")
+(defvar coffee-event-regexp "")
 
 ;; JavaScript Keywords
-(setq coffee-js-keywords
+(defvar coffee-js-keywords
       '("if" "else" "new" "return" "try" "catch"
         "finally" "throw" "break" "continue" "for" "in" "while"
         "delete" "instanceof" "typeof" "switch" "super" "extends"
         "class"))
 
 ;; Reserved keywords either by JS or CS.
-(setq coffee-js-reserved
+(defvar coffee-js-reserved
       '("case" "default" "do" "function" "var" "void" "with"
         "const" "let" "debugger" "enum" "export" "import" "native"
         "__extends" "__hasProp"))
 
 ;; CoffeeScript keywords.
-(setq coffee-cs-keywords
+(defvar coffee-cs-keywords
       '("then" "unless" "and" "or" "is"
         "isnt" "not" "of" "by" "where" "when"))
 
 ;; Regular expression combining the above three lists.
-(setq coffee-keywords-regexp (regexp-opt
+(defvar coffee-keywords-regexp (regexp-opt
                                 (append
                                  coffee-js-reserved
                                  coffee-js-keywords
@@ -46,7 +46,7 @@
 
 ;; Create the list for font-lock.
 ;; Each class of keyword is given a particular face
-(setq coffee-font-lock-keywords
+(defvar coffee-font-lock-keywords
       `(
         (,coffee-type-regexp . font-lock-type-face)
         (,coffee-constant-regexp . font-lock-variable-name-face)
@@ -73,6 +73,21 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
+;; Indentation
+(defun coffee-indent-line ()
+  "Indent current line as CoffeeScript"
+  (interactive)
+
+  (save-excursion
+    (let ((prev-indent 0) (cur-indent 0))
+      (beginning-of-line)
+      (forward-line -1)
+      (setq prev-indent (current-indentation))
+      (forward-line 1)
+      (setq cur-indent (current-indentation))
+
+      (backward-to-indentation 0)
+      (insert-tab))))
 
 ;;
 ;; Define Major Mode
@@ -100,6 +115,13 @@ For detail, see `comment-dwim'."
   ;; regular expressions
   (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
   (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
+
+  ;; indentation
+  (make-local-variable 'indent-line-function)
+  (setq indent-line-function 'coffee-indent-line)
+
+  ;; no tabs
+  (setq indent-tabs-mode nil)
 
   ;; clear memory
   (setq coffee-keywords-regexp nil)
