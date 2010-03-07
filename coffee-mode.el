@@ -54,8 +54,13 @@ print the compiled JavaScript.")
   (interactive)
   (message (concat "coffee-mode v" coffee-mode-version)))
 
+(defun coffee-open-reference ()
+  "Open browser to CoffeeScript reference."
+  (interactive)
+  (browse-url "http://jashkenas.github.com/coffee-script/"))
+
 (defun coffee-open-github ()
-  "Open `coffee-mode' on GithHub."
+  "Open browser to `coffee-mode' project on GithHub."
   (interactive)
   (browse-url "http://github.com/defunkt/coffee-mode"))
 
@@ -69,7 +74,8 @@ print the compiled JavaScript.")
     ["Compile Buffer" coffee-compile-buffer]
     ["Compile Region" coffee-compile-region]
     "---"
-    ["Open on GitHub" coffee-open-github]
+    ["CoffeeScript reference" coffee-open-reference]
+    ["coffee-mode on GitHub" coffee-open-github]
     ["Version" coffee-show-version]
     ))
 
