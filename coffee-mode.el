@@ -47,6 +47,13 @@
 
 ;; Also thanks to Jason Blevins's markdown-mode.el for guidance.
 
+;; TODO:
+;; - Fix indentation toggling on blank (pure whitespace) lines
+;; - imenu support
+;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
+
+;;; Code:
+
 (require 'easymenu)
 (require 'font-lock)
 (require 'cl)
