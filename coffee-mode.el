@@ -104,20 +104,29 @@ For detail, see `comment-dwim'."
 ;;    ^
 ;;
 ;; And so on.
+
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript"
   (interactive)
 
   (save-excursion
     (let ((prev-indent 0) (cur-indent 0))
-      (beginning-of-line)
+      ;; Figure out the indentation of the previous line
       (forward-line -1)
       (setq prev-indent (current-indentation))
+
+      ;; Figure out the current line's indentation
       (forward-line 1)
       (setq cur-indent (current-indentation))
 
+      ;; Shift one column to the left
       (backward-to-indentation 0)
-      (insert-tab))))
+      (insert-tab)
+
+      ;; We're too far, remove all indentation.
+      (when (> (- (current-indentation) prev-indent) tab-width)
+        (backward-to-indentation 0)
+        (delete-region (point-at-bol) (point))))))
 
 ;;
 ;; Define Major Mode
