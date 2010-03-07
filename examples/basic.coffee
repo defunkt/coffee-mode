@@ -19,10 +19,10 @@ eldest: if 24 > 21 then "Liz" else "Ike"
 
 six: (one: 1) + (two: 2) + (three: 3)
 
-mood: greatly_improved if true
+My.mood: greatly_improved if true
 
+# Unfancy JavaScript
 if happy and knows_it
-  claps_hands()
   cha_cha_cha()
   false
 
