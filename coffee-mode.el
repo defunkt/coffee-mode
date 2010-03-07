@@ -1,13 +1,21 @@
 ;;
 ;; Major thanks to http://xahlee.org/emacs/elisp_syntax_coloring.html
 ;; the instructions.
+;;
+;; Also thanks to Jason Blevins's markdown-mode.el for guidance.
+
+(require 'easymenu)
+(require 'font-lock)
 
 ;;
-;; Commands
+;; Customizable Variables
 ;;
 
-(defvar coffee-mode-version "0.1.0"
+(defconst coffee-mode-version "0.1.0"
   "The version of this `coffee-mode'.")
+
+(defvar coffee-mode-hook nil
+  "A hook for you to run your own code when the mode is loaded.")
 
 (defvar coffee-command "coffee"
   "The CoffeeScript command used for evaluating code. Must be in your
@@ -26,6 +34,11 @@ print the compiled JavaScript.")
 
 (defvar coffee-compiled-buffer-name "*coffee-compiled*"
   "The name of the scratch buffer used when compiling CoffeeScript.")
+
+;;
+;; Commands
+;;
+
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JS in the other buffer."
