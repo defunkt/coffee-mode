@@ -100,16 +100,16 @@ print the compiled JavaScript.")
 ;;
 
 ;; Instance variables (implicit this)
-(defvar coffee-constant-regexp "@\\w*\\|this")
+(setq coffee-this-regexp "@\\w*\\|this")
 
 ;; Assignment
-(defvar coffee-type-regexp "\\(\\w\\|\\.\\|_\\| \\|$\\)+?:")
+(setq coffee-assign-regexp "\\(\\w\\|\\.\\|_\\| \\|$\\)+?:")
 
 ;; Booleans
-(defvar coffee-functions-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
+(setq coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
 ;; Unused
-(defvar coffee-event-regexp "")
+(setq coffee-slash-regexp "\\/ ")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -139,12 +139,12 @@ print the compiled JavaScript.")
 
 ;; Create the list for font-lock.
 ;; Each class of keyword is given a particular face
-(defvar coffee-font-lock-keywords
+(setq coffee-font-lock-keywords
       `(
-        (,coffee-constant-regexp . font-lock-variable-name-face)
-        (,coffee-type-regexp . font-lock-type-face)
-        (,coffee-event-regexp . font-lock-builtin-face)
-        (,coffee-functions-regexp . font-lock-constant-face)
+        (,coffee-this-regexp . font-lock-variable-name-face)
+        (,coffee-assign-regexp . font-lock-type-face)
+        (,coffee-slash-regexp . font-lock-builtin-face)
+        (,coffee-boolean-regexp . font-lock-constant-face)
         (,coffee-keywords-regexp . font-lock-keyword-face)
 
         ;; note: order above matters. `coffee-keywords-regexp' goes last because
