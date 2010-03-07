@@ -6,6 +6,8 @@ An Emacs major mode for [CoffeeScript][cs], unfancy JavaScript.
 Provides syntax highlight by way of font-lock, basic indentation, and
 a few cute commands.
 
+![Screenshot](http://img.skitch.com/20100307-qmcr7kij6fx7qmsx6w12dgfs2x.png)
+
 ## Installation
 
 In your shell:
