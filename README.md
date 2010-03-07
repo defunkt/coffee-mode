@@ -190,6 +190,9 @@ Naturally. Example:
 
 Indentation on pure whitespace lines is a bit wonky.
 
+Prototype accessor assignments like `String::length: -> 10` don't look
+great.
+
 It's tested on Aquamacs 1.9 (Emacs 22) for OS X Snow Leopard so it may
 not work on your environment. Please file a bug at
 <http://github.com/defunkt/coffee-mode/issues> and maybe we can fix
