@@ -259,6 +259,8 @@ For detail, see `comment-dwim'."
   (setq coffee-events-regexp nil)
   (setq coffee-functions-regexp nil))
 
+(provide 'coffee-mode)
+
 ;;
 ;; On Load
 ;;
