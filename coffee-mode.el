@@ -58,6 +58,9 @@
 (defconst coffee-mode-version "0.1.0"
   "The version of this `coffee-mode'.")
 
+(defvar coffee-debug-mode t
+  "Whether to run in debug mode or not. Logs to `*Messages*'.")
+
 (defvar coffee-mode-hook nil
   "A hook for you to run your own code when the mode is loaded.")
 
@@ -223,6 +226,11 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
+(defun coffee-debug (string &optional args)
+  "Print a message when in debug mode."
+  (when coffee-debug-mode
+      (message string args)))
+
 ;;
 ;; Indentation
 ;;
@@ -238,13 +246,16 @@ For detail, see `comment-dwim'."
       ;; Figure out the indentation of the previous line
       (forward-line -1)
       (setq prev-indent (current-indentation))
+      (coffee-debug "prev-indent %s" prev-indent)
 
       ;; Figure out the current line's indentation
       (forward-line 1)
       (setq cur-indent (current-indentation))
+      (coffee-debug "cur-indent %s" cur-indent)
 
       ;; Shift one column to the left
       (backward-to-indentation 0)
+      (coffee-debug "backward cur-indent %s" (current-indentation))
       (insert-tab)
 
       ;; We're too far, remove all indentation.
