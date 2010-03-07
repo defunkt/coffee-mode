@@ -12,15 +12,15 @@
 ;; Instance variables (implicit this)
 (setq coffee-constant-regexp "@\\w*\\|this")
 
+;; Booleans
+(setq coffee-functions-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
+
 ;; Unused
 (setq coffee-event-regexp "")
 
-;; Unused
-(setq coffee-functions-regexp "")
-
 ;; JavaScript Keywords
 (setq coffee-js-keywords
-      '("if" "else" "true" "false" "new" "return" "try" "catch"
+      '("if" "else" "new" "return" "try" "catch"
         "finally" "throw" "break" "continue" "for" "in" "while"
         "delete" "instanceof" "typeof" "switch" "super" "extends"
         "class"))
@@ -33,7 +33,7 @@
 
 ;; CoffeeScript keywords.
 (setq coffee-cs-keywords
-      '("then" "unless" "yes" "no" "on" "off" "and" "or" "is"
+      '("then" "unless" "and" "or" "is"
         "isnt" "not" "of" "by" "where" "when"))
 
 ;; Regular expression combining the above three lists.
@@ -49,9 +49,9 @@
 (setq coffee-font-lock-keywords
       `(
         (,coffee-type-regexp . font-lock-type-face)
-        (,coffee-constant-regexp . font-lock-constant-face)
+        (,coffee-constant-regexp . font-lock-variable-name-face)
         (,coffee-event-regexp . font-lock-builtin-face)
-        (,coffee-functions-regexp . font-lock-function-name-face)
+        (,coffee-functions-regexp . font-lock-constant-face)
         (,coffee-keywords-regexp . font-lock-keyword-face)
 
         ;; note: order above matters. `coffee-keywords-regexp' goes last because
