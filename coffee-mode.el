@@ -92,21 +92,21 @@ print the compiled JavaScript.")
   "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
   (interactive)
 
-  (unless (comint-check-proc "*CoffeeScript*")
+  (unless (comint-check-proc "*CoffeeREPL*")
     (set-buffer
-     (apply 'make-comint "CoffeeScript"
+     (apply 'make-comint "CoffeeREPL"
             coffee-command nil coffee-repl-args)))
 
   (pop-to-buffer "*CoffeeScript*"))
 
 (defun coffee-compile-buffer ()
-  "Compiles the current buffer and displays the JS in the other buffer."
+  "Compiles the current buffer and displays the JS in another buffer."
   (interactive)
   (save-excursion
     (coffee-compile-region (point-min) (point-max))))
 
 (defun coffee-compile-region (start end)
-  "Compiles a region and displays the JS in the other buffer."
+  "Compiles a region and displays the JS in another buffer."
   (interactive "r")
 
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
@@ -250,12 +250,37 @@ For detail, see `comment-dwim'."
       (when (> (- (current-indentation) prev-indent) tab-width)
         (backward-to-indentation 0)
         (delete-region (point-at-bol) (point))))))
+(defun coffee-newline-and-indent ()
+  "Inserts a newline and indents it to the same level as the previous line."
+  (interactive)
 
-(defvar coffee-indenters-bol '("class" "for" "if")
+  ;; Remember the current line indentation level,
+  ;; insert a newline, and indent the newline to the same
+  ;; level as the previous line.
+  (let ((prev-indent (current-indentation)) (indent-next nil))
+    (newline)
+    (insert-tab (/ prev-indent tab-width))
+
+    ;; We need to insert an additional tab because the last line was special.
+    (when (coffee-line-wants-indent)
+      (insert-tab)))
+
+  ;; Last line was a comment so this one should probably be,
+  ;; too. Makes it easy to write multi-line comments (like the one I'm
+  ;; writing right now).
+  (when (coffee-previous-line-is-comment)
+    (insert "# ")))
+
+;; Indenters help determine whether the current line should be
+;; indented further based on the content of the previous line. If a
+;; line starts with `class', for instance, you're probably going to
+;; want to indent the next line.
+
+(defvar coffee-indenters-bol '("class" "for" "if" "try")
   "Keywords or syntax whose presence at the start of a line means the
 next line should probably be indented.")
 
-(defvar coffee-indenters-eol '("->" "=>" "{" "[")
+(defvar coffee-indenters-eol '("->" "=>" "\\{" "\\[")
   "Keywords or syntax whose presence at the end of a line means the
 next line should probably be indented.")
 
@@ -265,21 +290,62 @@ next line should probably be indented.")
 
 (defun coffee-indenters-eol-regexp ()
   "Builds a regexp out of `coffee-indenters-eol' words."
-  (concat (regexp-opt coffee-indenters-eol 'words) "$"))
+  (regexp-opt coffee-indenters-eol 'words))
 
-(defun coffee-newline-and-indent ()
-  "Inserts a newline and indents it to the same level as the previous line."
+(defun coffee-line-wants-indent ()
+  "Does the current line want to be indented deeper than the previous
+line? Returns `t' or `nil'.
+
+The answer is determined by checking the `coffee-indenters-bol' and
+his friends. Consider this code with the point at the location
+indicated by the caret:
+
+class Animal
+            ^
+
+Pressing RET here should produce the following:
+
+
+class Animal
+
+  ^
+
+Ready and waiting at the proper level of indentation."
   (interactive)
 
-  ;; Remember the current line indentation level,
-  ;; insert a newline, and indent the newline to the same
-  ;; level as the previous line.
-  (let ((prev-indent (current-indentation)))
-    (newline)
-    (insert-tab (/ prev-indent tab-width)))
+  (save-excursion
+    (let ((indenter-at-bol) (indenter-at-eol))
+      ;; Go back a line and to the first character.
+      (forward-line -1)
+      (backward-to-indentation 0)
 
-  (when (coffee-previous-line-is-comment)
-    (insert "# ")))
+      ;; If the next few characters match one of our magic indenter
+      ;; keywords, we want to indent the line we were on originally.
+      (when (looking-at (coffee-indenters-bol-regexp))
+        (setq indenter-at-bol t))
+
+      ;; If that didn't match, go to the back of the line and check to
+      ;; see if the last few characters match one of our indenter
+      ;; keywords.
+      (when (not indenter-at-bol)
+        (end-of-line)
+
+        ;; Optimized for speed.
+        ;; Check for -> or => by checking for >
+        (when (= (char-before) ?>)
+          (setq indenter-at-eol t))
+
+        ;; If not an arrow, check the rest of the options.
+        (when (and (not indenter-at-eol)
+                   (looking-back (coffee-indenters-eol-regexp)))
+          (setq indenter-at-eol t)))
+
+      (message "indenter-at-eol: %s" indenter-at-eol)
+
+      ;; If we found an indenter, return `t'.
+      (or indenter-at-bol indenter-at-eol))))
+
+(define-key global-map (kbd "A-d") 'coffee-line-wants-indent)
 
 (defun coffee-previous-line-is-comment ()
   "Returns `t' if the previous line is a CoffeeScript comment."

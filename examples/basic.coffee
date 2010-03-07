@@ -59,6 +59,11 @@ class Horse extends Animal
 sam: new Snake "Sammy the Python"
 tom: new Horse "Tommy the Palomino"
 
+
+
+
+
+
 sam.move()
 tom.move()
 if car.speed < speed_limit then accelerate()
@@ -84,7 +89,19 @@ alert "Silver: " + silver
 alert "The Field: " + the_field
 
 # Eat lunch.
+# what up
+# love it.
 lunch: eat food for food in ['toast', 'cheese', 'wine']
+
+$('#demo').click ->
+  asd
+# sup
+  # asd
+  # asdasd
+blah: true
+
+okay
+
 
 # Naive collision detection.
 for roid in asteroids
