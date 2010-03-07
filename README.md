@@ -166,12 +166,20 @@ Naturally. Example:
 
     (defun coffee-custom ()
       "coffee-mode-hook"
-      (set (make-local-variable 'tab-width) 2)
-      (setq coffee-debug-mode t)
-      (setq coffee-command "~/dev/coffee))
 
-    (add-hook coffee-mode-hook
-      '(lambda() (coffee-custom)))
+      ;; CoffeeScript uses two spaces.
+      (set (make-local-variable 'tab-width) 2)
+
+      ;; If you don't have js2-mode
+      (setq coffee-js-mode 'javascript-mode)
+
+      ;; *Messages* spam
+      (setq coffee-debug-mode t)
+
+      ;; Riding edge.
+      (setq coffee-command "~/dev/coffee"))
+
+    (add-hook 'coffee-mode-hook '(lambda () (coffee-custom)))
 
 ## Thanks
 
