@@ -239,6 +239,25 @@ For detail, see `comment-dwim'."
 ;;    ^
 ;;
 ;; And so on.
+;;
+;; As for indentation after newlines, given this code:
+;;
+;; line1()
+;;   line2()
+;;   line3()
+;;         ^
+;; Pressing RET would insert a newline and place our cursor at the
+;; following position:
+;;
+;; line1()
+;;   line2()
+;;   line3()
+;;
+;;   ^
+;;
+;; In other words, the level of indentation is maintained. This
+;; applies to comments as well.
+
 
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript"
@@ -267,6 +286,9 @@ For detail, see `comment-dwim'."
   "Inserts a newline and indents it to the same level as the previous line."
   (interactive)
 
+  ;; Remember the current line indentation level,
+  ;; insert a newline, and indent the newline to the same
+  ;; level as the previous line.
   (let ((prev-indent (current-indentation)))
     (newline)
     (insert-tab (/ prev-indent tab-width)))
