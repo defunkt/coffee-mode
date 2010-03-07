@@ -51,6 +51,8 @@
 ;; - Fix indentation toggling on blank (pure whitespace) lines
 ;; - imenu support
 ;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
+;; - Automatically `delete-trailing-whitespace' on save, configurable.
+;; - mirror-mode - close brackets and parens automatically
 
 ;;; Code:
 
@@ -82,10 +84,6 @@ path.")
   "The command line arguments to pass to `coffee-command' to get it to
 print the compiled JavaScript.")
 
-(defun coffee-command-full ()
-  "The full `coffee-command' complete with args."
-  (mapconcat 'identity (append (list coffee-command) coffee-command-args) " "))
-
 (defvar coffee-js-mode 'js2-mode
   "The mode to use when viewing compiled JavaScript.")
 
@@ -94,6 +92,10 @@ print the compiled JavaScript.")
 
 (defvar coffee-mode-map (make-keymap)
   "Keymap for CoffeeScript major mode.")
+
+;;
+;; Private Variables
+;;
 
 ;;
 ;; Commands
@@ -229,6 +231,10 @@ For detail, see `comment-dwim'."
   (require 'newcomment)
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
+
+(defun coffee-command-full ()
+  "The full `coffee-command' complete with args."
+  (mapconcat 'identity (append (list coffee-command) coffee-command-args) " "))
 
 (defun coffee-debug (string &optional args)
   "Print a message when in debug mode."
