@@ -48,8 +48,14 @@
         ;; would be highlighted.
         ))
 
-
-
+;; the command to comment/uncomment text
+(defun coffee-comment-dwim (arg)
+  "Comment or uncomment current line or region in a smart way.
+For detail, see `comment-dwim'."
+  (interactive "*P")
+  (require 'newcomment)
+  (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
+    (comment-dwim arg)))
 
 ;; define the mode
 (define-derived-mode coffee-mode fundamental-mode
@@ -65,6 +71,10 @@
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
+
+  ;; single quote strings
+  (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
+  (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
   ;; clear memory
   (setq coffee-keywords-regexp nil)
