@@ -103,7 +103,7 @@ print the compiled JavaScript.")
 (defvar coffee-constant-regexp "@\\w*\\|this")
 
 ;; Assignment
-(defvar coffee-type-regexp "\\(\\w\\|\\.\\|_\\|$\\)+?:")
+(defvar coffee-type-regexp "\\(\\w\\|\\.\\|_\\| \\|$\\)+?:")
 
 ;; Booleans
 (defvar coffee-functions-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
