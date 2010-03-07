@@ -49,6 +49,7 @@
 
 (require 'easymenu)
 (require 'font-lock)
+(require 'cl)
 
 ;;
 ;; Customizable Variables
@@ -312,9 +313,9 @@ line? Returns `t' or `nil'. See the README for more details."
         (end-of-line)
 
         ;; Optimized for speed - checks only the last character.
-        (when (select coffee-indenters-eol
-                      (lambda (char)
-                        (= (char-before) char)))
+        (when (some (lambda (char)
+                        (= (char-before) char))
+                      coffee-indenters-eol)
           (setq indenter-at-eol t)))
 
       ;; If we found an indenter, return `t'.
