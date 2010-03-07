@@ -250,6 +250,7 @@ For detail, see `comment-dwim'."
       (when (> (- (current-indentation) prev-indent) tab-width)
         (backward-to-indentation 0)
         (delete-region (point-at-bol) (point))))))
+
 (defun coffee-newline-and-indent ()
   "Inserts a newline and indents it to the same level as the previous line."
   (interactive)
@@ -290,23 +291,7 @@ should probably be indented.")
 
 (defun coffee-line-wants-indent ()
   "Does the current line want to be indented deeper than the previous
-line? Returns `t' or `nil'.
-
-The answer is determined by checking the `coffee-indenters-bol' and
-his friends. Consider this code with the point at the location
-indicated by the caret:
-
-class Animal
-            ^
-
-Pressing RET here should produce the following:
-
-
-class Animal
-
-  ^
-
-Ready and waiting at the proper level of indentation."
+line? Returns `t' or `nil'. See the README for more details."
   (interactive)
 
   (save-excursion

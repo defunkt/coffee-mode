@@ -51,7 +51,7 @@ current line more than two indentation levels deepers than the
 previous line. If that's the case, remove all indentation.
 
 Consider this code, with point at the position indicated by the
-carot:
+caret:
 
     line1()
       line2()
@@ -77,7 +77,8 @@ indentation with a whitespace-sensitive
 
 ### Newline and Indent
 
-As for indentation after newlines, given this code:
+As for indentation after newlines, given this code and cursor
+position:
 
     line1()
       line2()
@@ -96,6 +97,38 @@ following position:
 In other words, the level of indentation is maintained. This
 applies to comments as well. Combined with the `TAB` you should be
 able to get things where you want them pretty easily.
+
+`class`, `for`, `if`, and possibly other keywords cause the next line
+to be indented automatically, however.
+
+For example, given this code and cursor position::
+
+    class Animal
+                ^
+
+Pressing enter would produce the following:
+
+    class Animal
+
+      ^
+
+That is, indented a column deeper.
+
+This also applies to lines ending in `->`, `=>`, `{`, `[`, and
+possibly more characters.
+
+So this code and cursor position:
+
+    $('#demo').click ->
+                       ^
+
+On enter would produce this:
+
+    $('#demo').click ->
+
+      ^
+
+Pretty slick.
 
 ## Commands
 
