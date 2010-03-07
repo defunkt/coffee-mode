@@ -109,7 +109,7 @@ print the compiled JavaScript.")
 (setq coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
 ;; Unused
-(setq coffee-slash-regexp "\\/ ")
+(setq coffee-regexp-regexp "\\/ ")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -143,7 +143,7 @@ print the compiled JavaScript.")
       `(
         (,coffee-this-regexp . font-lock-variable-name-face)
         (,coffee-assign-regexp . font-lock-type-face)
-        (,coffee-slash-regexp . font-lock-builtin-face)
+        (,coffee-regexp-regexp . font-lock-constant-face)
         (,coffee-boolean-regexp . font-lock-constant-face)
         (,coffee-keywords-regexp . font-lock-keyword-face)
 
