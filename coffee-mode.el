@@ -241,27 +241,30 @@ For detail, see `comment-dwim'."
   "Indent current line as CoffeeScript."
   (interactive)
 
-  (save-excursion
-    (let ((prev-indent 0) (cur-indent 0))
-      ;; Figure out the indentation of the previous line
-      (forward-line -1)
-      (setq prev-indent (current-indentation))
-      (coffee-debug "prev-indent %s" prev-indent)
-
-      ;; Figure out the current line's indentation
-      (forward-line 1)
-      (setq cur-indent (current-indentation))
-      (coffee-debug "cur-indent %s" cur-indent)
-
-      ;; Shift one column to the left
-      (backward-to-indentation 0)
-      (coffee-debug "backward cur-indent %s" (current-indentation))
+  ;; Bail early by indenting if point as the front of the line.
+  (if (= (point) (point-at-bol))
       (insert-tab)
+    (save-excursion
+      (let ((prev-indent 0) (cur-indent 0))
+        ;; Figure out the indentation of the previous line
+        (forward-line -1)
+        (setq prev-indent (current-indentation))
+        (coffee-debug "prev-indent %s" prev-indent)
 
-      ;; We're too far, remove all indentation.
-      (when (> (- (current-indentation) prev-indent) tab-width)
+        ;; Figure out the current line's indentation
+        (forward-line 1)
+        (setq cur-indent (current-indentation))
+        (coffee-debug "cur-indent %s" cur-indent)
+
+        ;; Shift one column to the left
         (backward-to-indentation 0)
-        (delete-region (point-at-bol) (point))))))
+        (coffee-debug "backward cur-indent %s" (current-indentation))
+        (insert-tab)
+
+        ;; We're too far, remove all indentation.
+        (when (> (- (current-indentation) prev-indent) tab-width)
+          (backward-to-indentation 0)
+          (delete-region (point-at-bol) (point)))))))
 
 (defun coffee-newline-and-indent ()
   "Inserts a newline and indents it to the same level as the previous line."
