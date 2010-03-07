@@ -145,6 +145,7 @@ print the compiled JavaScript.")
   '("CoffeeScript"
     ["Compile Buffer" coffee-compile-buffer]
     ["Compile Region" coffee-compile-region]
+    ["REPL" coffee-repl]
     "---"
     ["CoffeeScript reference" coffee-open-reference]
     ["coffee-mode on GitHub" coffee-open-github]
@@ -156,16 +157,16 @@ print the compiled JavaScript.")
 ;;
 
 ;; Instance variables (implicit this)
-(setq coffee-this-regexp "@\\w*\\|this")
+(defvar coffee-this-regexp "@\\w*\\|this")
 
 ;; Assignment
-(setq coffee-assign-regexp "\\(\\w\\|\\.\\|_\\| \\|$\\)+?:")
+(defvar coffee-assign-regexp "\\(\\w\\|\\.\\|_\\| \\|$\\)+?:")
 
 ;; Booleans
-(setq coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
+(defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
 ;; Unused
-(setq coffee-regexp-regexp "\\/.+?\\/")
+(defvar coffee-regexp-regexp "\\/.+?\\/")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -195,7 +196,7 @@ print the compiled JavaScript.")
 
 ;; Create the list for font-lock.
 ;; Each class of keyword is given a particular face
-(setq coffee-font-lock-keywords
+(defvar coffee-font-lock-keywords
       `(
         (,coffee-this-regexp . font-lock-variable-name-face)
         (,coffee-assign-regexp . font-lock-type-face)

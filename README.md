@@ -44,7 +44,7 @@ Well, idiomatic CoffeeScript uses two spaces. We can set our
 
 Another example of this hook is given further down.
 
-### Theory
+### TAB Theory
 
 When you press `TAB`, indent the line unless doing so would make the
 current line more than two indentation levels deepers than the
@@ -73,8 +73,9 @@ Pressing `TAB` again will produce this code:
        ^
 
 And so on. I think this is a pretty good way of getting decent
-indentation without having to do anything complicated in our major
-mode.
+indentation with a whitespace-sensitive
+
+### Newline and Indent
 
 As for indentation after newlines, given this code:
 
