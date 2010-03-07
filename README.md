@@ -3,8 +3,8 @@ CoffeeScript Major Mode
 
 An Emacs major mode for [CoffeeScript][cs], unfancy JavaScript.
 
-Provides syntax highlight by way of font-lock, basic indentation, and
-a few cute commands.
+Provides syntax highlighting, indentation support, and a few cute
+commands.
 
 ![Screenshot](http://img.skitch.com/20100307-qmcr7kij6fx7qmsx6w12dgfs2x.png)
 
@@ -20,8 +20,81 @@ In your emacs config:
     (add-to-list 'load-path "~/.emacs.d/vendor/coffee-mode")
     (require 'coffee-mode)
 
-`coffe-mode` will be enabled automatically for any files ending in
-".coffee".
+`coffee-mode` will be enabled automatically for any files ending in
+".coffee" or named "Cakefile".
+
+## Indentation
+
+### Configuring
+
+Lines are indented according to the `tab-width` variable. If you're
+like me, you probably have this set in your Emacs config globally:
+
+    (setq-default tab-width 4)
+
+Well, idiomatic CoffeeScript uses two spaces. We can set our
+`tab-width` to two for `coffee-mode` using the `coffee-mode-hook`:
+
+    (defun coffee-custom ()
+      "coffee-mode-hook"
+     (set (make-local-variable 'tab-width) 2))
+
+    (add-hook coffee-mode-hook
+      '(lambda() (coffee-custom)))
+
+Another example of this hook is given further down.
+
+### Theory
+
+When you press `TAB`, indent the line unless doing so would make the
+current line more than two indentation levels deepers than the
+previous line. If that's the case, remove all indentation.
+
+Consider this code, with point at the position indicated by the
+carot:
+
+    line1()
+      line2()
+      line3()
+         ^
+
+Pressing `TAB` will produce the following code:
+
+    line1()
+      line2()
+        line3()
+           ^
+
+Pressing `TAB` again will produce this code:
+
+    line1()
+      line2()
+    line3()
+       ^
+
+And so on. I think this is a pretty good way of getting decent
+indentation without having to do anything complicated in our major
+mode.
+
+As for indentation after newlines, given this code:
+
+    line1()
+      line2()
+      line3()
+            ^
+
+Pressing `RET` would insert a newline and place our cursor at the
+following position:
+
+    line1()
+      line2()
+      line3()
+
+      ^
+
+In other words, the level of indentation is maintained. This
+applies to comments as well. Combined with the `TAB` you should be
+able to get things where you want them pretty easily.
 
 ## Commands
 
@@ -57,6 +130,7 @@ Naturally. Example:
 
     (defun coffee-custom ()
       "coffee-mode-hook"
+      (set (make-local-variable 'tab-width) 2)
       (setq coffee-command "~/dev/coffee))
 
     (add-hook coffee-mode-hook
