@@ -99,11 +99,11 @@ print the compiled JavaScript.")
 ;; Define Language Syntax
 ;;
 
-;; Assignment
-(defvar coffee-type-regexp ".+?:")
-
 ;; Instance variables (implicit this)
 (defvar coffee-constant-regexp "@\\w*\\|this")
+
+;; Assignment
+(defvar coffee-type-regexp "\\(\\w\\|\\.\\|_\\|$\\)+?:")
 
 ;; Booleans
 (defvar coffee-functions-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
@@ -141,8 +141,8 @@ print the compiled JavaScript.")
 ;; Each class of keyword is given a particular face
 (defvar coffee-font-lock-keywords
       `(
-        (,coffee-type-regexp . font-lock-type-face)
         (,coffee-constant-regexp . font-lock-variable-name-face)
+        (,coffee-type-regexp . font-lock-type-face)
         (,coffee-event-regexp . font-lock-builtin-face)
         (,coffee-functions-regexp . font-lock-constant-face)
         (,coffee-keywords-regexp . font-lock-keyword-face)
