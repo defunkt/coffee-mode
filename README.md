@@ -185,4 +185,7 @@ not work on your environment. Please file a bug at
 <http://github.com/defunkt/coffee-mode/issues> and maybe we can fix
 the problem.
 
+This is the author's first major mode. Any sort of style feedback is
+appreciated.
+
 [cs]: http://jashkenas.github.com/coffee-script/
