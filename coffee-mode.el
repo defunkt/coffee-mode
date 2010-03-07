@@ -477,6 +477,7 @@ line? Returns `t' or `nil'. See the README for more details."
 ;; Define Major Mode
 ;;
 
+;;;###autoload
 (define-derived-mode coffee-mode fundamental-mode
   "coffee-mode"
   "Major mode for editing CoffeeScript..."
@@ -525,5 +526,7 @@ line? Returns `t' or `nil'. See the README for more details."
 ;;
 
 ;; Run coffee-mode for files ending in .coffee.
+;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
