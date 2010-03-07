@@ -310,3 +310,4 @@ For detail, see `comment-dwim'."
 
 ;; Run coffee-mode for files ending in .coffee.
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+(add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
