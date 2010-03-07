@@ -1,36 +1,36 @@
 ;; JavaScript Keywords
-(defvar coffee-js-keywords
+(setq coffee-js-keywords
       '("if" "else" "true" "false" "new" "return" "try" "catch"
         "finally" "throw" "break" "continue" "for" "in" "while"
         "delete" "instanceof" "typeof" "switch" "super" "extends"
         "class"))
 
 ;; Reserved keywords either by JS or CS.
-(defvar coffee-js-reserved
+(setq coffee-js-reserved
       '("case" "default" "do" "function" "var" "void" "with"
         "const" "let" "debugger" "enum" "export" "import" "native"
         "__extends" "__hasProp"))
 
 ;; CoffeeScript keywords.
-(defvar coffee-cs-keywords
+(setq coffee-cs-keywords
       '("then" "unless" "yes" "no" "on" "off" "and" "or" "is"
         "isnt" "not" "of" "by" "where" "when"))
 
-(defvar coffee-keywords-regexp (regexp-opt
+(setq coffee-keywords-regexp (regexp-opt
                                 (append
                                  coffee-js-reserved
                                  coffee-js-keywords
                                  coffee-cs-keywords) 'words))
 
-(setq coffee-type-regexp "\\b.+:")
+(setq coffee-type-regexp ".+?:")
 
 (setq coffee-constant-regexp "@\\w+")
 
 (setq coffee-events '(""))
-(defvar coffee-event-regexp (regexp-opt coffee-events 'words))
+(setq coffee-event-regexp (regexp-opt coffee-events 'words))
 
 (setq coffee-functions '(""))
-(defvar coffee-functions-regexp (regexp-opt coffee-functions 'words))
+(setq coffee-functions-regexp (regexp-opt coffee-functions 'words))
 
 ;; create the list for font-lock.
 ;; each class of keyword is given a particular face
