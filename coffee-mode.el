@@ -109,7 +109,7 @@ print the compiled JavaScript.")
 (setq coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
 ;; Unused
-(setq coffee-regexp-regexp "\\/ ")
+(setq coffee-regexp-regexp "\\/.+?\\/")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -244,19 +244,6 @@ For detail, see `comment-dwim'."
   ;; single quote strings
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
-
-  ;; regular expressions
-  ;; TODO:
-  ;; Disabled until we can intelligently parse this:
-  ;;
-  ;;   regexp: /asdas/
-  ;;   two: 4 / 2
-  ;;
-  ;; With the below code we can do /asdas/ just fine but
-  ;; 4 / 2 falls apart.
-
-;;   (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
-;;   (modify-syntax-entry ?/ "\"" coffee-mode-syntax-table)
 
   ;; indentation
   (make-local-variable 'indent-line-function)
