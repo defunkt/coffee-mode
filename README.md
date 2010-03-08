@@ -45,7 +45,8 @@ Well, idiomatic CoffeeScript uses two spaces. We can set our
     (add-hook coffee-mode-hook
       '(lambda() (coffee-custom)))
 
-Another example of this hook is given further down.
+For more configuration options and another example of this hook, look
+further down in this README.
 
 ### TAB Theory
 
@@ -208,6 +209,65 @@ Naturally. Example:
       (setq coffee-command "~/dev/coffee"))
 
     (add-hook 'coffee-mode-hook '(lambda () (coffee-custom)))
+
+## Configuration
+
+You can customize any of the following options using `M-x
+customize-group` with "coffee" as the group.
+
+You can also customize then with `coffee-mode-hook`, as demonstrated
+above.
+
+### coffee-debug-mode
+
+Whether to run in debug mode or not. Logs to `*Messages*`.
+
+Default: `t`
+
+### coffee-js-mode
+
+The mode to use when viewing compiled JavaScript.
+
+Default: `'js2-mode`
+
+### coffee-cleanup-whitespace
+
+Should we `delete-trailing-whitespace' on save? Probably.
+
+Default: `t`
+
+### coffee-tab-width
+
+The tab width to use when indenting.
+
+Default: `tab-width`
+
+### coffee-command
+
+The CoffeeScript command used for evaluating code. Must be in your
+path.
+
+Default: `"coffee"`
+
+### coffee-repl-args
+
+The command line arguments to pass to `coffee-command' to start a
+REPL.
+
+Default: `'("-i")`
+
+### coffee-command-args
+
+The command line arguments to pass to `coffee-command' to get it
+toprint the compiled JavaScript.
+
+Default: `'("-s" "-p" "--no-wrap")`
+
+### coffee-compiled-buffer-name
+
+The name of the scratch buffer used when compiling CoffeeScript.
+
+Default: `"*coffee-compiled*"`
 
 ## Thanks
 

@@ -66,28 +66,51 @@
 (defconst coffee-mode-version "0.2.0"
   "The version of this `coffee-mode'.")
 
-(defvar coffee-debug-mode nil
-  "Whether to run in debug mode or not. Logs to `*Messages*'.")
+(defgroup coffee nil
+  "A CoffeeScript major mode."
+  :group 'languages)
 
-(defvar coffee-js-mode 'js2-mode
-  "The mode to use when viewing compiled JavaScript.")
+(defcustom coffee-debug-mode nil
+  "Whether to run in debug mode or not. Logs to `*Messages*'."
+  :type 'boolean
+  :group 'coffee-mode)
 
-(defvar coffee-cleanup-whitespace t
-  "Should we `delete-trailing-whitespace' on save? Probably.")
+(defcustom coffee-js-mode 'js2-mode
+  "The mode to use when viewing compiled JavaScript."
+  :type 'string
+  :group 'coffee)
 
-(defvar coffee-command "coffee"
+(defcustom coffee-cleanup-whitespace t
+  "Should we `delete-trailing-whitespace' on save? Probably."
+  :type 'boolean
+  :group 'coffee)
+
+(defcustom coffee-tab-width tab-width
+  "The tab width to use when indenting."
+  :type 'integer
+  :group 'coffee)
+
+(defcustom coffee-command "coffee"
   "The CoffeeScript command used for evaluating code. Must be in your
-path.")
+path."
+  :type 'string
+  :group 'coffee)
 
-(defvar coffee-repl-args '("-i")
-  "The command line arguments to pass to `coffee-command' to start a REPL.")
+(defcustom coffee-repl-args '("-i")
+  "The command line arguments to pass to `coffee-command' to start a REPL."
+  :type 'list
+  :group 'coffee)
 
-(defvar coffee-command-args '("-s" "-p" "--no-wrap")
+(defcustom coffee-command-args '("-s" "-p" "--no-wrap")
   "The command line arguments to pass to `coffee-command' to get it to
-print the compiled JavaScript.")
+print the compiled JavaScript."
+  :type 'list
+  :group 'coffee)
 
-(defvar coffee-compiled-buffer-name "*coffee-compiled*"
-  "The name of the scratch buffer used when compiling CoffeeScript.")
+(defcustom coffee-compiled-buffer-name "*coffee-compiled*"
+  "The name of the scratch buffer used when compiling CoffeeScript."
+  :type 'string
+  :group 'coffee)
 
 (defvar coffee-mode-hook nil
   "A hook for you to run your own code when the mode is loaded.")
@@ -420,12 +443,12 @@ For detail, see `comment-dwim'."
         (coffee-debug "point-at-bol: %s" (point-at-bol))
 
         (when (= (point-at-bol) (point))
-          (forward-char tab-width))
+          (forward-char coffee-tab-width))
 
         (coffee-debug "New indent: %s" (current-indentation))
 
         ;; We're too far, remove all indentation.
-        (when (> (- (current-indentation) prev-indent) tab-width)
+        (when (> (- (current-indentation) prev-indent) coffee-tab-width)
           (backward-to-indentation 0)
           (delete-region (point-at-bol) (point)))))))
 
@@ -451,7 +474,7 @@ For detail, see `comment-dwim'."
   ;; level as the previous line.
   (let ((prev-indent (current-indentation)) (indent-next nil))
     (newline)
-    (insert-tab (/ prev-indent tab-width))
+    (insert-tab (/ prev-indent coffee-tab-width))
 
     ;; We need to insert an additional tab because the last line was special.
     (when (coffee-line-wants-indent)
