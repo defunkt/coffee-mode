@@ -6,7 +6,7 @@ An Emacs major mode for [CoffeeScript][cs], unfancy JavaScript.
 Provides syntax highlighting, indentation support, imenu support, and
 a few cute commands.
 
-![Screenshot](http://img.skitch.com/20100307-qmcr7kij6fx7qmsx6w12dgfs2x.png)
+![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png)
 
 ## Installation
 

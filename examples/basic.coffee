@@ -59,11 +59,6 @@ class Horse extends Animal
 sam: new Snake "Sammy the Python"
 tom: new Horse "Tommy the Palomino"
 
-
-
-
-
-
 sam.move()
 tom.move()
 if car.speed < speed_limit then accelerate()
