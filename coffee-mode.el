@@ -94,8 +94,14 @@ print the compiled JavaScript.")
   "Keymap for CoffeeScript major mode.")
 
 ;;
-;; Private Variables
+;; Macros
 ;;
+
+(defmacro setd (var val)
+  "Like setq but optionally logs the variable's value using `coffee-debug'."
+  `(progn
+     (coffee-debug "%s: %s" ',var ,val)
+     (setq ,var ,val)))
 
 ;;
 ;; Commands
@@ -236,10 +242,10 @@ For detail, see `comment-dwim'."
   "The full `coffee-command' complete with args."
   (mapconcat 'identity (append (list coffee-command) coffee-command-args) " "))
 
-(defun coffee-debug (string &optional args)
+(defun coffee-debug (string &rest args)
   "Print a message when in debug mode."
   (when coffee-debug-mode
-      (message string args)))
+      (apply 'message (append (list string) args))))
 
 ;;
 ;; Indentation
@@ -258,17 +264,14 @@ For detail, see `comment-dwim'."
       (let ((prev-indent 0) (cur-indent 0))
         ;; Figure out the indentation of the previous line
         (forward-line -1)
-        (setq prev-indent (current-indentation))
-        (coffee-debug "prev-indent %s" prev-indent)
+        (setd prev-indent (current-indentation))
 
         ;; Figure out the current line's indentation
         (forward-line 1)
-        (setq cur-indent (current-indentation))
-        (coffee-debug "cur-indent %s" cur-indent)
+        (setd cur-indent (current-indentation))
 
         ;; Shift one column to the left
         (backward-to-indentation 0)
-        (coffee-debug "backward cur-indent %s" (current-indentation))
         (insert-tab)
 
         ;; We're too far, remove all indentation.
@@ -328,7 +331,7 @@ line? Returns `t' or `nil'. See the README for more details."
       ;; If the next few characters match one of our magic indenter
       ;; keywords, we want to indent the line we were on originally.
       (when (looking-at (coffee-indenters-bol-regexp))
-        (setq indenter-at-bol t))
+        (setd indenter-at-bol t))
 
       ;; If that didn't match, go to the back of the line and check to
       ;; see if the last character matches one of our indenter
@@ -340,7 +343,7 @@ line? Returns `t' or `nil'. See the README for more details."
         (when (some (lambda (char)
                         (= (char-before) char))
                       coffee-indenters-eol)
-          (setq indenter-at-eol t)))
+          (setd indenter-at-eol t)))
 
       ;; If we found an indenter, return `t'.
       (or indenter-at-bol indenter-at-eol))))
