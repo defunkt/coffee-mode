@@ -3,8 +3,8 @@ CoffeeScript Major Mode
 
 An Emacs major mode for [CoffeeScript][cs], unfancy JavaScript.
 
-Provides syntax highlighting, indentation support, imenu support, and
-a few cute commands.
+Provides syntax highlighting, indentation support, imenu support,
+a menu bar, and a few cute commands.
 
 ![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png)
 
@@ -144,6 +144,11 @@ a really awesome way to jump quickly to a function's definition in a
 file.
 
 ## Commands
+
+If you have `easymenu` you can get to any of these commands from the
+menu bar:
+
+![coffee-mode menu bar](http://img.skitch.com/20100308-tt5yn51h2jww2pmjqaawed6eq8.png)
 
 ### coffee-compile-file
 
