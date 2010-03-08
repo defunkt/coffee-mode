@@ -563,15 +563,7 @@ line? Returns `t' or `nil'. See the README for more details."
   (setq indent-tabs-mode nil)
 
   ;; hooks
-  (set (make-local-variable 'before-save-hook) 'coffee-before-save)
-
-  ;; clear memory
-  ;; TODO: make these accurate
-  (setq coffee-keywords-regexp nil)
-  (setq coffee-types-regexp nil)
-  (setq coffee-constants-regexp nil)
-  (setq coffee-events-regexp nil)
-  (setq coffee-functions-regexp nil))
+  (set (make-local-variable 'before-save-hook) 'coffee-before-save))
 
 (provide 'coffee-mode)
 
