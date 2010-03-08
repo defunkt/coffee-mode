@@ -126,6 +126,15 @@ print the compiled JavaScript.")
 
   (pop-to-buffer "*CoffeeScript*"))
 
+(defun coffee-compile-file ()
+  "Compiles and saves the current file to disk. Doesn't open in a buffer.."
+  (interactive)
+  (shell-command (concat coffee-command " -c " (buffer-file-name)))
+  (message "Compiled and saved %s"
+           (concat
+            (substring (buffer-file-name) 0 -6)
+            "js")))
+
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JS in another buffer."
   (interactive)
@@ -175,6 +184,7 @@ print the compiled JavaScript.")
 (easy-menu-define coffee-mode-menu coffee-mode-map
   "Menu for CoffeeScript mode"
   '("CoffeeScript"
+    ["Compile File" coffee-compile-file]
     ["Compile Buffer" coffee-compile-buffer]
     ["Compile Region" coffee-compile-region]
     ["REPL" coffee-repl]

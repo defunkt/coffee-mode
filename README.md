@@ -145,6 +145,15 @@ file.
 
 ## Commands
 
+### coffee-compile-file
+
+Compiles the current file as a JavaScript file. Doesn't open it or
+anything special for you.
+
+Operating on "basic.coffee" and running this command will save a
+"basic.js" in the same directory. Subsequent runs will overwrite the
+file.
+
 ### coffee-compile-buffer
 
 Compiles the current buffer to JavaScript using the command specified
