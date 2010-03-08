@@ -485,7 +485,7 @@ line? Returns `t' or `nil'. See the README for more details."
   "Major mode for editing CoffeeScript..."
 
   (define-key coffee-mode-map (kbd "A-r") 'coffee-compile-buffer)
-  (define-key coffee-mode-map (kbd "A-R") 'coffee-execute-line)
+  (define-key coffee-mode-map (kbd "A-R") 'coffee-compile-region)
   (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
   (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
