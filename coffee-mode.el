@@ -108,7 +108,7 @@ print the compiled JavaScript.")
 (defmacro coffee-debug (string &rest args)
   "Print a message when in debug mode."
   (when coffee-debug-mode
-    `(apply 'message (append (list ,string) ,args))))
+    `(apply 'message (append (list ,string) ',args))))
 
 ;;
 ;; Commands
