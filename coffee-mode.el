@@ -113,6 +113,10 @@ print the compiled JavaScript.")
   (when coffee-debug-mode
       (apply 'message (append (list string) args))))
 
+(defmacro coffee-line-as-string ()
+  "Returns the current line as a string."
+  `(buffer-substring (point-at-bol) (point-at-eol)))
+
 ;;
 ;; Commands
 ;;
@@ -399,27 +403,35 @@ For detail, see `comment-dwim'."
   "Indent current line as CoffeeScript."
   (interactive)
 
-  ;; Bail early by indenting if point as the front of the line.
-  (if (= (point) (point-at-bol))
+  (save-excursion
+    (let ((prev-indent 0) (cur-indent 0))
+      ;; Figure out the indentation of the previous line
+      (setd prev-indent (coffee-previous-indent))
+
+      ;; Figure out the current line's indentation
+      (setd cur-indent (current-indentation))
+
+      ;; Shift one column to the left
+      (backward-to-indentation 0)
       (insert-tab)
-    (save-excursion
-      (let ((prev-indent 0) (cur-indent 0))
-        ;; Figure out the indentation of the previous line
-        (forward-line -1)
-        (setd prev-indent (current-indentation))
 
-        ;; Figure out the current line's indentation
-        (forward-line 1)
-        (setd cur-indent (current-indentation))
-
-        ;; Shift one column to the left
+      ;; We're too far, remove all indentation.
+      (when (> (- (current-indentation) prev-indent) tab-width)
         (backward-to-indentation 0)
-        (insert-tab)
+        (delete-region (point-at-bol) (point))))))
 
-        ;; We're too far, remove all indentation.
-        (when (> (- (current-indentation) prev-indent) tab-width)
-          (backward-to-indentation 0)
-          (delete-region (point-at-bol) (point)))))))
+(defun coffee-previous-indent ()
+  "Return the indentation level of the previous non-blank line."
+
+  (save-excursion
+    (forward-line -1)
+    (while (coffee-line-empty-p) (forward-line -1))
+    (current-indentation)))
+
+(defun coffee-line-empty-p ()
+  "Is this line empty? Returns non-nil if so, nil if not."
+  (or (bobp)
+   (string-match "^\\s *$" (coffee-line-as-string))))
 
 (defun coffee-newline-and-indent ()
   "Inserts a newline and indents it to the same level as the previous line."
