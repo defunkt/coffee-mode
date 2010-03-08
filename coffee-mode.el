@@ -267,6 +267,8 @@ For detail, see `comment-dwim'."
 ;; block: ->
 ;;   print('potion')
 ;;
+;; (TODO: This next part is incomplete and therefor a lie.)
+;;
 ;; Next we look for any line that starts with `class' or
 ;; `coffee-assign-regexp' followed by `{` and drop into a
 ;; namespace. This means we search one indentation level deeper for
