@@ -49,7 +49,6 @@
 
 ;; TODO:
 ;; - Fix indentation toggling on blank (pure whitespace) lines
-;; - imenu support
 ;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
 ;; - Automatically `delete-trailing-whitespace' on save, configurable.
 ;; - mirror-mode - close brackets and parens automatically

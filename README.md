@@ -3,8 +3,8 @@ CoffeeScript Major Mode
 
 An Emacs major mode for [CoffeeScript][cs], unfancy JavaScript.
 
-Provides syntax highlighting, indentation support, and a few cute
-commands.
+Provides syntax highlighting, indentation support, imenu support, and
+a few cute commands.
 
 ![Screenshot](http://img.skitch.com/20100307-qmcr7kij6fx7qmsx6w12dgfs2x.png)
 
@@ -133,6 +133,16 @@ On enter would produce this:
 
 Pretty slick.
 
+## imenu
+
+If you're using imenu, `coffee-mode` should work just fine. This
+means users of [textmate.el][tm] will find that `⇧⌘T`
+(`textmate-go-to-symbol`) mostly works as expected.
+
+If you're not using imenu check out [this page][im] or textmate.el for
+a really awesome way to jump quickly to a function's definition in a
+file.
+
 ## Commands
 
 ### coffee-compile-buffer
@@ -203,3 +213,5 @@ This is the author's first major mode, so there are probably more
 bugs.
 
 [cs]: http://jashkenas.github.com/coffee-script/
+[tm]: http://github.com/defunkt/textmate.el
+[im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
