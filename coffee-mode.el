@@ -186,6 +186,9 @@ print the compiled JavaScript.")
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\s *\\(->\\|=>\\)")
 
+;; Namespaces
+(defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
+
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
 
@@ -267,8 +270,6 @@ For detail, see `comment-dwim'."
 ;; block: ->
 ;;   print('potion')
 ;;
-;; (TODO: This next part is incomplete and therefor a lie.)
-;;
 ;; Next we look for any line that starts with `class' or
 ;; `coffee-assign-regexp' followed by `{` and drop into a
 ;; namespace. This means we search one indentation level deeper for
@@ -287,6 +288,7 @@ For detail, see `comment-dwim'."
 ;;   print: ->
 ;;     print 'My name is ' + this.name + " and I'm a " + this.rank + '.'
 ;;
+;; TODO:
 ;; app = {
 ;;   window:  {width: 200, height: 200}
 ;;   para:    -> 'Welcome.'
@@ -300,26 +302,60 @@ For detail, see `comment-dwim'."
   ;; This function is called within a `save-excursion' so we're safe.
   (beginning-of-buffer)
 
-  (let ((index-alist '()) assign pos func)
+  (let ((index-alist '()) assign pos indent ns-name ns-indent)
     ;; Go through every assignment that includes -> or => on the same
     ;; line.
     (while (re-search-forward
-            (concat "^\\s *"
-                    coffee-assign-regexp
-                    ".+?"
-                    coffee-lambda-regexp)
+            (concat "^\\(\\s *\\)"
+                    "\\("
+                      coffee-assign-regexp
+                      ".+?"
+                      coffee-lambda-regexp
+                    "\\|"
+                      coffee-namespace-regexp
+                    "\\)")
             (point-max)
             t)
 
-      ;; The token being assigned. `Please.print:` will be
-      ;; `Please.print`, `block:` will be `block`, etc.
-      (setd assign (match-string 1))
+      ;; If this is the start of a new namespace, save the namespace's
+      ;; indentation level and name.
+      (when (and (not ns-name) (setq ns-name (match-string 7)))
+        ;; If this is a class declaration, add :: to the namespace.
+        (setq ns-name (concat ns-name "::"))
 
-      ;; The position of the match in the buffer.
-      (setd pos (match-beginning 0))
+        ;; Save the indentation level.
+        (setq ns-indent (length (match-string 1)))
 
-      ;; Add this to the alist. Done.
-      (push (cons assign pos) index-alist))
+        ;; Debug
+        (coffee-debug "ns: Found %s with indent %s" ns-name ns-indent))
+
+      ;; If this is an assignment, save the token being
+      ;; assigned. `Please.print:` will be `Please.print`, `block:`
+      ;; will be `block`, etc.
+      (when (setq assign (match-string 3))
+          ;; The position of the match in the buffer.
+          (setq pos (match-beginning 3))
+
+          ;; The indent level of this match
+          (setq indent (length (match-string 1)))
+
+          ;; If we're within the context of a namespace, add that to the
+          ;; front of the assign, e.g.
+          ;; constructor: => Policeman::constructor
+          (when (and ns-name (> indent ns-indent))
+            (setq assign (concat ns-name assign)))
+
+          (coffee-debug "=: Found %s with indent %s" assign indent)
+
+          ;; Clear the namespace if we're no longer indented deeper
+          ;; than it.
+          (when (and ns-name (<= indent ns-indent))
+            (coffee-debug "ns: Clearing %s" ns-name)
+            (setq ns-name nil)
+            (setq ns-indent nil))
+
+          ;; Add this to the alist. Done.
+          (push (cons assign pos) index-alist)))
 
     ;; Return the alist.
     index-alist))
