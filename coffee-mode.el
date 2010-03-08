@@ -50,7 +50,6 @@
 ;; TODO:
 ;; - Fix indentation toggling on blank (pure whitespace) lines
 ;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
-;; - Automatically `delete-trailing-whitespace' on save, configurable.
 ;; - mirror-mode - close brackets and parens automatically
 
 ;;; Code:
@@ -69,8 +68,11 @@
 (defvar coffee-debug-mode nil
   "Whether to run in debug mode or not. Logs to `*Messages*'.")
 
-(defvar coffee-mode-hook nil
-  "A hook for you to run your own code when the mode is loaded.")
+(defvar coffee-js-mode 'js2-mode
+  "The mode to use when viewing compiled JavaScript.")
+
+(defvar coffee-cleanup-whitespace t
+  "Should we `delete-trailing-whitespace' on save? Probably.")
 
 (defvar coffee-command "coffee"
   "The CoffeeScript command used for evaluating code. Must be in your
@@ -83,11 +85,11 @@ path.")
   "The command line arguments to pass to `coffee-command' to get it to
 print the compiled JavaScript.")
 
-(defvar coffee-js-mode 'js2-mode
-  "The mode to use when viewing compiled JavaScript.")
-
 (defvar coffee-compiled-buffer-name "*coffee-compiled*"
   "The name of the scratch buffer used when compiling CoffeeScript.")
+
+(defvar coffee-mode-hook nil
+  "A hook for you to run your own code when the mode is loaded.")
 
 (defvar coffee-mode-map (make-keymap)
   "Keymap for CoffeeScript major mode.")
@@ -241,7 +243,12 @@ print the compiled JavaScript.")
 ;; Helper Functions
 ;;
 
-;; The command to comment/uncomment text
+(defun coffee-before-save ()
+  "Hook run before file is saved. Deletes whitespace if
+`coffee-cleanup-whitespace' is non-nil."
+  (when coffee-cleanup-whitespace
+    (delete-trailing-whitespace)))
+
 (defun coffee-comment-dwim (arg)
   "Comment or uncomment current line or region in a smart way.
 For detail, see `comment-dwim'."
@@ -486,6 +493,7 @@ line? Returns `t' or `nil'. See the README for more details."
   "coffee-mode"
   "Major mode for editing CoffeeScript..."
 
+  ;; key bindings
   (define-key coffee-mode-map (kbd "A-r") 'coffee-compile-buffer)
   (define-key coffee-mode-map (kbd "A-R") 'coffee-compile-region)
   (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
@@ -514,6 +522,9 @@ line? Returns `t' or `nil'. See the README for more details."
 
   ;; no tabs
   (setq indent-tabs-mode nil)
+
+  ;; hooks
+  (set (make-local-variable 'before-save-hook) 'coffee-before-save)
 
   ;; clear memory
   ;; TODO: make these accurate
