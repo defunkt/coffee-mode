@@ -170,7 +170,7 @@ Bind it:
 
     (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
 
-### coffee-compiler-region
+### coffee-compile-region
 
 Compiles the selected region to JavaScript using the same
 configuration variables as `coffee-compile-buffer`.
