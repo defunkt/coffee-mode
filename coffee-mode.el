@@ -158,6 +158,11 @@ print the compiled JavaScript.")
   (interactive)
   (browse-url "http://jashkenas.github.com/coffee-script/"))
 
+(defun coffee-open-node-reference ()
+  "Open browser to node.js reference."
+  (interactive)
+  (browse-url "http://nodejs.org/api.html"))
+
 (defun coffee-open-github ()
   "Open browser to `coffee-mode' project on GithHub."
   (interactive)
@@ -174,7 +179,8 @@ print the compiled JavaScript.")
     ["Compile Region" coffee-compile-region]
     ["REPL" coffee-repl]
     "---"
-    ["CoffeeScript reference" coffee-open-reference]
+    ["CoffeeScript Reference" coffee-open-reference]
+    ["node.js Reference" coffee-open-node-reference]
     ["coffee-mode on GitHub" coffee-open-github]
     ["Version" coffee-show-version]
     ))
