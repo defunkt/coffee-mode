@@ -20,8 +20,11 @@ In your emacs config:
     (add-to-list 'load-path "~/.emacs.d/vendor/coffee-mode")
     (require 'coffee-mode)
 
-`coffee-mode` will be enabled automatically for any files ending in
-".coffee" or named "Cakefile".
+If `coffee-mode` is not enabled automatically for any files ending in
+".coffee" or named "Cakefile", add this to your emacs config as well:
+
+    (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+    (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
 ## Indentation
 
