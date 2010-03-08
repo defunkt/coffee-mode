@@ -317,6 +317,8 @@ For detail, see `comment-dwim'."
             (point-max)
             t)
 
+      (coffee-debug "Match: %s" (match-string 0))
+
       ;; If this is the start of a new namespace, save the namespace's
       ;; indentation level and name.
       (when (and (not ns-name) (setq ns-name (match-string 8)))
