@@ -213,8 +213,6 @@ Naturally. Example:
 
 ## Bugs
 
-Indentation on pure whitespace lines is a bit wonky.
-
 Prototype accessor assignments like `String::length: -> 10` don't look
 great.
 

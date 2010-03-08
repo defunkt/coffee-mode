@@ -49,7 +49,6 @@
 ;; js2-mode for guidance.
 
 ;; TODO:
-;; - Fix indentation toggling on blank (pure whitespace) lines
 ;; - Execute {buffer,region,line} and show output in new buffer
 ;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
 ;; - mirror-mode - close brackets and parens automatically
@@ -403,22 +402,32 @@ For detail, see `comment-dwim'."
   "Indent current line as CoffeeScript."
   (interactive)
 
-  (save-excursion
-    (let ((prev-indent 0) (cur-indent 0))
-      ;; Figure out the indentation of the previous line
-      (setd prev-indent (coffee-previous-indent))
-
-      ;; Figure out the current line's indentation
-      (setd cur-indent (current-indentation))
-
-      ;; Shift one column to the left
-      (backward-to-indentation 0)
+  (if (= (point) (point-at-bol))
       (insert-tab)
+    (save-excursion
+      (let ((prev-indent 0) (cur-indent 0))
+        ;; Figure out the indentation of the previous line
+        (setd prev-indent (coffee-previous-indent))
 
-      ;; We're too far, remove all indentation.
-      (when (> (- (current-indentation) prev-indent) tab-width)
-        (backward-to-indentation 0)
-        (delete-region (point-at-bol) (point))))))
+        ;; Figure out the current line's indentation
+        (setd cur-indent (current-indentation))
+
+        ;; Shift one column to the left
+        (beginning-of-line)
+        (insert-tab)
+
+        (coffee-debug "point: %s" (point))
+        (coffee-debug "point-at-bol: %s" (point-at-bol))
+
+        (when (= (point-at-bol) (point))
+          (forward-char tab-width))
+
+        (coffee-debug "New indent: %s" (current-indentation))
+
+        ;; We're too far, remove all indentation.
+        (when (> (- (current-indentation) prev-indent) tab-width)
+          (backward-to-indentation 0)
+          (delete-region (point-at-bol) (point)))))))
 
 (defun coffee-previous-indent ()
   "Return the indentation level of the previous non-blank line."
