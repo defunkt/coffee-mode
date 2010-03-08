@@ -179,7 +179,10 @@ print the compiled JavaScript.")
 (defvar coffee-this-regexp "@\\w*\\|this")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\w\\|\\.\\|_\\| \\|$\\)+?:")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
+
+;; Lambda
+(defvar coffee-lambda-regexp "\\((.+)\\)?\s *\\(->\\|=>\\)")
 
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
@@ -246,6 +249,76 @@ For detail, see `comment-dwim'."
   "Print a message when in debug mode."
   (when coffee-debug-mode
       (apply 'message (append (list string) args))))
+
+;;
+;; imenu support
+;;
+
+;; This is a pretty naive but workable way of doing it. First we look
+;; for any lines that starting with `coffee-assign-regexp' that include
+;; `coffee-lambda-regexp' then add those tokens to the list.
+;;
+;; Should cover cases like these:
+;;
+;; minus: (x, y) -> x - y
+;; String::length: -> 10
+;; block: ->
+;;   print('potion')
+;;
+;; Next we look for any line that starts with `class' or
+;; `coffee-assign-regexp' followed by `{` and drop into a
+;; namespace. This means we search one indentation level deeper for
+;; more assignments and add them to the alist prefixed with the
+;; namespace name.
+;;
+;; Should cover cases like these:
+;;
+;; class Person
+;;   print: ->
+;;     print 'My name is ' + this.name + '.'
+;;
+;; class Policeman extends Person
+;;   constructor: (rank) ->
+;;     @rank: rank
+;;   print: ->
+;;     print 'My name is ' + this.name + " and I'm a " + this.rank + '.'
+;;
+;; app = {
+;;   window:  {width: 200, height: 200}
+;;   para:    -> 'Welcome.'
+;;   button:  -> 'OK'
+;; }
+
+(defun coffee-imenu-create-index ()
+  "Create an imenu index of all methods in the buffer."
+  (interactive)
+
+  ;; This function is called within a `save-excursion' so we're safe.
+  (beginning-of-buffer)
+
+  (let ((index-alist '()) assign pos func)
+    ;; Go through every assignment that includes -> or => on the same
+    ;; line.
+    (while (re-search-forward
+            (concat "^\\s *"
+                    coffee-assign-regexp
+                    ".+?"
+                    coffee-lambda-regexp)
+            (point-max)
+            t)
+
+      ;; The token being assigned. `Please.print:` will be
+      ;; `Please.print`, `block:` will be `block`, etc.
+      (setd assign (match-string 1))
+
+      ;; The position of the match in the buffer.
+      (setd pos (match-beginning 0))
+
+      ;; Add this to the alist. Done.
+      (push (cons assign pos) index-alist))
+
+    ;; Return the alist.
+    index-alist))
 
 ;;
 ;; Indentation
@@ -390,10 +463,15 @@ line? Returns `t' or `nil'. See the README for more details."
   (make-local-variable 'indent-line-function)
   (setq indent-line-function 'coffee-indent-line)
 
+  ;; imenu
+  (make-local-variable 'imenu-create-index-function)
+  (setq imenu-create-index-function 'coffee-imenu-create-index)
+
   ;; no tabs
   (setq indent-tabs-mode nil)
 
   ;; clear memory
+  ;; TODO: make these accurate
   (setq coffee-keywords-regexp nil)
   (setq coffee-types-regexp nil)
   (setq coffee-constants-regexp nil)
