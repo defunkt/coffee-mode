@@ -320,7 +320,10 @@ For detail, see `comment-dwim'."
 
       ;; If this is the start of a new namespace, save the namespace's
       ;; indentation level and name.
-      (when (and (not ns-name) (setq ns-name (match-string 8)))
+      (when (match-string 8)
+        ;; Set the name.
+        (setq ns-name (match-string 8))
+
         ;; If this is a class declaration, add :: to the namespace.
         (setq ns-name (concat ns-name "::"))
 
