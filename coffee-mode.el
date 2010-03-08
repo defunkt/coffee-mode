@@ -100,10 +100,15 @@ print the compiled JavaScript.")
 (defmacro setd (var val)
   "Like setq but optionally logs the variable's value using `coffee-debug'."
   (if coffee-debug-mode
-  `(progn
-     (coffee-debug "%s: %s" ',var ,val)
-     (setq ,var ,val))
-  `(setq ,var ,val)))
+      `(progn
+         (coffee-debug "%s: %s" ',var ,val)
+         (setq ,var ,val))
+    `(setq ,var ,val)))
+
+(defmacro coffee-debug (string &rest args)
+  "Print a message when in debug mode."
+  (when coffee-debug-mode
+    `(apply 'message (append (list ,string) ,args))))
 
 ;;
 ;; Commands
@@ -250,11 +255,6 @@ For detail, see `comment-dwim'."
   "The full `coffee-command' complete with args."
   (mapconcat 'identity (append (list coffee-command) coffee-command-args) " "))
 
-(defun coffee-debug (string &rest args)
-  "Print a message when in debug mode."
-  (when coffee-debug-mode
-      (apply 'message (append (list string) args))))
-
 ;;
 ;; imenu support
 ;;
@@ -304,7 +304,7 @@ For detail, see `comment-dwim'."
 
   (let ((index-alist '()) assign pos indent ns-name ns-indent)
     ;; Go through every assignment that includes -> or => on the same
-    ;; line.
+    ;; line or starts with `class'.
     (while (re-search-forward
             (concat "^\\(\\s *\\)"
                     "\\("
