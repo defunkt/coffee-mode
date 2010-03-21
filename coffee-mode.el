@@ -181,7 +181,7 @@ print the compiled JavaScript."
                        (get-buffer-create coffee-compiled-buffer-name)
                        nil
                        "-s" "-p" "--no-wrap")
-  (switch-to-buffer-other-frame (get-buffer coffee-compiled-buffer-name))
+  (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
   (beginning-of-buffer))
 
