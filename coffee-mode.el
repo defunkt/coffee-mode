@@ -181,7 +181,7 @@ print the compiled JavaScript."
                        (get-buffer-create coffee-compiled-buffer-name)
                        nil
                        "-s" "-p" "--no-wrap")
-  (switch-to-buffer-other-frame (get-buffer coffee-compiled-buffer-name))
+  (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
   (beginning-of-buffer))
 
@@ -229,6 +229,9 @@ print the compiled JavaScript."
 
 ;; Instance variables (implicit this)
 (defvar coffee-this-regexp "@\\w*\\|this")
+
+;; Prototype::access
+(defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
 
 ;; Assignment
 (defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
@@ -278,6 +281,7 @@ print the compiled JavaScript."
   ;; because otherwise the keyword "state" in the function
   ;; "state_entry" would be highlighted.
   `((,coffee-this-regexp . font-lock-variable-name-face)
+    (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
