@@ -243,7 +243,7 @@ print the compiled JavaScript."
 (defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
 
 ;; Booleans
-(defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\)\\b")
+(defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\)\\b")
 
 ;; Regular Expressions
 (defvar coffee-regexp-regexp "\\/.+?\\/")
