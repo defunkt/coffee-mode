@@ -457,8 +457,11 @@ For detail, see `comment-dwim'."
 
   (save-excursion
     (forward-line -1)
-    (while (coffee-line-empty-p) (forward-line -1))
-    (current-indentation)))
+    (if (bobp)
+        0
+      (progn
+        (while (coffee-line-empty-p) (forward-line -1))
+        (current-indentation)))))
 
 (defun coffee-line-empty-p ()
   "Is this line empty? Returns non-nil if so, nil if not."
