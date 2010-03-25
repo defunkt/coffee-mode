@@ -211,8 +211,11 @@ Naturally. Example:
       ;; Riding edge.
       (setq coffee-command "~/dev/coffee"))
 
-      ;; Compile JS on every save.
-      (add-hook 'before-save-hook 'coffee-compile-file)
+      ;; Compile JS on every save, unless it's a Cakefile.
+      (add-hook 'before-save-hook
+          '(lambda ()
+             (when (not (string= (buffer-name) "Cakefile"))
+              (coffee-compile-file))))
 
     (add-hook 'coffee-mode-hook '(lambda () (coffee-custom)))
 
