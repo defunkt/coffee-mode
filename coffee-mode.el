@@ -96,12 +96,12 @@ path."
   :type 'string
   :group 'coffee)
 
-(defcustom coffee-repl-args '("-i")
+(defcustom coffee-args-repl '("-i")
   "The command line arguments to pass to `coffee-command' to start a REPL."
   :type 'list
   :group 'coffee)
 
-(defcustom coffee-command-args '("-s" "-p" "--no-wrap")
+(defcustom coffee-args-compile '("-s" "-p" "--no-wrap")
   "The command line arguments to pass to `coffee-command' to get it to
 print the compiled JavaScript."
   :type 'list
@@ -150,7 +150,7 @@ print the compiled JavaScript."
   (unless (comint-check-proc "*CoffeeREPL*")
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
-            coffee-command nil coffee-repl-args)))
+            coffee-command nil coffee-args-repl)))
 
   (pop-to-buffer "*CoffeeScript*"))
 
@@ -303,7 +303,7 @@ For detail, see `comment-dwim'."
 
 (defun coffee-command-full ()
   "The full `coffee-command' complete with args."
-  (mapconcat 'identity (append (list coffee-command) coffee-command-args) " "))
+  (mapconcat 'identity (append (list coffee-command) coffee-args-compile) " "))
 
 ;;
 ;; imenu support

@@ -205,8 +205,14 @@ Naturally. Example:
       ;; *Messages* spam
       (setq coffee-debug-mode t)
 
+      ;; Emacs key binding
+      (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
+
       ;; Riding edge.
       (setq coffee-command "~/dev/coffee"))
+
+      ;; Compile JS on every save.
+      (add-hook 'before-save-hook 'coffee-compile-file)
 
     (add-hook 'coffee-mode-hook '(lambda () (coffee-custom)))
 
@@ -249,14 +255,14 @@ path.
 
 Default: `"coffee"`
 
-### coffee-repl-args
+### coffee-args-repl
 
 The command line arguments to pass to `coffee-command' to start a
 REPL.
 
 Default: `'("-i")`
 
-### coffee-command-args
+### coffee-args-compile
 
 The command line arguments to pass to `coffee-command' to get it
 toprint the compiled JavaScript.
