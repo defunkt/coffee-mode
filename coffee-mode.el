@@ -55,9 +55,12 @@
 
 ;;; Code:
 
+(require 'comint)
 (require 'easymenu)
 (require 'font-lock)
-(require 'cl)
+
+(eval-when-compile
+  (require 'cl))
 
 ;;
 ;; Customizable Variables
@@ -183,7 +186,7 @@ print the compiled JavaScript."
                        "-s" "-p" "--no-wrap")
   (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
-  (beginning-of-buffer))
+  (goto-char (point-min)))
 
 (defun coffee-show-version ()
   "Prints the `coffee-mode' version."
@@ -354,7 +357,7 @@ For detail, see `comment-dwim'."
   (interactive)
 
   ;; This function is called within a `save-excursion' so we're safe.
-  (beginning-of-buffer)
+  (goto-char (point-min))
 
   (let ((index-alist '()) assign pos indent ns-name ns-indent)
     ;; Go through every assignment that includes -> or => on the same
