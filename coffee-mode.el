@@ -127,7 +127,7 @@ print the compiled JavaScript."
 
 (defmacro setd (var val)
   "Like setq but optionally logs the variable's value using `coffee-debug'."
-  (if coffee-debug-mode
+  (if (and (boundp 'coffee-debug-mode) coffee-debug-mode)
       `(progn
          (coffee-debug "%s: %s" ',var ,val)
          (setq ,var ,val))
