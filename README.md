@@ -280,6 +280,7 @@ Default: `"*coffee-compiled*"`
 
 ## Thanks
 
+* Jeremy Ashkenas for CoffeeScript
 * <http://xahlee.org/emacs/elisp_syntax_coloring.html> for instructions.
 * Jason Blevins for the guidance his markdown-mode.el gave.
 * Steve Yegge for js2
