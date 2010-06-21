@@ -212,7 +212,7 @@ Naturally. Example:
       (setq coffee-command "~/dev/coffee"))
 
       ;; Compile JS on every save, unless it's a Cakefile.
-      (add-hook 'before-save-hook
+      (add-hook 'after-save-hook
           '(lambda ()
              (when (not (string= (buffer-name) "Cakefile"))
               (coffee-compile-file))))
