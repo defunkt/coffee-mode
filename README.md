@@ -42,7 +42,7 @@ Well, idiomatic CoffeeScript uses two spaces. We can set our
       "coffee-mode-hook"
      (set (make-local-variable 'tab-width) 2))
 
-    (add-hook coffee-mode-hook
+    (add-hook 'coffee-mode-hook
       '(lambda() (coffee-custom)))
 
 For more configuration options and another example of this hook, look
