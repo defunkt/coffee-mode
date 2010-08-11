@@ -104,9 +104,8 @@ path."
   :type 'list
   :group 'coffee)
 
-(defcustom coffee-args-compile '("-s" "-p" "--no-wrap")
-  "The command line arguments to pass to `coffee-command' to get it to
-print the compiled JavaScript."
+(defcustom coffee-args-compile '("-c")
+  "The command line arguments to pass to `coffee-command' when compiling a file."
   :type 'list
   :group 'coffee)
 
@@ -160,11 +159,10 @@ print the compiled JavaScript."
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk. Doesn't open in a buffer.."
   (interactive)
-  (shell-command (concat coffee-command " -c " (buffer-file-name)))
-  (message "Compiled and saved %s"
-           (concat
-            (substring (buffer-file-name) 0 -6)
-            "js")))
+  (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
+    (if (string= compiler-output "")
+        (message "Compiled and saved %s" (concat (substring (buffer-file-name) 0 -6) "js"))
+      (message (car (split-string compiler-output "[\n\r]+"))))))
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JS in another buffer."
@@ -308,9 +306,9 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
-(defun coffee-command-full ()
-  "The full `coffee-command' complete with args."
-  (mapconcat 'identity (append (list coffee-command) coffee-args-compile) " "))
+(defun coffee-command-compile (file-name)
+  "The `coffee-command' with args to compile a file."
+  (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list file-name)) " "))
 
 ;;
 ;; imenu support

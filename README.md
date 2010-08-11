@@ -202,6 +202,9 @@ Naturally. Example:
       ;; If you don't have js2-mode
       (setq coffee-js-mode 'javascript-mode)
 
+      ;; If you don't want your compiled files to be wrapped
+      (setq coffee-args-compile '("-c" "--no-wrap"))
+
       ;; *Messages* spam
       (setq coffee-debug-mode t)
 
@@ -267,10 +270,9 @@ Default: `'("-i")`
 
 ### coffee-args-compile
 
-The command line arguments to pass to `coffee-command' to get it
-toprint the compiled JavaScript.
+The command line arguments to pass to `coffee-command' when compiling a file.
 
-Default: `'("-s" "-p" "--no-wrap")`
+Default: `'("-c")`
 
 ### coffee-compiled-buffer-name
 
