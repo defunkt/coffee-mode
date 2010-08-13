@@ -228,7 +228,7 @@ print the compiled JavaScript."
 ;;
 
 ;; Instance variables (implicit this)
-(defvar coffee-this-regexp "@\\w*\\|this")
+(defvar coffee-this-regexp "@\\(\\w\\|_\\)*\\|this")
 
 ;; Prototype::access
 (defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
