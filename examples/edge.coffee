@@ -8,3 +8,9 @@ console.log string
 
 string = 'Something with a \'single quote'
 console.log string
+
+# TODO
+heredoc = """
+  Heredoc with a " double quote
+"""
+console.log heredoc
