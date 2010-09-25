@@ -1,32 +1,32 @@
 # These examples are taken from
 # http://jashkenas.github.com/coffee-script/
 
-song: ["do", "re", "mi", "fa", "so"]
+song = ["do", "re", "mi", "fa", "so"]
 
-ages: {
+ages = {
   max: 10
   ida: 9
   tim: 11
 }
 
-matrix: [
+matrix = [
   1, 0, 1
   0, 0, 1
   1, 1, 0
 ]
 
-eldest: if 24 > 21 then "Liz" else "Ike"
+eldest = if 24 > 21 then "Liz" else "Ike"
 
-six: (one: 1) + (two: 2) + (three: 3)
+six = (one = 1) + (two = 2) + (three = 3)
 
-My.mood: greatly_improved if true
+My.mood = greatly_improved if true
 
 # Unfancy JavaScript
 if happy and knows_it
   cha_cha_cha()
   false
 
-Account: (customer, cart) ->
+Account = (customer, cart) ->
   @customer: customer
   @cart: cart
 
@@ -56,8 +56,8 @@ class Horse extends Animal
     alert "Galloping..."
     super 45
 
-sam: new Snake "Sammy the Python"
-tom: new Horse "Tommy the Palomino"
+sam = new Snake "Sammy the Python"
+tom = new Horse "Tommy the Palomino"
 
 sam.move()
 tom.move()
@@ -65,14 +65,14 @@ if car.speed < speed_limit then accelerate()
 
 print "My name is " + @name
 
-gold: silver: the_field: "unknown"
+gold = silver = the_field = "unknown"
 
-award_medals: (first, second, rest...) ->
+award_medals = (first, second, rest...) ->
   gold:       first
   silver:     second
   the_field:  rest
 
-contenders: [
+contenders = [
   "Michael Phelps"
   "Liu Xiang"
 ]
@@ -86,14 +86,14 @@ alert "The Field: " + the_field
 # Eat lunch.
 # what up
 # love it.
-lunch: eat food for food in ['toast', 'cheese', 'wine']
+lunch = eat food for food in ['toast', 'cheese', 'wine']
 
 $('#demo').click ->
   asd
 # sup
   # asd
   # asdasd
-blah: true
+blah = true
 
 okay
 
@@ -103,12 +103,12 @@ for roid in asteroids
   for roid2 in asteroids when roid isnt roid2
     roid.explode() if roid.overlaps roid2
 
-years_old: {max: 10, ida: 9, tim: 11}
+years_old = max: 10, ida: 9, tim: 11
 
-ages: for child, age of years_old
+ages = for child, age of years_old
   child + " is " + age
 
-grade: (student) ->
+grade = (student) ->
   if student.excellent_work
     "A+"
   else if student.okay_stuff

@@ -235,7 +235,7 @@ path."
 (defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)[:=]")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
