@@ -570,8 +570,8 @@ line? Returns `t' or `nil'. See the README for more details."
 
 ;;;###autoload
 (define-derived-mode coffee-mode fundamental-mode
-  "coffee-mode"
-  "Major mode for editing CoffeeScript..."
+  "Coffee"
+  "Major mode for editing CoffeeScript."
 
   ;; key bindings
   (define-key coffee-mode-map (kbd "A-r") 'coffee-compile-buffer)
