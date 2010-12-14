@@ -181,7 +181,7 @@ path."
   (call-process-region start end coffee-command nil
                        (get-buffer-create coffee-compiled-buffer-name)
                        nil
-                       "-s" "-p" "--no-wrap")
+                       "-s" "-p" "--bare")
   (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
   (goto-char (point-min)))
