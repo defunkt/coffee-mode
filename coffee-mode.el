@@ -154,7 +154,7 @@ path."
      (apply 'make-comint "CoffeeREPL"
             coffee-command nil coffee-args-repl)))
 
-  (pop-to-buffer "*CoffeeScript*"))
+  (pop-to-buffer "*CoffeeREPL*"))
 
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk. Doesn't open in a buffer.."
