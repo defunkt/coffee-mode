@@ -257,7 +257,7 @@ path."
       '("if" "else" "new" "return" "try" "catch"
         "finally" "throw" "break" "continue" "for" "in" "while"
         "delete" "instanceof" "typeof" "switch" "super" "extends"
-        "class"))
+        "class" "until" "loop"))
 
 ;; Reserved keywords either by JS or CS.
 (defvar coffee-js-reserved
