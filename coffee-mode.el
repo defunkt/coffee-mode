@@ -228,6 +228,9 @@ path."
 ;; Define Language Syntax
 ;;
 
+;; String literals
+(defvar coffee-string-regexp "\"\\([^\\]\\|\\\\.\\)*?\"\\|'\\([^\\]\\|\\\\.\\)*?'")
+
 ;; Instance variables (implicit this)
 (defvar coffee-this-regexp "@\\(\\w\\|_\\)*\\|this")
 
@@ -235,7 +238,7 @@ path."
 (defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)[:=]")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
@@ -247,7 +250,7 @@ path."
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\)\\b")
 
 ;; Regular Expressions
-(defvar coffee-regexp-regexp "\\/.+?\\/")
+(defvar coffee-regexp-regexp "\\/\\([^\\]\\|\\\\.\\)+?\\/")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -281,7 +284,8 @@ path."
   ;; *Note*: order below matters. `coffee-keywords-regexp' goes last
   ;; because otherwise the keyword "state" in the function
   ;; "state_entry" would be highlighted.
-  `((,coffee-this-regexp . font-lock-variable-name-face)
+  `((,coffee-string-regexp . font-lock-string-face)
+    (,coffee-this-regexp . font-lock-variable-name-face)
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
@@ -579,7 +583,6 @@ line? Returns `t' or `nil'. See the README for more details."
   (setq comment-start "#")
 
   ;; single quote strings
-  (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
   ;; indentation
