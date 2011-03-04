@@ -469,7 +469,7 @@ For detail, see `comment-dwim'."
     (if (bobp)
         0
       (progn
-        (while (coffee-line-empty-p) (forward-line -1))
+        (while (and (coffee-line-empty-p) (not (bobp))) (forward-line -1))
         (current-indentation)))))
 
 (defun coffee-line-empty-p ()
