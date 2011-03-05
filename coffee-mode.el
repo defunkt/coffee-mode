@@ -580,6 +580,7 @@ line? Returns `t' or `nil'. See the README for more details."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
+  (make-local-variable 'comment-start)
   (setq comment-start "#")
 
   ;; single quote strings
