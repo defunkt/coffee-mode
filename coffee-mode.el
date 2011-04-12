@@ -250,7 +250,7 @@ path."
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\)\\b")
 
 ;; Regular Expressions
-(defvar coffee-regexp-regexp "\\/\\([^\\]\\|\\\\.\\)+?\\/")
+(defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/]\\)+?\\/")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
