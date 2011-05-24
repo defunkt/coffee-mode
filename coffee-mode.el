@@ -573,6 +573,7 @@ line? Returns `t' or `nil'. See the README for more details."
   (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
   (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
+  (define-key coffee-mode-map "\C-c\C-o\C-s" 'coffee-cos-mode)
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
@@ -599,6 +600,22 @@ line? Returns `t' or `nil'. See the README for more details."
 
   ;; hooks
   (set (make-local-variable 'before-save-hook) 'coffee-before-save))
+
+;;
+;; Compile-on-Save minor mode
+;;
+
+(defvar coffee-cos-mode-line " CoS")
+(make-variable-buffer-local 'coffee-cos-mode-line)
+
+(define-minor-mode coffee-cos-mode
+  "Toggle compile-on-save for coffee-mode."
+  :group 'coffee-cos :lighter coffee-cos-mode-line
+  (cond
+   (coffee-cos-mode
+    (add-hook 'after-save-hook 'coffee-compile-file nil t))
+   (t
+    (remove-hook 'after-save-hook 'coffee-compile-file t))))
 
 (provide 'coffee-mode)
 
