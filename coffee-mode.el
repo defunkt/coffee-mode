@@ -238,7 +238,7 @@ path."
 (defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\|$\\)+?\s*\\):")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
@@ -485,6 +485,7 @@ For detail, see `comment-dwim'."
   ;; insert a newline, and indent the newline to the same
   ;; level as the previous line.
   (let ((prev-indent (current-indentation)) (indent-next nil))
+    (delete-horizontal-space t)
     (newline)
     (insert-tab (/ prev-indent coffee-tab-width))
 
