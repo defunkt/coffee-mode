@@ -203,7 +203,7 @@ Naturally. Example:
       (setq coffee-js-mode 'javascript-mode)
 
       ;; If you don't want your compiled files to be wrapped
-      (setq coffee-args-compile '("-c" "--no-wrap"))
+      (setq coffee-args-compile '("-c" "--bare"))
 
       ;; *Messages* spam
       (setq coffee-debug-mode t)
