@@ -156,12 +156,17 @@ path."
 
   (pop-to-buffer "*CoffeeREPL*"))
 
+(defun coffee-compiled-file-name (&optional filename)
+  "Returns the name of the JavaScript file compiled from a CoffeeScript file.
+If FILENAME is omitted, the current buffer's file name is used."
+  (concat (file-name-sans-extension (or filename (buffer-file-name))) ".js"))
+
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk. Doesn't open in a buffer.."
   (interactive)
   (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
     (if (string= compiler-output "")
-        (message "Compiled and saved %s" (concat (substring (buffer-file-name) 0 -6) "js"))
+        (message "Compiled and saved %s" (coffee-compiled-file-name))
       (message (car (split-string compiler-output "[\n\r]+"))))))
 
 (defun coffee-compile-buffer ()
