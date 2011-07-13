@@ -156,12 +156,17 @@ path."
 
   (pop-to-buffer "*CoffeeREPL*"))
 
+(defun coffee-compiled-file-name (&optional filename)
+  "Returns the name of the JavaScript file compiled from a CoffeeScript file.
+If FILENAME is omitted, the current buffer's file name is used."
+  (concat (file-name-sans-extension (or filename (buffer-file-name))) ".js"))
+
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk. Doesn't open in a buffer.."
   (interactive)
   (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
     (if (string= compiler-output "")
-        (message "Compiled and saved %s" (concat (substring (buffer-file-name) 0 -6) "js"))
+        (message "Compiled and saved %s" (coffee-compiled-file-name))
       (message (car (split-string compiler-output "[\n\r]+"))))))
 
 (defun coffee-compile-buffer ()
@@ -574,6 +579,7 @@ line? Returns `t' or `nil'. See the README for more details."
   (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
   (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
+  (define-key coffee-mode-map "\C-c\C-o\C-s" 'coffee-cos-mode)
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
@@ -600,6 +606,22 @@ line? Returns `t' or `nil'. See the README for more details."
 
   ;; hooks
   (set (make-local-variable 'before-save-hook) 'coffee-before-save))
+
+;;
+;; Compile-on-Save minor mode
+;;
+
+(defvar coffee-cos-mode-line " CoS")
+(make-variable-buffer-local 'coffee-cos-mode-line)
+
+(define-minor-mode coffee-cos-mode
+  "Toggle compile-on-save for coffee-mode."
+  :group 'coffee-cos :lighter coffee-cos-mode-line
+  (cond
+   (coffee-cos-mode
+    (add-hook 'after-save-hook 'coffee-compile-file nil t))
+   (t
+    (remove-hook 'after-save-hook 'coffee-compile-file t))))
 
 (provide 'coffee-mode)
 

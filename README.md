@@ -183,6 +183,20 @@ Bind it:
 
     (define-key coffee-mode-map [(meta R)] 'coffee-compile-region)
 
+### Compile-on-save
+
+Hitting the key sequence `C-c C-o C-s` turns on (toggles) the
+compile-on-save minor mode in `coffee-mode`.  To enable it by default:
+
+    (add-hook 'coffee-mode-hook '(lambda () (coffee-cos-mode t)))
+
+To enable it only if it looks like you may want to:
+
+    (add-hook 'coffee-mode-hook '(lambda ()
+                                   (and (file-exists-p (buffer-file-name))
+                                        (file-exists-p (coffee-compiled-file-name))
+                                        (coffee-cos-mode t))))
+
 ### coffee-repl
 
 Starts a repl in a new buffer using `coffee-command`.
@@ -215,12 +229,11 @@ Naturally. Example:
       (setq coffee-command "~/dev/coffee"))
 
       ;; Compile '.coffee' files on every save
-      (add-hook 'after-save-hook
-          '(lambda ()
-             (when (string-match "\.coffee$" (buffer-name))
-              (coffee-compile-file))))
+      (and (file-exists-p (buffer-file-name))
+           (file-exists-p (coffee-compiled-file-name))
+           (coffee-cos-mode t))))
 
-    (add-hook 'coffee-mode-hook '(lambda () (coffee-custom)))
+    (add-hook 'coffee-mode-hook 'coffee-custom))
 
 ## Configuration
 
