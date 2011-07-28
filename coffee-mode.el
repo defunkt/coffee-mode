@@ -292,7 +292,7 @@ If FILENAME is omitted, the current buffer's file name is used."
   `((,coffee-string-regexp . font-lock-string-face)
     (,coffee-this-regexp . font-lock-variable-name-face)
     (,coffee-prototype-regexp . font-lock-variable-name-face)
-    (,coffee-assign-regexp . font-lock-type-face)
+    (,coffee-assign-regexp . font-lock-function-name-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
     (,coffee-keywords-regexp . font-lock-keyword-face)))
