@@ -207,10 +207,10 @@ If FILENAME is omitted, the current buffer's file name is used."
     (when buffer
       (kill-buffer buffer)))
 
-  (call-process-region start end coffee-command nil
-                       (get-buffer-create coffee-compiled-buffer-name)
-                       nil
-                       "-s" "-p" "--bare")
+  (apply (apply-partially 'call-process-region start end coffee-command nil
+                          (get-buffer-create coffee-compiled-buffer-name)
+                          nil)
+         (append coffee-args-compile (list "-s" "-p")))
   (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
   (goto-char (point-min)))
