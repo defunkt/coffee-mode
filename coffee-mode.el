@@ -329,12 +329,17 @@ For detail, see `comment-dwim'."
   "Given an expanded file name, derive the absolute Cygwin path based on `coffee-cygwin-prefix'."
   (replace-regexp-in-string "^[a-zA-Z]:" coffee-cygwin-prefix expanded-file-name t))
 
+(defun coffee-universal-path (file-name)
+  "Handle different paths for different OS configurations for CoffeeScript"
+  (let ((full-file-name (expand-file-name file-name)))
+    (if (and (equal system-type 'windows-nt)
+             coffee-cygwin-mode)
+        (coffee-cygwin-path full-file-name)
+      full-file-name)))
+
 (defun coffee-command-compile (file-name)
   "The `coffee-command' with args to compile a file."
-  (let ((full-file-name (if (and (equal system-type 'windows-nt)
-                                 coffee-cygwin-mode)
-                            (coffee-cygwin-path (expand-file-name file-name))
-			  (expand-file-name file-name))))
+  (let ((full-file-name (coffee-universal-path file-name)))
     (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list full-file-name)) " ")))
 
 ;;
