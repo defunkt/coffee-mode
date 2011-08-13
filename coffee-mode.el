@@ -114,6 +114,14 @@ path."
   :type 'string
   :group 'coffee)
 
+(defcustom coffee-compile-jump-to-error t
+  "Whether to jump to the first error if compilation fails.
+Please note that the coffee compiler doesn't always give a line
+number for the issue and in that case it is not possible to jump
+to the error, of course."
+  :type 'boolean
+  :group 'coffee)
+
 (defvar coffee-mode-hook nil
   "A hook for you to run your own code when the mode is loaded.")
 
@@ -167,7 +175,13 @@ If FILENAME is omitted, the current buffer's file name is used."
   (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
     (if (string= compiler-output "")
         (message "Compiled and saved %s" (coffee-compiled-file-name))
-      (message (car (split-string compiler-output "[\n\r]+"))))))
+      (let* ((msg (car (split-string compiler-output "[\n\r]+")))
+	     (line (and (string-match "on line \\([0-9]+\\)" msg)
+			(string-to-number (match-string 1 msg)))))
+	(message msg)
+	(when (and coffee-compile-jump-to-error line (> line 0))
+	  (goto-char (point-min))
+	  (forward-line (1- line)))))))
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JS in another buffer."
