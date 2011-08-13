@@ -596,6 +596,7 @@ line? Returns `t' or `nil'. See the README for more details."
   ;; indentation
   (make-local-variable 'indent-line-function)
   (setq indent-line-function 'coffee-indent-line)
+  (set (make-local-variable 'tab-width) coffee-tab-width)
 
   ;; imenu
   (make-local-variable 'imenu-create-index-function)
