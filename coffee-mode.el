@@ -132,6 +132,11 @@ to the error, of course."
   :type 'boolean
   :group 'coffee)
 
+(defcustom coffee-watch-buffer-name "*coffee-watch*"
+  "The name of the scratch buffer used when using the --watch flag with  CoffeeScript."
+  :type 'string
+  :group 'coffee)
+
 (defvar coffee-mode-hook nil
   "A hook for you to run your own code when the mode is loaded.")
 
@@ -234,6 +239,13 @@ If FILENAME is omitted, the current buffer's file name is used."
   "Open browser to `coffee-mode' project on GithHub."
   (interactive)
   (browse-url "http://github.com/defunkt/coffee-mode"))
+
+(defun coffee-watch (dir-or-file)
+  "Run `coffee-run-cmd' with the --watch flag enabled for a directory or file"
+  (interactive "fDirectory or File: ")
+  (let ((coffee-compiled-buffer-name coffee-watch-buffer-name)
+        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (expand-file-name dir-or-file))) " ")))
+    (coffee-run-cmd args)))
 
 ;;
 ;; Menubar
@@ -355,6 +367,13 @@ For detail, see `comment-dwim'."
   "The `coffee-command' with args to compile a file."
   (let ((full-file-name (coffee-universal-path file-name)))
     (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list full-file-name)) " ")))
+
+(defun coffee-run-cmd (args)
+  "Given an arbitrary set of arguments for the `coffee-command', compile the command and show output in a custom compilation buffer."
+  (interactive "sArguments: ")
+  (let ((compilation-buffer-name-function (lambda (this-mode)
+                                            (generate-new-buffer-name coffee-compiled-buffer-name))))
+    (compile (concat coffee-command " " args))))
 
 ;;
 ;; imenu support
