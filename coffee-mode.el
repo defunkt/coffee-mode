@@ -109,6 +109,16 @@ path."
   :type 'list
   :group 'coffee)
 
+(defcustom coffee-cygwin-mode t
+  "For Windows systems, add support for Cygwin-style absolute paths."
+  :type 'boolean
+  :group 'coffee)
+
+(defcustom coffee-cygwin-prefix "/cygdrive/C"
+  "The prefix with which to replace the drive-letter for your Windows partition, e.g. 'C:' would be replaced by '/c/cygdrive'."
+  :type 'string
+  :group 'coffee)
+
 (defcustom coffee-compiled-buffer-name "*coffee-compiled*"
   "The name of the scratch buffer used when compiling CoffeeScript."
   :type 'string
@@ -329,9 +339,22 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
+(defun coffee-cygwin-path (expanded-file-name)
+  "Given an expanded file name, derive the absolute Cygwin path based on `coffee-cygwin-prefix'."
+  (replace-regexp-in-string "^[a-zA-Z]:" coffee-cygwin-prefix expanded-file-name t))
+
+(defun coffee-universal-path (file-name)
+  "Handle different paths for different OS configurations for CoffeeScript"
+  (let ((full-file-name (expand-file-name file-name)))
+    (if (and (equal system-type 'windows-nt)
+             coffee-cygwin-mode)
+        (coffee-cygwin-path full-file-name)
+      full-file-name)))
+
 (defun coffee-command-compile (file-name)
   "The `coffee-command' with args to compile a file."
-  (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list file-name)) " "))
+  (let ((full-file-name (coffee-universal-path file-name)))
+    (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list full-file-name)) " ")))
 
 ;;
 ;; imenu support
