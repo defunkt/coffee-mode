@@ -258,7 +258,7 @@ If FILENAME is omitted, the current buffer's file name is used."
   "Run `coffee-run-cmd' with the --watch flag enabled for a directory or file"
   (interactive "fDirectory or File: ")
   (let ((coffee-compiled-buffer-name coffee-watch-buffer-name)
-        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (expand-file-name dir-or-file))) " ")))
+        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (coffee-universal-path dir-or-file))) " ")))
     (coffee-run-cmd args)))
 
 ;;
