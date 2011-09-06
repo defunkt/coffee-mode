@@ -231,14 +231,14 @@ Naturally. Example:
       (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
 
       ;; Riding edge.
-      (setq coffee-command "~/dev/coffee"))
+      (setq coffee-command "~/dev/coffee")
 
       ;; Compile '.coffee' files on every save
       (and (file-exists-p (buffer-file-name))
            (file-exists-p (coffee-compiled-file-name))
-           (coffee-cos-mode t))))
+           (coffee-cos-mode t)))
 
-    (add-hook 'coffee-mode-hook 'coffee-custom))
+    (add-hook 'coffee-mode-hook 'coffee-custom)
 
 ## Configuration
 
