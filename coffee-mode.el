@@ -99,6 +99,13 @@ path."
   :type 'string
   :group 'coffee)
 
+(defcustom js2coffee-command "js2coffee"
+  "The js2coffee command used for evaluating code. Must be in your
+path."
+  :type 'string
+  :group 'coffee)
+
+
 (defcustom coffee-args-repl '("-i")
   "The command line arguments to pass to `coffee-command' to start a REPL."
   :type 'list
@@ -233,6 +240,21 @@ If FILENAME is omitted, the current buffer's file name is used."
   (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (funcall coffee-js-mode)
   (goto-char (point-min)))
+
+(defun coffee-js2coffee-replace-region (start end)
+  "Replace JS to coffee in current buffer."
+  (interactive "r")
+
+  (let ((buffer (get-buffer coffee-compiled-buffer-name)))
+    (when buffer
+      (kill-buffer buffer)))
+
+  (call-process-region start end 
+                       js2coffee-command nil
+                       (current-buffer)
+                       )
+  (delete-region start end)
+  )
 
 (defun coffee-show-version ()
   "Prints the `coffee-mode' version."
