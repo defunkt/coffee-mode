@@ -216,7 +216,8 @@ Naturally. Example:
       "coffee-mode-hook"
 
       ;; CoffeeScript uses two spaces.
-      (set (make-local-variable 'tab-width) 2)
+      (make-local-variable 'tab-width)
+      (set 'tab-width 2)
 
       ;; If you don't have js2-mode
       (setq coffee-js-mode 'javascript-mode)
