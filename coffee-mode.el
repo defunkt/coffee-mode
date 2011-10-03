@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2010 Chris Wanstrath
 
-;; Version 0.3.0
+;; Version: 0.3.0
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
 ;; URL: http://github.com/defunkt/coffee-script
@@ -727,3 +727,4 @@ line? Returns `t' or `nil'. See the README for more details."
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
+;;; coffee-mode.el ends here
