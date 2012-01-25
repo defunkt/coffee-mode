@@ -553,7 +553,7 @@ previous line."
         ;; Optimized for speed - checks only the last character.
         (let ((indenters coffee-indenters-eol))
           (while indenters
-            (if (/= (char-before) (car indenters))
+            (if (and (char-before) (/= (char-before) (car indenters)))
                 (setq indenters (cdr indenters))
               (setq indenter-at-eol t)
               (setq indenters nil)))))
