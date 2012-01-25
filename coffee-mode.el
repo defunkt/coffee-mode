@@ -636,9 +636,10 @@ line? Returns `t' or `nil'. See the README for more details."
         (end-of-line)
 
         ;; Optimized for speed - checks only the last character.
-        (when (some (lambda (char)
-                        (= (char-before) char))
-                      coffee-indenters-eol)
+        (when (and (char-before)
+                   (some (lambda (char)
+                           (= (char-before) char))
+                         coffee-indenters-eol))
           (setd indenter-at-eol t)))
 
       ;; If we found an indenter, return `t'.
