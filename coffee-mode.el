@@ -196,7 +196,8 @@ was called."
   (unless (comint-check-proc "*CoffeeREPL*")
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
-            coffee-command nil coffee-args-repl)))
+            "env"
+            nil (append (list "NODE_NO_READLINE=1" coffee-command) coffee-args-repl))))
 
   (pop-to-buffer "*CoffeeREPL*"))
 
