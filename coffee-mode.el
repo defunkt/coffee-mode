@@ -5,7 +5,7 @@
 ;; Version: 0.4.0
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
-;; URL: http://github.com/defunkt/coffee-script
+;; URL: http://github.com/defunkt/coffee-mode
 
 ;; This file is not part of GNU Emacs.
 
