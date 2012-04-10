@@ -277,12 +277,17 @@ called `coffee-compiled-buffer-name'."
       '("then" "unless" "and" "or" "is"
         "isnt" "not" "of" "by" "where" "when"))
 
+;; Iced CoffeeScript keywords
+(defvar iced-coffee-cs-keywords
+  '("await" "defer"))
+
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp (regexp-opt
                                 (append
                                  coffee-js-reserved
                                  coffee-js-keywords
-                                 coffee-cs-keywords) 'words))
+                                 coffee-cs-keywords
+                                 iced-coffee-cs-keywords) 'words))
 
 
 ;; Create the list for font-lock. Each class of keyword is given a
