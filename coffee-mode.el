@@ -636,10 +636,12 @@ line? Returns `t' or `nil'. See the README for more details."
         (end-of-line)
 
         ;; Optimized for speed - checks only the last character.
-        (when (some (lambda (char)
-                        (= (char-before) char))
-                      coffee-indenters-eol)
-          (setd indenter-at-eol t)))
+        (let ((indenters coffee-indenters-eol))
+          (while indenters
+            (if (/= (char-before) (car indenters))
+                (setq indenters (cdr indenters))
+              (setd indenter-at-eol t)
+              (setq indenters nil)))))
 
       ;; If we found an indenter, return `t'.
       (or indenter-at-bol indenter-at-eol))))
