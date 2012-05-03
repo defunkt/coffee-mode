@@ -36,17 +36,11 @@ like me, you probably have this set in your Emacs config globally:
     (setq-default tab-width 4)
 
 Well, idiomatic CoffeeScript uses two spaces. We can set our
-`tab-width` to two for `coffee-mode` using the `coffee-mode-hook`:
+`tab-width` to two for `coffee-mode` using the `coffee-tab-width`:
 
-    (defun coffee-custom ()
-      "coffee-mode-hook"
-     (set (make-local-variable 'tab-width) 2))
+    (setq coffee-tab-width 2)
 
-    (add-hook 'coffee-mode-hook
-      '(lambda() (coffee-custom)))
-
-For more configuration options and another example of this hook, look
-further down in this README.
+For more configuration options, look further down in this README.
 
 ### TAB Theory
 
