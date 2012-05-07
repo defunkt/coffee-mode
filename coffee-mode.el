@@ -83,11 +83,6 @@
   :type 'string
   :group 'coffee)
 
-(defcustom coffee-cleanup-whitespace t
-  "Should we `delete-trailing-whitespace' on save? Probably."
-  :type 'boolean
-  :group 'coffee)
-
 (defcustom coffee-tab-width tab-width
   "The tab width to use when indenting."
   :type 'integer
@@ -372,12 +367,6 @@ If FILENAME is omitted, the current buffer's file name is used."
 ;;
 ;; Helper Functions
 ;;
-
-(defun coffee-before-save ()
-  "Hook run before file is saved. Deletes whitespace if
-`coffee-cleanup-whitespace' is non-nil."
-  (when coffee-cleanup-whitespace
-    (delete-trailing-whitespace)))
 
 (defun coffee-comment-dwim (arg)
   "Comment or uncomment current line or region in a smart way.
@@ -695,10 +684,7 @@ line? Returns `t' or `nil'. See the README for more details."
   (setq imenu-create-index-function 'coffee-imenu-create-index)
 
   ;; no tabs
-  (setq indent-tabs-mode nil)
-
-  ;; hooks
-  (set (make-local-variable 'before-save-hook) 'coffee-before-save))
+  (setq indent-tabs-mode nil))
 
 ;;
 ;; Compile-on-Save minor mode

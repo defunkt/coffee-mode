@@ -261,12 +261,6 @@ The mode to use when viewing compiled JavaScript.
 
 Default: `'js2-mode`
 
-### coffee-cleanup-whitespace
-
-Should we `delete-trailing-whitespace' on save? Probably.
-
-Default: `t`
-
 ### coffee-tab-width
 
 The tab width to use when indenting.
