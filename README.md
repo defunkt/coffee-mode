@@ -225,9 +225,6 @@ Naturally. Example:
       ;; If you don't want your compiled files to be wrapped
       (setq coffee-args-compile '("-c" "--bare"))
 
-      ;; *Messages* spam
-      (setq coffee-debug-mode t)
-
       ;; Emacs key binding
       (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
 
@@ -248,12 +245,6 @@ customize-group` with "coffee" as the group.
 
 You can also customize then with `coffee-mode-hook`, as demonstrated
 above.
-
-### coffee-debug-mode
-
-Whether to run in debug mode or not. Logs to `*Messages*`.
-
-Default: `t`
 
 ### coffee-js-mode
 

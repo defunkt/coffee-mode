@@ -73,11 +73,6 @@
   "A CoffeeScript major mode."
   :group 'languages)
 
-(defcustom coffee-debug-mode nil
-  "Whether to run in debug mode or not. Logs to `*Messages*'."
-  :type 'boolean
-  :group 'coffee-mode)
-
 (defcustom coffee-js-mode 'js2-mode
   "The mode to use when viewing compiled JavaScript."
   :type 'string
@@ -109,16 +104,6 @@ path."
 (defcustom coffee-args-compile '("-c")
   "The command line arguments to pass to `coffee-command' when compiling a file."
   :type 'list
-  :group 'coffee)
-
-(defcustom coffee-cygwin-mode t
-  "For Windows systems, add support for Cygwin-style absolute paths."
-  :type 'boolean
-  :group 'coffee)
-
-(defcustom coffee-cygwin-prefix "/cygdrive/C"
-  "The prefix with which to replace the drive-letter for your Windows partition, e.g. 'C:' would be replaced by '/c/cygdrive'."
-  :type 'string
   :group 'coffee)
 
 (defcustom coffee-compiled-buffer-name "*coffee-compiled*"
@@ -163,19 +148,6 @@ was called."
 ;; Macros
 ;;
 
-(defmacro setd (var val)
-  "Like setq but optionally logs the variable's value using `coffee-debug'."
-  (if (and (boundp 'coffee-debug-mode) coffee-debug-mode)
-      `(progn
-         (coffee-debug "%s: %s" ',var ,val)
-         (setq ,var ,val))
-    `(setq ,var ,val)))
-
-(defun coffee-debug (string &rest args)
-  "Print a message when in debug mode."
-  (when coffee-debug-mode
-      (apply 'message (append (list string) args))))
-
 (defmacro coffee-line-as-string ()
   "Returns the current line as a string."
   `(buffer-substring (point-at-bol) (point-at-eol)))
@@ -207,12 +179,12 @@ If FILENAME is omitted, the current buffer's file name is used."
     (if (string= compiler-output "")
         (message "Compiled and saved %s" (coffee-compiled-file-name))
       (let* ((msg (car (split-string compiler-output "[\n\r]+")))
-	     (line (and (string-match "on line \\([0-9]+\\)" msg)
-			(string-to-number (match-string 1 msg)))))
-	(message msg)
-	(when (and coffee-compile-jump-to-error line (> line 0))
-	  (goto-char (point-min))
-	  (forward-line (1- line)))))))
+             (line (and (string-match "on line \\([0-9]+\\)" msg)
+                        (string-to-number (match-string 1 msg)))))
+        (message msg)
+        (when (and coffee-compile-jump-to-error line (> line 0))
+          (goto-char (point-min))
+          (forward-line (1- line)))))))
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JS in another buffer."
@@ -244,7 +216,7 @@ If FILENAME is omitted, the current buffer's file name is used."
     (when buffer
       (kill-buffer buffer)))
 
-  (call-process-region start end 
+  (call-process-region start end
                        js2coffee-command nil
                        (current-buffer)
                        )
@@ -275,7 +247,7 @@ If FILENAME is omitted, the current buffer's file name is used."
   "Run `coffee-run-cmd' with the --watch flag enabled for a directory or file"
   (interactive "fDirectory or File: ")
   (let ((coffee-compiled-buffer-name coffee-watch-buffer-name)
-        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (coffee-universal-path dir-or-file))) " ")))
+        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (expand-file-name dir-or-file))) " ")))
     (coffee-run-cmd args)))
 
 ;;
@@ -376,21 +348,9 @@ For detail, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
-(defun coffee-cygwin-path (expanded-file-name)
-  "Given an expanded file name, derive the absolute Cygwin path based on `coffee-cygwin-prefix'."
-  (replace-regexp-in-string "^[a-zA-Z]:" coffee-cygwin-prefix expanded-file-name t))
-
-(defun coffee-universal-path (file-name)
-  "Handle different paths for different OS configurations for CoffeeScript"
-  (let ((full-file-name (expand-file-name file-name)))
-    (if (and (equal system-type 'windows-nt)
-             coffee-cygwin-mode)
-        (coffee-cygwin-path full-file-name)
-      full-file-name)))
-
 (defun coffee-command-compile (file-name)
   "The `coffee-command' with args to compile a file."
-  (let ((full-file-name (coffee-universal-path file-name)))
+  (let ((full-file-name (expand-file-name file-name)))
     (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list full-file-name)) " ")))
 
 (defun coffee-run-cmd (args)
@@ -462,8 +422,6 @@ For detail, see `comment-dwim'."
             (point-max)
             t)
 
-      (coffee-debug "Match: %s" (match-string 0))
-
       ;; If this is the start of a new namespace, save the namespace's
       ;; indentation level and name.
       (when (match-string 8)
@@ -474,10 +432,7 @@ For detail, see `comment-dwim'."
         (setq ns-name (concat ns-name "::"))
 
         ;; Save the indentation level.
-        (setq ns-indent (length (match-string 1)))
-
-        ;; Debug
-        (coffee-debug "ns: Found %s with indent %s" ns-name ns-indent))
+        (setq ns-indent (length (match-string 1))))
 
       ;; If this is an assignment, save the token being
       ;; assigned. `Please.print:` will be `Please.print`, `block:`
@@ -495,12 +450,9 @@ For detail, see `comment-dwim'."
           (when (and ns-name (> indent ns-indent))
             (setq assign (concat ns-name assign)))
 
-          (coffee-debug "=: Found %s with indent %s" assign indent)
-
           ;; Clear the namespace if we're no longer indented deeper
           ;; than it.
           (when (and ns-name (<= indent ns-indent))
-            (coffee-debug "ns: Clearing %s" ns-name)
             (setq ns-name nil)
             (setq ns-indent nil))
 
@@ -525,22 +477,17 @@ For detail, see `comment-dwim'."
     (save-excursion
       (let ((prev-indent 0) (cur-indent 0))
         ;; Figure out the indentation of the previous line
-        (setd prev-indent (coffee-previous-indent))
+        (setq prev-indent (coffee-previous-indent))
 
         ;; Figure out the current line's indentation
-        (setd cur-indent (current-indentation))
+        (setq cur-indent (current-indentation))
 
         ;; Shift one column to the left
         (beginning-of-line)
         (insert-tab)
 
-        (coffee-debug "point: %s" (point))
-        (coffee-debug "point-at-bol: %s" (point-at-bol))
-
         (when (= (point-at-bol) (point))
           (forward-char coffee-tab-width))
-
-        (coffee-debug "New indent: %s" (current-indentation))
 
         ;; We're too far, remove all indentation.
         (when (> (- (current-indentation) prev-indent) coffee-tab-width)
@@ -616,7 +563,7 @@ line? Returns `t' or `nil'. See the README for more details."
       ;; If the next few characters match one of our magic indenter
       ;; keywords, we want to indent the line we were on originally.
       (when (looking-at (coffee-indenters-bol-regexp))
-        (setd indenter-at-bol t))
+        (setq indenter-at-bol t))
 
       ;; If that didn't match, go to the back of the line and check to
       ;; see if the last character matches one of our indenter
@@ -628,7 +575,7 @@ line? Returns `t' or `nil'. See the README for more details."
         (when (some (lambda (char)
                         (= (char-before) char))
                       coffee-indenters-eol)
-          (setd indenter-at-eol t)))
+          (setq indenter-at-eol t)))
 
       ;; If we found an indenter, return `t'.
       (or indenter-at-bol indenter-at-eol))))
