@@ -28,26 +28,6 @@ If `coffee-mode` is not enabled automatically for any files ending in
 
 ## Indentation
 
-### Configuring
-
-Lines are indented according to the `tab-width` variable. If you're
-like me, you probably have this set in your Emacs config globally:
-
-    (setq-default tab-width 4)
-
-Well, idiomatic CoffeeScript uses two spaces. We can set our
-`tab-width` to two for `coffee-mode` using the `coffee-mode-hook`:
-
-    (defun coffee-custom ()
-      "coffee-mode-hook"
-     (set (make-local-variable 'tab-width) 2))
-
-    (add-hook 'coffee-mode-hook
-      '(lambda() (coffee-custom)))
-
-For more configuration options and another example of this hook, look
-further down in this README.
-
 ### TAB Theory
 
 It goes like this: when you press `TAB`, we indent the line unless
@@ -193,13 +173,6 @@ Hitting the key sequence `C-c C-o C-s` turns on (toggles) the
 compile-on-save minor mode in `coffee-mode`.  To enable it by default:
 
     (add-hook 'coffee-mode-hook '(lambda () (coffee-cos-mode t)))
-
-To enable it only if it looks like you may want to:
-
-    (add-hook 'coffee-mode-hook '(lambda ()
-                                   (and (file-exists-p (buffer-file-name))
-                                        (file-exists-p (coffee-compiled-file-name))
-                                        (coffee-cos-mode t))))
 
 ### coffee-repl
 
