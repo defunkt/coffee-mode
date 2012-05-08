@@ -124,14 +124,6 @@ with CoffeeScript."
   "Keymap for CoffeeScript major mode.")
 
 ;;
-;; Macros
-;;
-
-(defmacro coffee-line-as-string ()
-  "Returns the current line as a string."
-  `(buffer-substring (point-at-bol) (point-at-eol)))
-
-;;
 ;; Commands
 ;;
 
@@ -437,13 +429,8 @@ output in a compilation buffer."
   (if (= (point) (point-at-bol))
       (insert-tab)
     (save-excursion
-      (let ((prev-indent 0) (cur-indent 0))
-        ;; Figure out the indentation of the previous line
-        (setq prev-indent (coffee-previous-indent))
-
-        ;; Figure out the current line's indentation
-        (setq cur-indent (current-indentation))
-
+      (let ((prev-indent (coffee-previous-indent))
+            (cur-indent (current-indentation)))
         ;; Shift one column to the left
         (beginning-of-line)
         (insert-tab)
@@ -463,13 +450,8 @@ output in a compilation buffer."
     (if (bobp)
         0
       (progn
-        (while (and (coffee-line-empty-p) (not (bobp))) (forward-line -1))
+        (while (and (looking-at "^[ \t]*$") (not (bobp))) (forward-line -1))
         (current-indentation)))))
-
-(defun coffee-line-empty-p ()
-  "Is this line empty? Returns non-nil if so, nil if not."
-  (or (bobp)
-   (string-match "^\\s *$" (coffee-line-as-string))))
 
 (defun coffee-newline-and-indent ()
   "Insert a newline and indent it to the same level as the previous line."
