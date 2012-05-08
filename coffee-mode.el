@@ -117,8 +117,10 @@ with CoffeeScript."
   :type 'string
   :group 'coffee)
 
-(defvar coffee-mode-hook nil
-  "Hook run when entering `coffee-mode'.")
+(defcustom coffee-mode-hook nil
+  "Hook called by `coffee-mode'."
+  :type 'hook
+  :group 'coffee)
 
 (defvar coffee-mode-map (make-keymap)
   "Keymap for CoffeeScript major mode.")
