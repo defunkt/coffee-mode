@@ -305,13 +305,7 @@ Default: `t`
 Prototype accessor assignments like `String::length: -> 10` don't look
 great.
 
-It's tested on Aquamacs 1.9 (Emacs 22) for OS X Snow Leopard so it may
-not work on your environment. Please file a bug at
-<http://github.com/defunkt/coffee-mode/issues> and maybe we can fix
-the problem.
-
-This is the author's first major mode, so there are probably more
-bugs.
+Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 
 [cs]: http://jashkenas.github.com/coffee-script/
 [tm]: http://github.com/defunkt/textmate.el
