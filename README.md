@@ -172,8 +172,7 @@ line, so you can investigate.  If this annoys you, you can set
 
 Compiles the current buffer to JavaScript using the command specified
 by the `coffee-command` variable and opens the contents in a new
-buffer using your JavaScript mode of choice. The JavaScript mode is
-determined by the `coffee-js-mode` variable and defaults to `js2-mode`.
+buffer using the mode configured for ".js" files.
 
 Bind it:
 
@@ -219,9 +218,6 @@ Naturally. Example:
       (make-local-variable 'tab-width)
       (set 'tab-width 2)
 
-      ;; If you don't have js2-mode
-      (setq coffee-js-mode 'javascript-mode)
-
       ;; If you don't want your compiled files to be wrapped
       (setq coffee-args-compile '("-c" "--bare"))
 
@@ -245,12 +241,6 @@ customize-group` with "coffee" as the group.
 
 You can also customize then with `coffee-mode-hook`, as demonstrated
 above.
-
-### coffee-js-mode
-
-The mode to use when viewing compiled JavaScript.
-
-Default: `'js2-mode`
 
 ### coffee-tab-width
 
