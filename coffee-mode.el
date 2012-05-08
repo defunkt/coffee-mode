@@ -228,21 +228,6 @@ If FILENAME is omitted, the current buffer's file name is used."
   (interactive)
   (message (concat "coffee-mode v" coffee-mode-version)))
 
-(defun coffee-open-reference ()
-  "Open browser to CoffeeScript reference."
-  (interactive)
-  (browse-url "http://jashkenas.github.com/coffee-script/"))
-
-(defun coffee-open-node-reference ()
-  "Open browser to node.js documentation."
-  (interactive)
-  (browse-url "http://nodejs.org/docs/"))
-
-(defun coffee-open-github ()
-  "Open browser to `coffee-mode' project on GithHub."
-  (interactive)
-  (browse-url "http://github.com/defunkt/coffee-mode"))
-
 (defun coffee-watch (dir-or-file)
   "Run `coffee-run-cmd' with the --watch flag enabled for a directory or file"
   (interactive "fDirectory or File: ")
@@ -262,9 +247,6 @@ If FILENAME is omitted, the current buffer's file name is used."
     ["Compile Region" coffee-compile-region]
     ["REPL" coffee-repl]
     "---"
-    ["CoffeeScript Reference" coffee-open-reference]
-    ["node.js Reference" coffee-open-node-reference]
-    ["coffee-mode on GitHub" coffee-open-github]
     ["Version" coffee-show-version]
     ))
 
