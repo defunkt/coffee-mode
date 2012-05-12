@@ -26,6 +26,15 @@ If `coffee-mode` is not enabled automatically for any files ending in
     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
     (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
+[coffee-mode used to offer automatic deletion of trailing whitespace.
+This is now left to whitespace-mode. See its documentation for full
+details, but as a hint, configure:
+
+    (setq whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
+    (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
+
+Then turn on whitespace-mode, or global-whitespace-mode.]
+
 ## Indentation
 
 ### TAB Theory
