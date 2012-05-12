@@ -26,27 +26,16 @@ If `coffee-mode` is not enabled automatically for any files ending in
     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
     (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 
+[coffee-mode used to offer automatic deletion of trailing whitespace.
+This is now left to whitespace-mode. See its documentation for full
+details, but as a hint, configure:
+
+    (setq whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
+    (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
+
+Then turn on whitespace-mode, or global-whitespace-mode.]
+
 ## Indentation
-
-### Configuring
-
-Lines are indented according to the `tab-width` variable. If you're
-like me, you probably have this set in your Emacs config globally:
-
-    (setq-default tab-width 4)
-
-Well, idiomatic CoffeeScript uses two spaces. We can set our
-`tab-width` to two for `coffee-mode` using the `coffee-mode-hook`:
-
-    (defun coffee-custom ()
-      "coffee-mode-hook"
-     (set (make-local-variable 'tab-width) 2))
-
-    (add-hook 'coffee-mode-hook
-      '(lambda() (coffee-custom)))
-
-For more configuration options and another example of this hook, look
-further down in this README.
 
 ### TAB Theory
 
@@ -172,8 +161,7 @@ line, so you can investigate.  If this annoys you, you can set
 
 Compiles the current buffer to JavaScript using the command specified
 by the `coffee-command` variable and opens the contents in a new
-buffer using your JavaScript mode of choice. The JavaScript mode is
-determined by the `coffee-js-mode` variable and defaults to `js2-mode`.
+buffer using the mode configured for ".js" files.
 
 Bind it:
 
@@ -195,13 +183,6 @@ compile-on-save minor mode in `coffee-mode`.  To enable it by default:
 
     (add-hook 'coffee-mode-hook '(lambda () (coffee-cos-mode t)))
 
-To enable it only if it looks like you may want to:
-
-    (add-hook 'coffee-mode-hook '(lambda ()
-                                   (and (file-exists-p (buffer-file-name))
-                                        (file-exists-p (coffee-compiled-file-name))
-                                        (coffee-cos-mode t))))
-
 ### coffee-repl
 
 Starts a repl in a new buffer using `coffee-command`.
@@ -219,14 +200,8 @@ Naturally. Example:
       (make-local-variable 'tab-width)
       (set 'tab-width 2)
 
-      ;; If you don't have js2-mode
-      (setq coffee-js-mode 'javascript-mode)
-
       ;; If you don't want your compiled files to be wrapped
       (setq coffee-args-compile '("-c" "--bare"))
-
-      ;; *Messages* spam
-      (setq coffee-debug-mode t)
 
       ;; Emacs key binding
       (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
@@ -248,24 +223,6 @@ customize-group` with "coffee" as the group.
 
 You can also customize then with `coffee-mode-hook`, as demonstrated
 above.
-
-### coffee-debug-mode
-
-Whether to run in debug mode or not. Logs to `*Messages*`.
-
-Default: `t`
-
-### coffee-js-mode
-
-The mode to use when viewing compiled JavaScript.
-
-Default: `'js2-mode`
-
-### coffee-cleanup-whitespace
-
-Should we `delete-trailing-whitespace' on save? Probably.
-
-Default: `t`
 
 ### coffee-tab-width
 
@@ -320,13 +277,7 @@ Default: `t`
 Prototype accessor assignments like `String::length: -> 10` don't look
 great.
 
-It's tested on Aquamacs 1.9 (Emacs 22) for OS X Snow Leopard so it may
-not work on your environment. Please file a bug at
-<http://github.com/defunkt/coffee-mode/issues> and maybe we can fix
-the problem.
-
-This is the author's first major mode, so there are probably more
-bugs.
+Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 
 [cs]: http://jashkenas.github.com/coffee-script/
 [tm]: http://github.com/defunkt/textmate.el
