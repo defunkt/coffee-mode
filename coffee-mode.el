@@ -105,9 +105,8 @@
 
 (defcustom coffee-compile-jump-to-error t
   "Whether to jump to the first error if compilation fails.
-Please note that the coffee compiler doesn't always give a line
-number for the issue and in that case it is not possible to jump
-to the error."
+Since the coffee compiler does not always include a line number in
+its error messages, this is not always possible."
   :type 'boolean
   :group 'coffee)
 
