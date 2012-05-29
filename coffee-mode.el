@@ -251,6 +251,9 @@ called `coffee-compiled-buffer-name'."
 ;; Regular Expressions
 (defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/]\\)+?\\/")
 
+;; Functions
+(defvar coffee-cs-function-regexp "\\s *\\([^ ]+\\)\\s *=\\s *\\(([^)]*)\\)?\\s *\\(->\\|=>\\)")
+
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
       '("if" "else" "new" "return" "try" "catch"
@@ -289,6 +292,8 @@ called `coffee-compiled-buffer-name'."
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
+    (,coffee-cs-function-regexp . (1 font-lock-function-name-face))
+    (,coffee-cs-function-regexp . (3 font-lock-function-name-face))
     (,coffee-keywords-regexp . font-lock-keyword-face)))
 
 ;;
