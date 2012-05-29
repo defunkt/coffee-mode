@@ -239,6 +239,10 @@ called `coffee-compiled-buffer-name'."
 ;; Assignment
 (defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\|$\\)+?\s*\\):")
 
+;; Variable assignment, someVar = something, someObj.member = someting
+;; or [var1, var2] = something
+(defvar coffee-var-assign-regexp "\\s *\\(.+\\)\\s *=")
+
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
 
@@ -250,6 +254,9 @@ called `coffee-compiled-buffer-name'."
 
 ;; Regular Expressions
 (defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/]\\)+?\\/")
+
+;; Functions
+(defvar coffee-cs-function-regexp "\\s *\\([^ ]+\\)\\s *=\\s *\\(([^)]*)\\)?\\s *\\(->\\|=>\\)")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -269,12 +276,17 @@ called `coffee-compiled-buffer-name'."
       '("then" "unless" "and" "or" "is"
         "isnt" "not" "of" "by" "where" "when"))
 
+;; Iced CoffeeScript keywords
+(defvar iced-coffee-cs-keywords
+  '("await" "defer"))
+
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp (regexp-opt
                                 (append
                                  coffee-js-reserved
                                  coffee-js-keywords
-                                 coffee-cs-keywords) 'words))
+                                 coffee-cs-keywords
+                                 iced-coffee-cs-keywords) 'words))
 
 
 ;; Create the list for font-lock. Each class of keyword is given a
@@ -289,7 +301,10 @@ called `coffee-compiled-buffer-name'."
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
-    (,coffee-keywords-regexp . font-lock-keyword-face)))
+    (,coffee-cs-function-regexp . (1 font-lock-function-name-face))
+    (,coffee-cs-function-regexp . (3 font-lock-function-name-face))
+    (,coffee-keywords-regexp . font-lock-keyword-face)
+    (,coffee-var-assign-regexp . (1 font-lock-type-face))))
 
 ;;
 ;; Helper Functions

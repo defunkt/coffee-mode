@@ -1,3 +1,8 @@
+I forked it and added coloring for traditional functions and variable assignments.
+I still can not get it to highlight the parens like the screenshot does, so if
+anybody have a suggestion feel free to add it to the issues list or send me a
+message.
+
 CoffeeScript Major Mode
 =======================
 
