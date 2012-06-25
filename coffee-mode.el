@@ -103,6 +103,11 @@
   :type 'string
   :group 'coffee)
 
+(defcustom coffee-repl-buffer "*CoffeeREPL*"
+  "The name of the CoffeeREPL buffer."
+  :type 'string
+  :group 'coffee)
+
 (defcustom coffee-compile-jump-to-error t
   "Whether to jump to the first error if compilation fails.
 Please note that the coffee compiler doesn't always give a line
@@ -132,11 +137,11 @@ with CoffeeScript."
   "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
   (interactive)
 
-  (unless (comint-check-proc "*CoffeeREPL*")
+  (unless (comint-check-proc coffee-repl-buffer)
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
             coffee-command nil coffee-args-repl)))
-  (pop-to-buffer "*CoffeeREPL*"))
+  (pop-to-buffer coffee-repl-buffer))
 
 (defun coffee-compiled-file-name (&optional filename)
   "Returns the name of the JavaScript file compiled from a CoffeeScript file.
@@ -184,20 +189,20 @@ called `coffee-compiled-buffer-name'."
 (defun coffee-send-line (start end)
   "Send the current line to the inferior Coffee process."
   (interactive "r")
-  (send-region "*CoffeeREPL*" (line-beginning-position) (line-end-position))
-  (send-string "*CoffeeREPL*" "\n"))
+  (send-region coffee-repl-buffer (line-beginning-position) (line-end-position))
+  (send-string coffee-repl-buffer "\n"))
 
 (defun coffee-send-region (start end)
   "Send the current region to the inferior Coffee process."
   (interactive "r")
-  (send-region "*CoffeeREPL*" start end)
-  (send-string "*CoffeeREPL*" "\n"))
+  (send-region coffee-repl-buffer start end)
+  (send-string coffee-repl-buffer "\n"))
 
 (defun coffee-send-buffer ()
   "Send the current buffer to the inferior Coffee process."
   (interactive "r")
-  (send-region "*CoffeeREPL*" point-min point-max)
-  (send-string "*CoffeeREPL*" "\n"))
+  (send-region coffee-repl-buffer point-min point-max)
+  (send-string coffee-repl-buffer "\n"))
 
 (defun coffee-js2coffee-replace-region (start end)
   "Convert JavaScript in the region into CoffeeScript."
