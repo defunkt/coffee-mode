@@ -128,7 +128,6 @@ with CoffeeScript."
 ;;
 ;; Commands
 ;;
-
 (defun coffee-repl ()
   "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
   (interactive)
@@ -137,7 +136,6 @@ with CoffeeScript."
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
             coffee-command nil coffee-args-repl)))
-
   (pop-to-buffer "*CoffeeREPL*"))
 
 (defun coffee-compiled-file-name (&optional filename)
@@ -182,6 +180,24 @@ called `coffee-compiled-buffer-name'."
   (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (let ((buffer-file-name "tmp.js")) (set-auto-mode))
   (goto-char (point-min)))
+
+(defun coffee-send-line (start end)
+  "Send the current line to the inferior Coffee process"
+  (interactive "r")
+  (send-region "*CoffeeREPL*" (line-beginning-position) (line-end-position))
+  (send-string "*CoffeeREPL*" "\n"))
+
+(defun coffee-send-region (start end)
+  "Send the current region to the inferior Coffee process."
+  (interactive "r")
+  (send-region "*CoffeeREPL*" start end)
+  (send-string "*CoffeeREPL*" "\n"))
+
+(defun coffee-send-buffer ()
+  "Send the current buffer to the inferior Coffee process."
+  (interactive "r")
+  (send-region "*CoffeeREPL*" point-min point-max)
+  (send-string "*CoffeeREPL*" "\n"))
 
 (defun coffee-js2coffee-replace-region (start end)
   "Convert JavaScript in the region into CoffeeScript."
