@@ -182,7 +182,7 @@ called `coffee-compiled-buffer-name'."
   (goto-char (point-min)))
 
 (defun coffee-send-line (start end)
-  "Send the current line to the inferior Coffee process"
+  "Send the current line to the inferior Coffee process."
   (interactive "r")
   (send-region "*CoffeeREPL*" (line-beginning-position) (line-end-position))
   (send-string "*CoffeeREPL*" "\n"))
@@ -571,6 +571,10 @@ previous line."
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
   (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
   (define-key coffee-mode-map "\C-c\C-o\C-s" 'coffee-cos-mode)
+  (define-key coffee-mode-map "\C-c\C-l" 'coffee-send-line)
+  (define-key coffee-mode-map "\C-c\C-r" 'coffee-send-region)
+  (define-key coffee-mode-map "\C-c\C-b" 'coffee-send-buffer)
+
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
