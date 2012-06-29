@@ -1,4 +1,4 @@
-CoffeeScript Major Mode
+CoffeeScript Major Mode (IcedCoffeeScript)
 =======================
 
 An Emacs major mode for [CoffeeScript][cs], unfancy JavaScript.
