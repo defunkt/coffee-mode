@@ -103,6 +103,11 @@
   :type 'string
   :group 'coffee)
 
+(defcustom coffee-runned-buffer-name "*coffee-runned*"
+  "The name of the scratch buffer used for CoffeeScript run result."
+  :type 'string
+  :group 'coffee)
+
 (defcustom coffee-compile-jump-to-error t
   "Whether to jump to the first error if compilation fails.
 Please note that the coffee compiler doesn't always give a line
@@ -182,6 +187,27 @@ called `coffee-compiled-buffer-name'."
   (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
   (let ((buffer-file-name "tmp.js")) (set-auto-mode))
   (goto-char (point-min)))
+
+(defun coffee-run-region ()
+  "Run the buffer or a region and displays the output in a buffer called
+`coffee-runned-buffer-name'."
+  (interactive)
+
+  (let ((buffer (get-buffer coffee-runned-buffer-name)))
+    (when buffer
+      (kill-buffer buffer)))
+
+  (let ((start (point-min))
+	(end (point-max)))
+    (if (use-region-p)
+	(setq start (region-beginning)
+	      end (region-end)))
+    (apply (apply-partially 'call-process-region start end coffee-command nil
+			    (get-buffer-create coffee-runned-buffer-name)
+			    nil)
+	   (list "-s")))
+
+  (display-buffer (get-buffer coffee-runned-buffer-name)))
 
 (defun coffee-js2coffee-replace-region (start end)
   "Convert JavaScript in the region into CoffeeScript."
