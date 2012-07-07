@@ -122,7 +122,15 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
-(defvar coffee-mode-map (make-keymap)
+(defvar coffee-mode-map (let ((map (make-sparse-keymap)))
+                          ;; key bindings
+                          (define-key map (kbd "A-r") 'coffee-compile-buffer)
+                          (define-key map (kbd "A-R") 'coffee-compile-region)
+                          (define-key map (kbd "A-M-r") 'coffee-repl)
+                          (define-key map [remap comment-dwim] 'coffee-comment-dwim)
+                          (define-key map "\C-m" 'coffee-newline-and-indent)
+                          (define-key map "\C-c\C-o\C-s" 'coffee-cos-mode)
+                          map)
   "Keymap for CoffeeScript major mode.")
 
 ;;
@@ -547,14 +555,6 @@ previous line."
 (define-derived-mode coffee-mode fundamental-mode
   "Coffee"
   "Major mode for editing CoffeeScript."
-
-  ;; key bindings
-  (define-key coffee-mode-map (kbd "A-r") 'coffee-compile-buffer)
-  (define-key coffee-mode-map (kbd "A-R") 'coffee-compile-region)
-  (define-key coffee-mode-map (kbd "A-M-r") 'coffee-repl)
-  (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
-  (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
-  (define-key coffee-mode-map "\C-c\C-o\C-s" 'coffee-cos-mode)
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
