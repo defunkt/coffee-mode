@@ -202,6 +202,10 @@ called `coffee-compiled-buffer-name'."
   "Put mark at end of this member function, point at beginning.
 The member marked is the one returned by `which-function'."
   (interactive)
+  (setq imenu--index-alist nil)
+  (save-excursion
+    (goto-char (point-min))
+    (coffee-imenu-create-index))
   (let ((beg (cdr (assoc (which-function) imenu--index-alist)))
         (lines (count-lines (point-min) (point-max)))
         spacing-length
@@ -219,7 +223,7 @@ The member marked is the one returned by `which-function'."
             (if (not spacing-length)
                 (progn
                   (unless (string-match coffee-member-decl-re line)
-                    (throw 'kikia-invalid-defun line))
+                    (throw 'coffee-invalid-defun line))
                   (setq spacing-length (length (match-string 1 line))))
               (when (string-match "^\\(\s+\\)[^#].*" line)
                 (when (<= (length (match-string 1 line)) spacing-length)
