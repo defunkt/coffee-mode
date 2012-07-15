@@ -324,6 +324,7 @@ The member marked is the one returned by `which-function'."
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
+    (,coffee-lambda-regexp . (2 font-lock-function-name-face))
     (,coffee-keywords-regexp . font-lock-keyword-face)))
 
 ;;
