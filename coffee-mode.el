@@ -590,6 +590,7 @@ previous line."
   (define-key coffee-mode-map [remap comment-dwim] 'coffee-comment-dwim)
   (define-key coffee-mode-map "\C-m" 'coffee-newline-and-indent)
   (define-key coffee-mode-map "\C-c\C-o\C-s" 'coffee-cos-mode)
+  (define-key coffee-mode-map (kbd "C-c m") 'coffee-mark-member)
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
