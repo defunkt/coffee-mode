@@ -232,6 +232,7 @@ The member marked is the one returned by `which-function'."
               (when (>= (line-number-at-pos) lines)
                 (throw 'break nil)))
             (forward-line 1))))
+      (end-of-line)
       (set-mark (min (point-max) (point)))
       (goto-char beg))))
 
