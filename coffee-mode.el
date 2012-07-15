@@ -196,6 +196,41 @@ called `coffee-compiled-buffer-name'."
                        (current-buffer))
   (delete-region start end))
 
+(defconst coffee-member-decl-re "^\\(\s+\\)\\([^:]+\\):\\(\\(?:.*\n?\\)+\\)$")
+
+(defun coffee-mark-member ()
+  "Put mark at end of this member function, point at beginning.
+The member marked is the one returned by `which-function'."
+  (interactive)
+  (let ((beg (cdr (assoc (which-function) imenu--index-alist)))
+        (lines (count-lines (point-min) (point-max)))
+        spacing-length
+        line-beg
+        activate-mark-hook)
+    (if (not beg)
+        (progn (message "Don't know how to mark defun at point.") ())
+      (goto-char beg)
+      (catch 'break
+        (while t
+          (beginning-of-line)
+          (setq line-beg (point))
+          (end-of-line)
+          (let ((line (buffer-substring-no-properties line-beg (point))))
+            (if (not spacing-length)
+                (progn
+                  (unless (string-match coffee-member-decl-re line)
+                    (throw 'kikia-invalid-defun line))
+                  (setq spacing-length (length (match-string 1 line))))
+              (when (string-match "^\\(\s+\\)[^#].*" line)
+                (when (<= (length (match-string 1 line)) spacing-length)
+                  (forward-line -1)
+                  (throw 'break nil)))
+              (when (>= (line-number-at-pos) lines)
+                (throw 'break nil)))
+            (forward-line 1))))
+      (set-mark (min (point-max) (point)))
+      (goto-char beg))))
+
 (defun coffee-version ()
   "Show the `coffee-mode' version in the echo area."
   (interactive)
