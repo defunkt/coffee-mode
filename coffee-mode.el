@@ -128,6 +128,7 @@ with CoffeeScript."
                           (define-key map (kbd "A-R") 'coffee-compile-region)
                           (define-key map (kbd "A-M-r") 'coffee-repl)
                           (define-key map [remap comment-dwim] 'coffee-comment-dwim)
+                          (define-key map [remap newline-and-indent] 'coffee-newline-and-indent)
                           (define-key map "\C-m" 'coffee-newline-and-indent)
                           (define-key map "\C-c\C-o\C-s" 'coffee-cos-mode)
                           map)
