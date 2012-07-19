@@ -609,6 +609,9 @@ Used for syntactic keywords.  N is the match number (1, 2 or 3)."
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
 
+  ;; treat "_" as part of a word
+  (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
+
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
