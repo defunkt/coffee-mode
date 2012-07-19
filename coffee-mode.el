@@ -277,7 +277,7 @@ called `coffee-compiled-buffer-name'."
 
 ;; CoffeeScript keywords.
 (defvar coffee-cs-keywords
-      '("then" "unless" "and" "or" "is"
+      '("then" "unless" "and" "or" "is" "own"
         "isnt" "not" "of" "by" "where" "when"))
 
 ;; Iced CoffeeScript keywords
