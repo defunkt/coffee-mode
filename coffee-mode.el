@@ -671,5 +671,7 @@ Used for syntactic keywords.  N is the match number (1, 2 or 3)."
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
 ;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.iced$" . coffee-mode))
+;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
 ;;; coffee-mode.el ends here
