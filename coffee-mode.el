@@ -565,7 +565,6 @@ previous line."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
-  (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
   (make-local-variable 'comment-start)
   (setq comment-start "#")
 
