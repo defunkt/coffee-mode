@@ -557,7 +557,10 @@ previous line."
   (define-key coffee-mode-map "\C-c\C-o\C-s" 'coffee-cos-mode)
 
   ;; code for syntax highlighting
-  (setq font-lock-defaults '((coffee-font-lock-keywords)))
+  (setq font-lock-defaults `((coffee-font-lock-keywords)
+                             nil
+                             nil
+                             ((,?_ . "w"))))
 
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
