@@ -220,7 +220,7 @@ called `coffee-compiled-buffer-name'."
     ["Compile Region" coffee-compile-region]
     ["REPL" coffee-repl]
     "---"
-    ["Version" coffee-show-version]
+    ["Version" coffee-version]
     ))
 
 ;;
