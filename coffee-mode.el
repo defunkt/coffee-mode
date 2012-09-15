@@ -310,6 +310,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
+    (,coffee-lambda-regexp . (2 font-lock-function-name-face))
     (,coffee-keywords-regexp . font-lock-keyword-face)))
 
 ;;
