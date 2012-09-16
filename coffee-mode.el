@@ -251,7 +251,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\|$\\)+?\s*\\):")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(^\\|\s\\)\\(\\(_\\|\\.\\|\\w\\|\\$\\)+\\)\s+=")
+(defvar coffee-local-assign-regexp "\\(\\(_\\|\\w\\|\\$\\)+\\)\s+=")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
@@ -308,7 +308,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-this-regexp . font-lock-variable-name-face)
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
-    (,coffee-local-assign-regexp 2 font-lock-variable-name-face)
+    (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
     (,coffee-lambda-regexp . (2 font-lock-function-name-face))
