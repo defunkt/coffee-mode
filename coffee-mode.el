@@ -291,12 +291,11 @@ called `coffee-compiled-buffer-name'."
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp
   ;; keywords can be member names.
-  (concat "[^.]" (regexp-opt
-		  (append
-		   coffee-js-reserved
-		   coffee-js-keywords
-		   coffee-cs-keywords
-		   iced-coffee-cs-keywords) 'words)))
+  (concat "[^.]"
+	  (regexp-opt (append coffee-js-reserved
+			      coffee-js-keywords
+			      coffee-cs-keywords
+			      iced-coffee-cs-keywords) 'words)))
 
 
 ;; Create the list for font-lock. Each class of keyword is given a
@@ -313,7 +312,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
     (,coffee-lambda-regexp . (2 font-lock-function-name-face))
-    (,coffee-keywords-regexp . font-lock-keyword-face)))
+    (,coffee-keywords-regexp 1 font-lock-keyword-face)))
 
 ;;
 ;; Helper Functions
