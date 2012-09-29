@@ -132,6 +132,7 @@ with CoffeeScript."
     (define-key map [remap newline-and-indent] 'coffee-newline-and-indent)
     (define-key map "\C-m" 'coffee-newline-and-indent)
     (define-key map "\C-c\C-o\C-s" 'coffee-cos-mode)
+    (define-key map "\177" 'coffee-dedent-line-backspace)
     map)
   "Keymap for CoffeeScript major mode.")
 
@@ -499,6 +500,16 @@ output in a compilation buffer."
   ;; writing right now).
   (when (coffee-previous-line-is-comment)
     (insert "# ")))
+
+(defun coffee-dedent-line-backspace ()
+  "We want to be backspacing full tabs not just single characters."
+  (interactive)
+  (if (and (<= (point-marker) (save-excursion
+                                (back-to-indentation)
+                                (point-marker)))
+           (> (current-column) 0))
+      (backward-delete-char-untabify coffee-tab-width)
+    (backward-delete-char-untabify 1)))
 
 ;; Indenters help determine whether the current line should be
 ;; indented further based on the content of the previous line. If a
