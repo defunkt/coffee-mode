@@ -200,6 +200,7 @@ Naturally. Example:
       ;; CoffeeScript uses two spaces.
       (make-local-variable 'tab-width)
       (set 'tab-width 2)
+      (set 'coffee-tab-width 2)
 
       ;; If you don't want your compiled files to be wrapped
       (setq coffee-args-compile '("-c" "--bare"))
