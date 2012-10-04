@@ -25,31 +25,105 @@
 
 ;;; Commentary
 
-;; For commentary please see the README.md or
-;; http://github.com/defunkt/coffee-mode#readme
+;; Provides syntax highlighting, indentation support, imenu support,
+;; a menu bar, and a few cute commands.
 
-;;; Installation
+;; ## Indentation
 
-;; In your shell:
+;; ### TAB Theory
 
-;;     $ cd ~/.emacs.d/vendor
-;;     $ git clone git://github.com/defunkt/coffee-mode.git
+;; It goes like this: when you press `TAB`, we indent the line unless
+;; doing so would make the current line more than two indentation levels
+;; deepers than the previous line. If that's the case, remove all
+;; indentation.
 
-;; In your emacs config:
+;; Consider this code, with point at the position indicated by the
+;; caret:
 
-;;     (add-to-list 'load-path "~/.emacs.d/vendor/coffee-mode")
-;;     (require 'coffee-mode)
+;;     line1()
+;;       line2()
+;;       line3()
+;;          ^
 
-;;; Thanks
+;; Pressing `TAB` will produce the following code:
 
-;; Major thanks to http://xahlee.org/emacs/elisp_syntax_coloring.html
-;; the instructions.
+;;     line1()
+;;       line2()
+;;         line3()
+;;            ^
 
-;; Also thanks to Jason Blevins's markdown-mode.el and Steve Yegge's
-;; js2-mode for guidance.
+;; Pressing `TAB` again will produce this code:
+
+;;     line1()
+;;       line2()
+;;     line3()
+;;        ^
+
+;; And so on. I think this is a pretty good way of getting decent
+;; indentation with a whitespace-sensitive language.
+
+;; ### Newline and Indent
+
+;; We all love hitting `RET` and having the next line indented
+;; properly. Given this code and cursor position:
+
+;;     line1()
+;;       line2()
+;;       line3()
+;;             ^
+
+;; Pressing `RET` would insert a newline and place our cursor at the
+;; following position:
+
+;;     line1()
+;;       line2()
+;;       line3()
+
+;;       ^
+
+;; In other words, the level of indentation is maintained. This
+;; applies to comments as well. Combined with the `TAB` you should be
+;; able to get things where you want them pretty easily.
+
+;; ### Indenters
+
+;; `class`, `for`, `if`, and possibly other keywords cause the next line
+;; to be indented a level deeper automatically.
+
+;; For example, given this code and cursor position::
+
+;;     class Animal
+;;                 ^
+
+;; Pressing enter would produce the following:
+
+;;     class Animal
+
+;;       ^
+
+;; That is, indented a column deeper.
+
+;; This also applies to lines ending in `->`, `=>`, `{`, `[`, and
+;; possibly more characters.
+
+;; So this code and cursor position:
+
+;;     $('#demo').click ->
+;;                        ^
+
+;; On enter would produce this:
+
+;;     $('#demo').click ->
+
+;;       ^
+
+;; Pretty slick.
+
+;; Thanks to Jeremy Ashkenas for CoffeeScript, and to
+;; http://xahlee.org/emacs/elisp_syntax_coloring.html, Jason
+;; Blevins's markdown-mode.el and Steve Yegge's js2-mode for guidance.
 
 ;; TODO:
-;; - Execute {buffer,region,line} and show output in new buffer
 ;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
 ;; - mirror-mode - close brackets and parens automatically
 
@@ -117,7 +191,25 @@ with CoffeeScript."
   :group 'coffee)
 
 (defcustom coffee-mode-hook nil
-  "Hook called by `coffee-mode'."
+  "Hook called by `coffee-mode'.  Examples:
+
+      ;; CoffeeScript uses two spaces.
+      (make-local-variable 'tab-width)
+      (set 'tab-width 2)
+
+      ;; If you don't want your compiled files to be wrapped
+      (setq coffee-args-compile '(\"-c\" \"--bare\"))
+
+      ;; Emacs key binding
+      (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
+
+      ;; Bleeding edge.
+      (setq coffee-command \"~/dev/coffee\")
+
+      ;; Compile '.coffee' files on every save
+      (and (file-exists-p (buffer-file-name))
+           (file-exists-p (coffee-compiled-file-name))
+           (coffee-cos-mode t)))"
   :type 'hook
   :group 'coffee)
 
@@ -157,7 +249,12 @@ If FILENAME is omitted, the current buffer's file name is used."
   (concat (file-name-sans-extension (or filename (buffer-file-name))) ".js"))
 
 (defun coffee-compile-file ()
-  "Compiles and saves the current file to disk."
+  "Compiles and saves the current file to disk in a file of the same
+base name, with extension `.js'.  Subsequent runs will overwrite the
+file.
+
+If there are compilation errors, point is moved to the first
+(see `coffee-compile-jump-to-error')."
   (interactive)
   (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
     (if (string= compiler-output "")
@@ -670,7 +767,10 @@ previous line."
 (make-variable-buffer-local 'coffee-cos-mode-line)
 
 (define-minor-mode coffee-cos-mode
-  "Toggle compile-on-save for coffee-mode."
+  "Toggle compile-on-save for coffee-mode.
+
+Add `'(lambda () (coffee-cos-mode t))' to `coffee-mode-hook' to turn
+it on by default."
   :group 'coffee-cos :lighter coffee-cos-mode-line
   (cond
    (coffee-cos-mode
