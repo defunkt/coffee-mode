@@ -597,15 +597,23 @@ output in a compilation buffer."
   (when (coffee-previous-line-is-comment)
     (insert "# ")))
 
-(defun coffee-dedent-line-backspace ()
-  "We want to be backspacing full tabs not just single characters."
-  (interactive)
-  (if (and (<= (point-marker) (save-excursion
-                                (back-to-indentation)
-                                (point-marker)))
-           (> (current-column) 0))
-      (backward-delete-char-untabify coffee-tab-width)
-    (backward-delete-char-untabify 1)))
+(defun coffee-dedent-line-backspace (arg)
+  "Unindent to increment of `coffee-tab-width' with ARG==1 when
+called from first non-blank char of line.
+
+Delete ARG spaces if ARG!=1."
+  (interactive "*p")
+  (if (and (= 1 arg)
+           (= (point) (save-excursion
+                        (back-to-indentation)
+                        (point)))
+           (not old-bolp))
+      (let ((extra-space-count (% (current-column) coffee-tab-width)))
+        (backward-delete-char-untabify
+         (if (zerop extra-space-count)
+             coffee-tab-width
+           extra-space-count)))
+    (backward-delete-char-untabify arg)))
 
 ;; Indenters help determine whether the current line should be
 ;; indented further based on the content of the previous line. If a
