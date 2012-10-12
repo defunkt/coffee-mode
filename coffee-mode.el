@@ -715,46 +715,63 @@ previous line."
 ;;      ;; nil, which is OK.
 ;;      )))
 
+(defun coffee-indent-shift-amount (start end dir)
+  "Compute distance to the closest increment of `coffee-tab-width'."
+  (let ((min most-positive-fixnum) rem)
+    (save-excursion
+      (goto-char start)
+      (while (< (point) end)
+        (let ((current (current-indentation)))
+          (when (< current min) (setq min current)))
+        (forward-line))
+      (setq rem (% min coffee-tab-width))
+      (if (zerop rem)
+          coffee-tab-width
+        (cond ((eq dir 'left) rem)
+              ((eq dir 'right) (- coffee-tab-width rem))
+              (t 0))))))
+
 (defun coffee-indent-shift-left (start end &optional count)
   "Shift lines contained in region START END by COUNT columns to the left.
-COUNT defaults to `coffee-tab-width'.  If region isn't
-active, the current line is shifted.  The shifted region includes
-the lines in which START and END lie.  An error is signaled if
-any lines in the region are indented less than COUNT columns."
+If COUNT is not given, indents to the closest increment of
+`coffee-tab-width'. If region isn't active, the current line is
+shifted. The shifted region includes the lines in which START and
+END lie. An error is signaled if any lines in the region are
+indented less than COUNT columns."
   (interactive
    (if mark-active
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
-  (if count
-      (setq count (prefix-numeric-value count))
-    (setq count coffee-tab-width))
-  (when (> count 0)
-    (let ((deactivate-mark nil))
-      (save-excursion
-        (goto-char start)
-        (while (< (point) end)
-          (if (and (< (current-indentation) count)
-                   (not (looking-at "[ \t]*$")))
-              (error "Can't shift all lines enough"))
-          (forward-line))
-        (indent-rigidly start end (- count))))))
+  (let ((amount (if count (prefix-numeric-value count)
+                  (coffee-indent-shift-amount start end 'left))))
+    (when (> amount 0)
+      (let (deactivate-mark)
+        (save-excursion
+          (goto-char start)
+          ;; Check that all lines can be shifted enough
+          (while (< (point) end)
+            (if (and (< (current-indentation) amount)
+                     (not (looking-at "[ \t]*$")))
+                (error "Can't shift all lines enough"))
+            (forward-line))
+          (indent-rigidly start end (- amount)))))))
 
 (add-to-list 'debug-ignored-errors "^Can't shift all lines enough")
 
 (defun coffee-indent-shift-right (start end &optional count)
-  "Shift lines contained in region START END by COUNT columns to the left.
-COUNT defaults to `coffee-tab-width'.  If region isn't
-active, the current line is shifted.  The shifted region includes
-the lines in which START and END lie."
+  "Shift lines contained in region START END by COUNT columns to the right.
+if COUNT is not given, indents to the closest increment of
+`coffee-tab-width'. If region isn't active, the current line is
+shifted. The shifted region includes the lines in which START and
+END lie."
   (interactive
    (if mark-active
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
-  (let ((deactivate-mark nil))
-    (if count
-        (setq count (prefix-numeric-value count))
-      (setq count coffee-tab-width))
-    (indent-rigidly start end count)))
+  (let (deactivate-mark
+        (amount (if count (prefix-numeric-value count)
+                  (coffee-indent-shift-amount start end 'right))))
+    (indent-rigidly start end amount)))
 
 ;;
 ;; Define Major Mode
