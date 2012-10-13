@@ -607,7 +607,7 @@ Delete ARG spaces if ARG!=1."
            (= (point) (save-excursion
                         (back-to-indentation)
                         (point)))
-           (not old-bolp))
+           (not (bolp)))
       (let ((extra-space-count (% (current-column) coffee-tab-width)))
         (backward-delete-char-untabify
          (if (zerop extra-space-count)
