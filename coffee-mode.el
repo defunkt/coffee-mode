@@ -641,7 +641,7 @@ previous line."
     (and (not (bobp))
          (or (memq (char-before (point-at-eol)) coffee-indenters-eol)
              (progn
-               (forward-line 0)
+               (back-to-indentation)
                (looking-at-p (coffee-indenters-bol-regexp)))))))
 
 (defun coffee-previous-line-is-comment ()
