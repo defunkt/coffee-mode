@@ -289,7 +289,7 @@ called `coffee-compiled-buffer-name'."
                           (get-buffer-create coffee-compiled-buffer-name)
                           nil)
          (append coffee-args-compile (list "-s" "-p")))
-  (switch-to-buffer (get-buffer coffee-compiled-buffer-name))
+  (pop-to-buffer (get-buffer coffee-compiled-buffer-name))
   (let ((buffer-file-name "tmp.js")) (set-auto-mode))
   (goto-char (point-min)))
 
