@@ -157,6 +157,11 @@
   :type 'string
   :group 'coffee)
 
+(defcustom coffee-js-directory ""
+  "The directory for compiled JavaScript files output"
+  :type 'string
+  :group 'coffee)
+
 (defcustom js2coffee-command "js2coffee"
   "The js2coffee command used for evaluating code."
   :type 'string
@@ -246,9 +251,12 @@ with CoffeeScript."
   (pop-to-buffer "*CoffeeREPL*"))
 
 (defun coffee-compiled-file-name (&optional filename)
+  (setq working-on-file (expand-file-name (or filename (buffer-file-name))))
+  (unless (string= coffee-js-directory "")
+      (setq working-on-file (expand-file-name (concat (file-name-directory working-on-file) coffee-js-directory (file-name-nondirectory working-on-file)))))
   "Returns the name of the JavaScript file compiled from a CoffeeScript file.
 If FILENAME is omitted, the current buffer's file name is used."
-  (concat (file-name-sans-extension (or filename (buffer-file-name))) ".js"))
+  (concat (file-name-sans-extension working-on-file) ".js"))
 
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk in a file of the same
@@ -427,8 +435,12 @@ For details, see `comment-dwim'."
 
 (defun coffee-command-compile (file-name)
   "Run `coffee-command' to compile FILE."
-  (let ((full-file-name (expand-file-name file-name)))
-    (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list full-file-name)) " ")))
+  (let (
+	(full-file-name
+	 (expand-file-name file-name))
+	(output-directory
+	 (concat " -o " (file-name-directory (expand-file-name file-name)) coffee-js-directory)))
+    (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list output-directory) (list full-file-name)) " ")))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
