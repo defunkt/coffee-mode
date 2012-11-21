@@ -291,15 +291,18 @@ called `coffee-compiled-buffer-name'."
 
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
     (when buffer
-      (kill-buffer buffer)))
+      (with-current-buffer buffer
+        (erase-buffer))))
 
   (apply (apply-partially 'call-process-region start end coffee-command nil
                           (get-buffer-create coffee-compiled-buffer-name)
                           nil)
          (append coffee-args-compile (list "-s" "-p")))
-  (pop-to-buffer (get-buffer coffee-compiled-buffer-name))
-  (let ((buffer-file-name "tmp.js")) (set-auto-mode))
-  (goto-char (point-min)))
+
+  (let ((buffer (get-buffer coffee-compiled-buffer-name)))
+    (display-buffer buffer)
+    (with-current-buffer buffer
+      (let ((buffer-file-name "tmp.js")) (set-auto-mode)))))
 
 (defun coffee-js2coffee-replace-region (start end)
   "Convert JavaScript in the region into CoffeeScript."
