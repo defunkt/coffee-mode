@@ -800,6 +800,26 @@ END lie."
 ;; Define Major Mode
 ;;
 
+(defun coffee-block-comment-delimiter (match)
+  (progn
+    (goto-char match)
+    (beginning-of-line)
+    (add-text-properties (point) (+ (point) 1) `(syntax-table (14 . nil)))))
+
+(defun coffee-propertize-function (start end)
+  ;; return if we don't have anything to parse
+  (unless (>= start end)
+    (save-excursion
+      (progn
+        (goto-char start)
+        (let ((match (re-search-forward "^###.*$" end t)))
+          (if match
+              (progn
+                (coffee-block-comment-delimiter match)
+                (goto-char match)
+                (next-line)
+                (coffee-propertize-function (point) end))))))))
+
 ;;;###autoload
 (define-derived-mode coffee-mode fundamental-mode
   "Coffee"
@@ -834,6 +854,7 @@ END lie."
   (make-local-variable 'indent-line-function)
   (setq indent-line-function 'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
+  (set (make-local-variable 'syntax-propertize-function) 'coffee-propertize-function)
 
   ;; imenu
   (make-local-variable 'imenu-create-index-function)
