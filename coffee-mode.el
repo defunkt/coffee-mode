@@ -806,13 +806,29 @@ END lie."
     (beginning-of-line)
     (add-text-properties (point) (+ (point) 1) `(syntax-table (14 . nil)))))
 
+;; support coffescript block comments
+;; examples:
+;;   at indent level 0
+;;   ###
+;;        foobar
+;;   ###
+;;   at indent level 0 with text following it
+;;   ### foobar
+;;     moretext
+;;   ###
+;;   at indent level > 0
+;;     ###
+;;       foobar
+;;     ###
+;; examples of non-block comments:
+;;   #### foobar
 (defun coffee-propertize-function (start end)
   ;; return if we don't have anything to parse
   (unless (>= start end)
     (save-excursion
       (progn
         (goto-char start)
-        (let ((match (re-search-forward "^###.*$" end t)))
+        (let ((match (re-search-forward "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
           (if match
               (progn
                 (coffee-block-comment-delimiter match)
