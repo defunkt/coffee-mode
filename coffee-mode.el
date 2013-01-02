@@ -419,7 +419,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
-    (,coffee-regexp-regexp . font-lock-constant-face)
+    ;(,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
     (,coffee-lambda-regexp . (2 font-lock-function-name-face))
     (,coffee-keywords-regexp 1 font-lock-keyword-face)))
