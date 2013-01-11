@@ -906,9 +906,9 @@ it on by default."
 
 ;; Run coffee-mode for files ending in .coffee.
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+(add-to-list 'auto-mode-alist '("\\.coffee\\'" . coffee-mode))
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.iced$" . coffee-mode))
+(add-to-list 'auto-mode-alist '("\\.iced\\'" . coffee-mode))
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
+(add-to-list 'auto-mode-alist '("Cakefile\\'" . coffee-mode))
 ;;; coffee-mode.el ends here
