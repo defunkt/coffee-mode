@@ -251,12 +251,15 @@ with CoffeeScript."
   (pop-to-buffer "*CoffeeREPL*"))
 
 (defun coffee-compiled-file-name (&optional filename)
-  (setq working-on-file (expand-file-name (or filename (buffer-file-name))))
-  (unless (string= coffee-js-directory "")
-      (setq working-on-file (expand-file-name (concat (file-name-directory working-on-file) coffee-js-directory (file-name-nondirectory working-on-file)))))
-  "Returns the name of the JavaScript file compiled from a CoffeeScript file.
-If FILENAME is omitted, the current buffer's file name is used."
-  (concat (file-name-sans-extension working-on-file) ".js"))
+  (let ((working-on-file (expand-file-name (or filename (buffer-file-name)))))
+    (unless (string= coffee-js-directory "")
+      (setq working-on-file
+            (expand-file-name (concat (file-name-directory working-on-file)
+                                      coffee-js-directory
+                                      (file-name-nondirectory working-on-file)))))
+    ;; Returns the name of the JavaScript file compiled from a CoffeeScript file.
+    ;; If FILENAME is omitted, the current buffer's file name is used.
+    (concat (file-name-sans-extension working-on-file) ".js")))
 
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk in a file of the same
@@ -833,7 +836,7 @@ END lie."
               (progn
                 (coffee-block-comment-delimiter match)
                 (goto-char match)
-                (next-line)
+                (forward-line)
                 (coffee-propertize-function (point) end))))))))
 
 ;;;###autoload
@@ -906,9 +909,9 @@ it on by default."
 
 ;; Run coffee-mode for files ending in .coffee.
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
+(add-to-list 'auto-mode-alist '("\\.coffee\\'" . coffee-mode))
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.iced$" . coffee-mode))
+(add-to-list 'auto-mode-alist '("\\.iced\\'" . coffee-mode))
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))
+(add-to-list 'auto-mode-alist '("Cakefile\\'" . coffee-mode))
 ;;; coffee-mode.el ends here
