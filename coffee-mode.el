@@ -231,6 +231,7 @@ with CoffeeScript."
     (define-key map "\177" 'coffee-dedent-line-backspace)
     (define-key map (kbd "C-c C-<") 'coffee-indent-shift-left)
     (define-key map (kbd "C-c C->") 'coffee-indent-shift-right)
+    (define-key map (kbd "<backtab>") 'coffee-indent-shift-left)
     map)
   "Keymap for CoffeeScript major mode.")
 
