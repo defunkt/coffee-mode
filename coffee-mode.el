@@ -236,6 +236,9 @@ with CoffeeScript."
     (define-key map "\177" 'coffee-dedent-line-backspace)
     (define-key map (kbd "C-c C-<") 'coffee-indent-shift-left)
     (define-key map (kbd "C-c C->") 'coffee-indent-shift-right)
+    (define-key map (kbd "C-c C-l") 'coffee-send-line)
+    (define-key map (kbd "C-c C-r") 'coffee-send-region)
+    (define-key map (kbd "C-c C-b") 'coffee-send-buffer)
     (define-key map (kbd "<backtab>") 'coffee-indent-shift-left)
     map)
   "Keymap for CoffeeScript major mode.")
@@ -312,29 +315,26 @@ called `coffee-compiled-buffer-name'."
     (with-current-buffer buffer
       (let ((buffer-file-name "tmp.js")) (set-auto-mode)))))
 
-;; TODO replace coffee-repl-buffer with function like this
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
     (coffee-repl))
   (get-buffer-process coffee-repl-buffer))
 
-(defun coffee-send-line (start end)
+(defun coffee-send-line ()
   "Send the current line to the inferior Coffee process."
-  (interactive "r")
-  (send-region coffee-get-repl-proc (line-beginning-position) (line-end-position))
-  (send-string coffee-get-repl-proc "\n"))
+  (interactive)
+  (coffee-send-region (line-beginning-position) (line-end-position)))
 
 (defun coffee-send-region (start end)
   "Send the current region to the inferior Coffee process."
   (interactive "r")
-  (send-region coffee-repl-buffer start end)
-  (send-string coffee-repl-buffer "\n"))
+  (comint-simple-send (coffee-get-repl-proc)
+                      (buffer-substring-no-properties start end)))
 
 (defun coffee-send-buffer ()
   "Send the current buffer to the inferior Coffee process."
-  (interactive "r")
-  (send-region coffee-repl-buffer point-min point-max)
-  (send-string coffee-repl-buffer "\n"))
+  (interactive)
+  (coffee-send-region (point-min) (point-max)))
 
 (defun coffee-js2coffee-replace-region (start end)
   "Convert JavaScript in the region into CoffeeScript."
