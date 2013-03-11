@@ -854,8 +854,8 @@ END lie."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
-  (make-local-variable 'comment-start)
-  (setq comment-start "#")
+
+  (set (make-local-variable 'comment-start) "#")
 
   ;; single quote strings
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
@@ -871,14 +871,12 @@ END lie."
   ;;          (3 (coffee-quote-syntax 3)))))
 
   ;; indentation
-  (make-local-variable 'indent-line-function)
-  (setq indent-line-function 'coffee-indent-line)
+  (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
-  (set (make-local-variable 'syntax-propertize-function) 'coffee-propertize-function)
+  (set (make-local-variable 'syntax-propertize-function) #'coffee-propertize-function)
 
   ;; imenu
-  (make-local-variable 'imenu-create-index-function)
-  (setq imenu-create-index-function 'coffee-imenu-create-index)
+  (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
 
   ;; no tabs
   (setq indent-tabs-mode nil))
