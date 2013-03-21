@@ -223,6 +223,16 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
+(defface coffee-mode-function-param
+  '((t :foreground "#6c71c4"))
+  "Face for highlighting function parameters in coffee-mode."
+  :group 'coffee)
+
+(defface coffee-mode-class-name
+  '((t :foreground "#d33682"))
+  "Face for highlighting class names in coffee-mode."
+  :group 'coffee)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -399,7 +409,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
 
 ;; Namespaces
-(defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
+(defvar coffee-class-regexp "\\(extends\\|class\\|new\\)\\s +\\(\\w+\\)")
 
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
@@ -433,11 +443,29 @@ called `coffee-compiled-buffer-name'."
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp
   ;; keywords can be member names.
-  (concat "[^.]"
+  (concat "\\b"
 	  (regexp-opt (append coffee-js-reserved
 			      coffee-js-keywords
 			      coffee-cs-keywords
 			      iced-coffee-cs-keywords) 'words)))
+
+;; This is for highlighting names in function parameter lists.
+(defun coffee-match-next-argument (limit)
+  (let ((start (point)))
+    ;; Look for the arrow.
+    (when (re-search-forward ") *[=-]>" limit t)
+      ;; Save the position of the closing arrow.
+      (let ((stop (point)))
+        (goto-char (match-beginning 0))
+        ;; Go to the opening paren.
+        (goto-char (nth 1 (syntax-ppss)))
+        ;; If we're before our initial position, go forward.
+        ;; We don't want to find the same symbols again.
+        (when (> start (point))
+          (goto-char start))
+        ;; Look for the next symbol until the arrow.
+        (or (re-search-forward "\\((\\|,\\) *\\(\\(\\sw\\|_\\)+\\)" stop 'mv)
+            (coffee-match-next-argument limit))))))
 
 
 ;; Create the list for font-lock. Each class of keyword is given a
@@ -453,7 +481,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
-    (,coffee-lambda-regexp . (2 font-lock-function-name-face))
+    (,coffee-class-regexp 2 'coffee-mode-class-name)
     (,coffee-keywords-regexp 1 font-lock-keyword-face)))
 
 ;;
@@ -542,7 +570,7 @@ output in a compilation buffer."
                       ".+?"
                       coffee-lambda-regexp
                     "\\|"
-                      coffee-namespace-regexp
+                      coffee-class-regexp
                     "\\)")
             (point-max)
             t)
@@ -875,6 +903,9 @@ END lie."
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
+  (font-lock-add-keywords
+   'coffee-mode
+   '((coffee-match-next-argument 2 'coffee-mode-function-param)))
 
   ;; treat "_" as part of a word
   (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
