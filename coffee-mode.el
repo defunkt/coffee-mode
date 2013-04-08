@@ -246,7 +246,8 @@ with CoffeeScript."
     (define-key map "\177" 'coffee-dedent-line-backspace)
     (define-key map (kbd "C-c C-<") 'coffee-indent-shift-left)
     (define-key map (kbd "C-c C->") 'coffee-indent-shift-right)
-    (define-key map (kbd "C-c C-l") 'coffee-send-line)
+    ; Don't stomp my own key bindings.
+    ;(define-key map (kbd "C-c C-l") 'coffee-send-line)
     (define-key map (kbd "C-c C-r") 'coffee-send-region)
     (define-key map (kbd "C-c C-b") 'coffee-send-buffer)
     (define-key map (kbd "<backtab>") 'coffee-indent-shift-left)
