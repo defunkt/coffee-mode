@@ -415,8 +415,9 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular Expressions
-(defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/
-]\\)+?\\/")
+;; Ignore this until https://github.com/defunkt/coffee-mode/issues/110 is fixed.
+;(defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/
+;]\\)+?\\/")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
