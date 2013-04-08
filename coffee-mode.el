@@ -182,6 +182,11 @@
   :type 'string
   :group 'coffee)
 
+(defcustom coffee-repl-buffer "*CoffeeREPL*"
+  "The name of the CoffeeREPL buffer."
+  :type 'string
+  :group 'coffee)
+
 (defcustom coffee-compile-jump-to-error t
   "Whether to jump to the first error if compilation fails.
 Since the coffee compiler does not always include a line number in
@@ -218,6 +223,16 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
+(defface coffee-mode-function-param
+  '((t :foreground "#6c71c4"))
+  "Face for highlighting function parameters in coffee-mode."
+  :group 'coffee)
+
+(defface coffee-mode-class-name
+  '((t :foreground "#d33682"))
+  "Face for highlighting class names in coffee-mode."
+  :group 'coffee)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -231,24 +246,27 @@ with CoffeeScript."
     (define-key map "\177" 'coffee-dedent-line-backspace)
     (define-key map (kbd "C-c C-<") 'coffee-indent-shift-left)
     (define-key map (kbd "C-c C->") 'coffee-indent-shift-right)
+    (define-key map (kbd "C-c C-l") 'coffee-send-line)
+    (define-key map (kbd "C-c C-r") 'coffee-send-region)
+    (define-key map (kbd "C-c C-b") 'coffee-send-buffer)
+    (define-key map (kbd "<backtab>") 'coffee-indent-shift-left)
     map)
   "Keymap for CoffeeScript major mode.")
 
 ;;
 ;; Commands
 ;;
-
 (defun coffee-repl ()
   "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
   (interactive)
 
-  (unless (comint-check-proc "*CoffeeREPL*")
+  (unless (comint-check-proc coffee-repl-buffer)
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
             "env"
             nil (append (list "NODE_NO_READLINE=1" coffee-command) coffee-args-repl))))
 
-  (pop-to-buffer "*CoffeeREPL*"))
+  (pop-to-buffer coffee-repl-buffer))
 
 (defun coffee-compiled-file-name (&optional filename)
   (let ((working-on-file (expand-file-name (or filename (buffer-file-name)))))
@@ -306,6 +324,27 @@ called `coffee-compiled-buffer-name'."
     (display-buffer buffer)
     (with-current-buffer buffer
       (let ((buffer-file-name "tmp.js")) (set-auto-mode)))))
+
+(defun coffee-get-repl-proc ()
+  (unless (comint-check-proc coffee-repl-buffer)
+    (coffee-repl))
+  (get-buffer-process coffee-repl-buffer))
+
+(defun coffee-send-line ()
+  "Send the current line to the inferior Coffee process."
+  (interactive)
+  (coffee-send-region (line-beginning-position) (line-end-position)))
+
+(defun coffee-send-region (start end)
+  "Send the current region to the inferior Coffee process."
+  (interactive "r")
+  (comint-simple-send (coffee-get-repl-proc)
+                      (buffer-substring-no-properties start end)))
+
+(defun coffee-send-buffer ()
+  "Send the current buffer to the inferior Coffee process."
+  (interactive)
+  (coffee-send-region (point-min) (point-max)))
 
 (defun coffee-js2coffee-replace-region (start end)
   "Convert JavaScript in the region into CoffeeScript."
@@ -370,7 +409,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
 
 ;; Namespaces
-(defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
+(defvar coffee-class-regexp "\\(extends\\|class\\|new\\)\\s +\\(\\w+\\)")
 
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
@@ -404,11 +443,29 @@ called `coffee-compiled-buffer-name'."
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp
   ;; keywords can be member names.
-  (concat "[^.]"
+  (concat "\\b"
 	  (regexp-opt (append coffee-js-reserved
 			      coffee-js-keywords
 			      coffee-cs-keywords
 			      iced-coffee-cs-keywords) 'words)))
+
+;; This is for highlighting names in function parameter lists.
+(defun coffee-match-next-argument (limit)
+  (let ((start (point)))
+    ;; Look for the arrow.
+    (when (re-search-forward ") *[=-]>" limit t)
+      ;; Save the position of the closing arrow.
+      (let ((stop (point)))
+        (goto-char (match-beginning 0))
+        ;; Go to the opening paren.
+        (goto-char (nth 1 (syntax-ppss)))
+        ;; If we're before our initial position, go forward.
+        ;; We don't want to find the same symbols again.
+        (when (> start (point))
+          (goto-char start))
+        ;; Look for the next symbol until the arrow.
+        (or (re-search-forward "\\((\\|,\\) *\\(\\(\\sw\\|_\\)+\\)" stop 'mv)
+            (coffee-match-next-argument limit))))))
 
 
 ;; Create the list for font-lock. Each class of keyword is given a
@@ -424,7 +481,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     ;(,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
-    (,coffee-lambda-regexp . (2 font-lock-function-name-face))
+    (,coffee-class-regexp 2 'coffee-mode-class-name)
     (,coffee-keywords-regexp 1 font-lock-keyword-face)))
 
 ;;
@@ -513,7 +570,7 @@ output in a compilation buffer."
                       ".+?"
                       coffee-lambda-regexp
                     "\\|"
-                      coffee-namespace-regexp
+                      coffee-class-regexp
                     "\\)")
             (point-max)
             t)
@@ -846,6 +903,9 @@ END lie."
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
+  (font-lock-add-keywords
+   'coffee-mode
+   '((coffee-match-next-argument 2 'coffee-mode-function-param)))
 
   ;; treat "_" as part of a word
   (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
@@ -853,8 +913,8 @@ END lie."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
-  (make-local-variable 'comment-start)
-  (setq comment-start "#")
+
+  (set (make-local-variable 'comment-start) "#")
 
   ;; single quote strings
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
@@ -870,14 +930,12 @@ END lie."
   ;;          (3 (coffee-quote-syntax 3)))))
 
   ;; indentation
-  (make-local-variable 'indent-line-function)
-  (setq indent-line-function 'coffee-indent-line)
+  (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
-  (set (make-local-variable 'syntax-propertize-function) 'coffee-propertize-function)
+  (set (make-local-variable 'syntax-propertize-function) #'coffee-propertize-function)
 
   ;; imenu
-  (make-local-variable 'imenu-create-index-function)
-  (setq imenu-create-index-function 'coffee-imenu-create-index)
+  (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
 
   ;; no tabs
   (setq indent-tabs-mode nil))
