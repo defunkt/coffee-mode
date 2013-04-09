@@ -418,6 +418,9 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/
 ]\\)+?\\/")
 
+;; String Interpolation(This regexp is taken from ruby-mode)
+(defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
+
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
       '("if" "else" "new" "return" "try" "catch"
@@ -482,7 +485,8 @@ called `coffee-compiled-buffer-name'."
     (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
     (,coffee-class-regexp 2 'coffee-mode-class-name)
-    (,coffee-keywords-regexp 1 font-lock-keyword-face)))
+    (,coffee-keywords-regexp 1 font-lock-keyword-face)
+    (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t)))
 
 ;;
 ;; Helper Functions
