@@ -269,6 +269,13 @@ with CoffeeScript."
     ;; If FILENAME is omitted, the current buffer's file name is used.
     (concat (file-name-sans-extension working-on-file) ".js")))
 
+(defun coffee-revert-buffer-compiled-file (file-name)
+  "Revert a buffer of compiled file when the buffer exist and is not modified."
+  (let ((buffer (find-buffer-visiting file-name)))
+    (when (and buffer (not (buffer-modified-p buffer)))
+      (with-current-buffer buffer
+        (revert-buffer nil t)))))
+
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk in a file of the same
 base name, with extension `.js'.  Subsequent runs will overwrite the
@@ -279,7 +286,9 @@ If there are compilation errors, point is moved to the first
   (interactive)
   (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
     (if (string= compiler-output "")
-        (message "Compiled and saved %s" (coffee-compiled-file-name))
+        (let ((file-name (coffee-compiled-file-name)))
+          (message "Compiled and saved %s" file-name)
+          (coffee-revert-buffer-compiled-file file-name))
       (let* ((msg (car (split-string compiler-output "[\n\r]+")))
              (line (and (string-match "on line \\([0-9]+\\)" msg)
                         (string-to-number (match-string 1 msg)))))
