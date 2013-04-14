@@ -464,19 +464,22 @@ For details, see `comment-dwim'."
 
 (defun coffee-command-compile (file-name)
   "Run `coffee-command' to compile FILE."
-  (let (
-	(full-file-name
-	 (expand-file-name file-name))
-	(output-directory
-	 (concat " -o " (file-name-directory (expand-file-name file-name)) coffee-js-directory)))
-    (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list output-directory) (list full-file-name)) " ")))
+  (let ((full-file-name
+         (expand-file-name file-name))
+        (output-directory
+         (concat " -o " (file-name-directory (expand-file-name file-name))
+                 coffee-js-directory)))
+    (mapconcat 'identity (append (list coffee-command) coffee-args-compile
+                                 (list output-directory)
+                                 (list full-file-name)) " ")))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
 output in a compilation buffer."
   (interactive "sArguments: ")
-  (let ((compilation-buffer-name-function (lambda (this-mode)
-                                            (generate-new-buffer-name coffee-compiled-buffer-name))))
+  (let ((compilation-buffer-name-function
+         (lambda (this-mode)
+           (generate-new-buffer-name coffee-compiled-buffer-name))))
     (compile (concat coffee-command " " args))))
 
 ;;
@@ -745,21 +748,21 @@ previous line."
 ;;      ;; Consider property for the last char if in a fenced string.
 ;;      ((= n 3)
 ;;       (let* ((font-lock-syntactic-keywords nil)
-;; 	     (syntax (syntax-ppss)))
-;; 	(when (eq t (nth 3 syntax))	; after unclosed fence
-;; 	  (goto-char (nth 8 syntax))	; fence position
-;; 	  ;; (skip-chars-forward "uUrR")	; skip any prefix
-;; 	  ;; Is it a matching sequence?
-;; 	  (if (eq (char-after) (char-after (match-beginning 2)))
-;; 	      (eval-when-compile (string-to-syntax "|"))))))
+;;         (syntax (syntax-ppss)))
+;;    (when (eq t (nth 3 syntax))   ; after unclosed fence
+;;      (goto-char (nth 8 syntax))   ; fence position
+;;      ;; (skip-chars-forward "uUrR")   ; skip any prefix
+;;      ;; Is it a matching sequence?
+;;      (if (eq (char-after) (char-after (match-beginning 2)))
+;;          (eval-when-compile (string-to-syntax "|"))))))
 ;;      ;; Consider property for initial char, accounting for prefixes.
-;;      ((or (and (= n 2)			; leading quote (not prefix)
-;; 	       (not (match-end 1)))     ; prefix is null
-;; 	  (and (= n 1)			; prefix
-;; 	       (match-end 1)))          ; non-empty
+;;      ((or (and (= n 2)         ; leading quote (not prefix)
+;;           (not (match-end 1)))     ; prefix is null
+;;      (and (= n 1)         ; prefix
+;;           (match-end 1)))          ; non-empty
 ;;       (let ((font-lock-syntactic-keywords nil))
-;; 	(unless (eq 'string (syntax-ppss-context (syntax-ppss)))
-;; 	  (eval-when-compile (string-to-syntax "|")))))
+;;    (unless (eq 'string (syntax-ppss-context (syntax-ppss)))
+;;      (eval-when-compile (string-to-syntax "|")))))
 ;;      ;; Otherwise (we're in a non-matching string) the property is
 ;;      ;; nil, which is OK.
 ;;      )))
@@ -854,7 +857,8 @@ END lie."
     (save-excursion
       (progn
         (goto-char start)
-        (let ((match (re-search-forward "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
+        (let ((match (re-search-forward
+                      "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
           (if match
               (progn
                 (coffee-block-comment-delimiter match)
@@ -941,4 +945,5 @@ it on by default."
 (add-to-list 'auto-mode-alist '("\\.iced\\'" . coffee-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile\\'" . coffee-mode))
+
 ;;; coffee-mode.el ends here
