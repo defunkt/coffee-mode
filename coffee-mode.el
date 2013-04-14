@@ -862,9 +862,12 @@ END lie."
                 (forward-line)
                 (coffee-propertize-function (point) end))))))))
 
+;; For compatibility with Emacs < 24, derive conditionally
+(defalias 'coffee-parent-mode
+  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
+
 ;;;###autoload
-(define-derived-mode coffee-mode fundamental-mode
-  "Coffee"
+(define-derived-mode coffee-mode coffee-parent-mode "Coffee"
   "Major mode for editing CoffeeScript."
 
   ;; code for syntax highlighting
