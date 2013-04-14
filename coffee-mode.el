@@ -410,6 +410,9 @@ called `coffee-compiled-buffer-name'."
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
+;; Regular expressions
+(defvar coffee-regexp-regexp "\\s$.*\\s$")
+
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
 
@@ -450,7 +453,8 @@ called `coffee-compiled-buffer-name'."
   ;; *Note*: order below matters. `coffee-keywords-regexp' goes last
   ;; because otherwise the keyword "state" in the function
   ;; "state_entry" would be highlighted.
-  `((,coffee-this-regexp . font-lock-variable-name-face)
+  `((,coffee-regexp-regexp . font-lock-constant-face)
+    (,coffee-this-regexp . font-lock-variable-name-face)
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
@@ -893,8 +897,8 @@ END lie."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
 
-  ;; ;; Treat regular expressions as strings.
-  ;; (modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
+  ;; Treat slashes as paired delimiters; useful for finding regexps.
+  (modify-syntax-entry ?/ "$" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
