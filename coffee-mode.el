@@ -380,9 +380,6 @@ called `coffee-compiled-buffer-name'."
 ;; Define Language Syntax
 ;;
 
-;; String literals
-(defvar coffee-string-regexp "\"\\([^\\]\\|\\\\.\\)*?\"\\|'\\([^\\]\\|\\\\.\\)*?'")
-
 ;; Instance variables (implicit this)
 (defvar coffee-this-regexp "@\\w+\\|this")
 
@@ -444,15 +441,14 @@ called `coffee-compiled-buffer-name'."
   ;; *Note*: order below matters. `coffee-keywords-regexp' goes last
   ;; because otherwise the keyword "state" in the function
   ;; "state_entry" would be highlighted.
-  `((,coffee-string-regexp . font-lock-string-face)
-    (,coffee-this-regexp . font-lock-variable-name-face)
+  `((,coffee-this-regexp . font-lock-variable-name-face)
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
     (,coffee-lambda-regexp 2 font-lock-function-name-face)
-    (,coffee-keywords-regexp 1 font-lock-keyword-face))
-    (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t))
+    (,coffee-keywords-regexp 1 font-lock-keyword-face)
+    (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t)))
 
 ;;
 ;; Helper Functions
