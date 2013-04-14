@@ -436,11 +436,10 @@ called `coffee-compiled-buffer-name'."
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp
   ;; keywords can be member names.
-  (concat "[^.]"
-	  (regexp-opt (append coffee-js-reserved
-			      coffee-js-keywords
-			      coffee-cs-keywords
-			      iced-coffee-cs-keywords) 'words)))
+  (regexp-opt (append coffee-js-reserved
+                      coffee-js-keywords
+                      coffee-cs-keywords
+                      iced-coffee-cs-keywords) 'symbols))
 
 
 ;; Create the list for font-lock. Each class of keyword is given a
@@ -691,32 +690,12 @@ previous line."
   (interactive)
 
   (save-excursion
-    (let ((indenter-at-bol) (indenter-at-eol))
-      ;; Go back a line and to the first character.
-      (forward-line -1)
-      (backward-to-indentation 0)
-
-      ;; If the next few characters match one of our magic indenter
-      ;; keywords, we want to indent the line we were on originally.
-      (when (looking-at (coffee-indenters-bol-regexp))
-        (setq indenter-at-bol t))
-
-      ;; If that didn't match, go to the back of the line and check to
-      ;; see if the last character matches one of our indenter
-      ;; characters.
-      (when (not indenter-at-bol)
-        (end-of-line)
-
-        ;; Optimized for speed - checks only the last character.
-        (let ((indenters coffee-indenters-eol))
-          (while indenters
-            (if (and (char-before) (/= (char-before) (car indenters)))
-                (setq indenters (cdr indenters))
-              (setq indenter-at-eol t)
-              (setq indenters nil)))))
-
-      ;; If we found an indenter, return `t'.
-      (or indenter-at-bol indenter-at-eol))))
+    (skip-chars-backward "\n\t ")
+    (and (not (bobp))
+         (or (memq (char-before (point-at-eol)) coffee-indenters-eol)
+             (progn
+               (back-to-indentation)
+               (looking-at-p (coffee-indenters-bol-regexp)))))))
 
 (defun coffee-previous-line-is-comment ()
   "Return t if the previous line is a CoffeeScript comment."
