@@ -894,7 +894,8 @@ END lie."
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
 
   ;; Treat regular expressions as strings.
-  (modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
+  ;; FIXME: Causes everything following division to be highlighted as a string.
+  ;(modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
