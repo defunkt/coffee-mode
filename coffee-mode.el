@@ -393,7 +393,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\s*\\):")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(\\(\\w\\|\\$\\)+\\)\s+=")
+(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(\\w\\|\\$\\)+\\)\s+=[^>]")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
