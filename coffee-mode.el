@@ -893,8 +893,8 @@ END lie."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
 
-  ;; Treat regular expressions as strings.
-  (modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
+  ;; ;; Treat regular expressions as strings.
+  ;; (modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
