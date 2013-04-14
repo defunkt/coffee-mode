@@ -384,16 +384,16 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-string-regexp "\"\\([^\\]\\|\\\\.\\)*?\"\\|'\\([^\\]\\|\\\\.\\)*?'")
 
 ;; Instance variables (implicit this)
-(defvar coffee-this-regexp "@\\(\\w\\|_\\)*\\|this")
+(defvar coffee-this-regexp "@\\w+\\|this")
 
 ;; Prototype::access
-(defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
+(defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\| \\|$\\)+?\\):")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\|$\\)+?\s*\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\s*\\):")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(\\(_\\|\\w\\|\\$\\)+\\)\s+=")
+(defvar coffee-local-assign-regexp "\\(\\(\\w\\|\\$\\)+\\)\s+=")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
