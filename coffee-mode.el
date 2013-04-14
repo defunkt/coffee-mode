@@ -223,16 +223,6 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
-(defface coffee-mode-function-param
-  '((t :foreground "#6c71c4"))
-  "Face for highlighting function parameters in coffee-mode."
-  :group 'coffee)
-
-(defface coffee-mode-class-name
-  '((t :foreground "#d33682"))
-  "Face for highlighting class names in coffee-mode."
-  :group 'coffee)
-
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -391,34 +381,29 @@ called `coffee-compiled-buffer-name'."
 ;; Define Language Syntax
 ;;
 
-;; String literals
-(defvar coffee-string-regexp "\"\\([^\\]\\|\\\\.\\)*?\"\\|'\\([^\\]\\|\\\\.\\)*?'")
-
 ;; Instance variables (implicit this)
-(defvar coffee-this-regexp "@\\(\\w\\|_\\)*\\|this")
+(defvar coffee-this-regexp "\\(?:@\\w+\\|\\<this\\)\\>")
 
 ;; Prototype::access
-(defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\|_\\| \\|$\\)+?\\):")
+(defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\| \\|$\\)+?\\):")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|_\\|$\\)+?\s*\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\s*\\):")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(\\(_\\|\\w\\|\\$\\)+\\)\s+=")
+(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(\\w\\|\\$\\)+\\)\s+=[^>]")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
 
 ;; Namespaces
-(defvar coffee-class-regexp "\\(extends\\|class\\|new\\)\\s +\\(\\w+\\)")
+(defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
 
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
-;; Regular Expressions
-;; Ignore this until https://github.com/defunkt/coffee-mode/issues/110 is fixed.
-;(defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/
-;]\\)+?\\/")
+;; String Interpolation(This regexp is taken from ruby-mode)
+(defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
@@ -445,30 +430,11 @@ called `coffee-compiled-buffer-name'."
 ;; Regular expression combining the above three lists.
 (defvar coffee-keywords-regexp
   ;; keywords can be member names.
-  (concat "\\b"
-	  (regexp-opt (append coffee-js-reserved
-			      coffee-js-keywords
-			      coffee-cs-keywords
-			      iced-coffee-cs-keywords) 'words)))
-
-;; This is for highlighting names in function parameter lists.
-(defun coffee-match-next-argument (limit)
-  (let ((start (point)))
-    ;; Look for the arrow.
-    (when (re-search-forward ") *[=-]>" limit t)
-      ;; Save the position of the closing arrow.
-      (let ((stop (point)))
-        (goto-char (match-beginning 0))
-        ;; Go to the opening paren.
-        (goto-char (nth 1 (syntax-ppss)))
-        ;; If we're before our initial position, go forward.
-        ;; We don't want to find the same symbols again.
-        (when (> start (point))
-          (goto-char start))
-        ;; Look for the next symbol until the arrow.
-        (or (re-search-forward "\\((\\|,\\) *\\(\\(\\sw\\|_\\)+\\)" stop 'mv)
-            (coffee-match-next-argument limit))))))
-
+  (format "\\<%s\\>"
+          (regexp-opt (append coffee-js-reserved
+                              coffee-js-keywords
+                              coffee-cs-keywords
+                              iced-coffee-cs-keywords) 'words)))
 
 ;; Create the list for font-lock. Each class of keyword is given a
 ;; particular face.
@@ -476,15 +442,14 @@ called `coffee-compiled-buffer-name'."
   ;; *Note*: order below matters. `coffee-keywords-regexp' goes last
   ;; because otherwise the keyword "state" in the function
   ;; "state_entry" would be highlighted.
-  `((,coffee-string-regexp . font-lock-string-face)
-    (,coffee-this-regexp . font-lock-variable-name-face)
+  `((,coffee-this-regexp . font-lock-variable-name-face)
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
-    ;(,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
-    (,coffee-class-regexp 2 'coffee-mode-class-name)
-    (,coffee-keywords-regexp 1 font-lock-keyword-face)))
+    (,coffee-lambda-regexp 2 font-lock-function-name-face)
+    (,coffee-keywords-regexp 1 font-lock-keyword-face)
+    (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t)))
 
 ;;
 ;; Helper Functions
@@ -500,19 +465,22 @@ For details, see `comment-dwim'."
 
 (defun coffee-command-compile (file-name)
   "Run `coffee-command' to compile FILE."
-  (let (
-	(full-file-name
-	 (expand-file-name file-name))
-	(output-directory
-	 (concat " -o " (file-name-directory (expand-file-name file-name)) coffee-js-directory)))
-    (mapconcat 'identity (append (list coffee-command) coffee-args-compile (list output-directory) (list full-file-name)) " ")))
+  (let ((full-file-name
+         (expand-file-name file-name))
+        (output-directory
+         (concat " -o " (file-name-directory (expand-file-name file-name))
+                 coffee-js-directory)))
+    (mapconcat 'identity (append (list coffee-command) coffee-args-compile
+                                 (list output-directory)
+                                 (list full-file-name)) " ")))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
 output in a compilation buffer."
   (interactive "sArguments: ")
-  (let ((compilation-buffer-name-function (lambda (this-mode)
-                                            (generate-new-buffer-name coffee-compiled-buffer-name))))
+  (let ((compilation-buffer-name-function
+         (lambda (this-mode)
+           (generate-new-buffer-name coffee-compiled-buffer-name))))
     (compile (concat coffee-command " " args))))
 
 ;;
@@ -572,7 +540,7 @@ output in a compilation buffer."
                       ".+?"
                       coffee-lambda-regexp
                     "\\|"
-                      coffee-class-regexp
+                      coffee-namespace-regexp
                     "\\)")
             (point-max)
             t)
@@ -781,21 +749,21 @@ previous line."
 ;;      ;; Consider property for the last char if in a fenced string.
 ;;      ((= n 3)
 ;;       (let* ((font-lock-syntactic-keywords nil)
-;; 	     (syntax (syntax-ppss)))
-;; 	(when (eq t (nth 3 syntax))	; after unclosed fence
-;; 	  (goto-char (nth 8 syntax))	; fence position
-;; 	  ;; (skip-chars-forward "uUrR")	; skip any prefix
-;; 	  ;; Is it a matching sequence?
-;; 	  (if (eq (char-after) (char-after (match-beginning 2)))
-;; 	      (eval-when-compile (string-to-syntax "|"))))))
+;;         (syntax (syntax-ppss)))
+;;    (when (eq t (nth 3 syntax))   ; after unclosed fence
+;;      (goto-char (nth 8 syntax))   ; fence position
+;;      ;; (skip-chars-forward "uUrR")   ; skip any prefix
+;;      ;; Is it a matching sequence?
+;;      (if (eq (char-after) (char-after (match-beginning 2)))
+;;          (eval-when-compile (string-to-syntax "|"))))))
 ;;      ;; Consider property for initial char, accounting for prefixes.
-;;      ((or (and (= n 2)			; leading quote (not prefix)
-;; 	       (not (match-end 1)))     ; prefix is null
-;; 	  (and (= n 1)			; prefix
-;; 	       (match-end 1)))          ; non-empty
+;;      ((or (and (= n 2)         ; leading quote (not prefix)
+;;           (not (match-end 1)))     ; prefix is null
+;;      (and (= n 1)         ; prefix
+;;           (match-end 1)))          ; non-empty
 ;;       (let ((font-lock-syntactic-keywords nil))
-;; 	(unless (eq 'string (syntax-ppss-context (syntax-ppss)))
-;; 	  (eval-when-compile (string-to-syntax "|")))))
+;;    (unless (eq 'string (syntax-ppss-context (syntax-ppss)))
+;;      (eval-when-compile (string-to-syntax "|")))))
 ;;      ;; Otherwise (we're in a non-matching string) the property is
 ;;      ;; nil, which is OK.
 ;;      )))
@@ -890,7 +858,8 @@ END lie."
     (save-excursion
       (progn
         (goto-char start)
-        (let ((match (re-search-forward "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
+        (let ((match (re-search-forward
+                      "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
           (if match
               (progn
                 (coffee-block-comment-delimiter match)
@@ -898,16 +867,16 @@ END lie."
                 (forward-line)
                 (coffee-propertize-function (point) end))))))))
 
+;; For compatibility with Emacs < 24, derive conditionally
+(defalias 'coffee-parent-mode
+  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
+
 ;;;###autoload
-(define-derived-mode coffee-mode fundamental-mode
-  "Coffee"
+(define-derived-mode coffee-mode coffee-parent-mode "Coffee"
   "Major mode for editing CoffeeScript."
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
-  (font-lock-add-keywords
-   'coffee-mode
-   '((coffee-match-next-argument 2 'coffee-mode-function-param)))
 
   ;; treat "_" as part of a word
   (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
@@ -915,6 +884,10 @@ END lie."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
+
+  ;; Treat regular expressions as strings.
+  ;; FIXME: Causes everything following division to be highlighted as a string.
+  ;(modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
@@ -974,4 +947,5 @@ it on by default."
 (add-to-list 'auto-mode-alist '("\\.iced\\'" . coffee-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile\\'" . coffee-mode))
+
 ;;; coffee-mode.el ends here

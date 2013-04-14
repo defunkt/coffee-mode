@@ -1,8 +1,7 @@
 CoffeeScript Major Mode
 =======================
 
-An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics],
-unfancy JavaScript.
+An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
 
 Provides syntax highlighting, indentation support, imenu support,
 a menu bar, and a few cute commands.
