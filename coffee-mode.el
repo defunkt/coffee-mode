@@ -404,10 +404,6 @@ called `coffee-compiled-buffer-name'."
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
-;; Regular Expressions
-(defvar coffee-regexp-regexp "\\/\\(\\\\.\\|\\[\\(\\\\.\\|.\\)+?\\]\\|[^/
-]\\)+?\\/")
-
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
 
@@ -453,9 +449,8 @@ called `coffee-compiled-buffer-name'."
     (,coffee-prototype-regexp . font-lock-variable-name-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
-    (,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
-    (,coffee-lambda-regexp . (2 font-lock-function-name-face))
+    (,coffee-lambda-regexp 2 font-lock-function-name-face)
     (,coffee-keywords-regexp 1 font-lock-keyword-face))
     (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t))
 
@@ -885,6 +880,9 @@ END lie."
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
+
+  ;; Treat regular expressions as strings.
+  (modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
