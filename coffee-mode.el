@@ -451,6 +451,8 @@ called `coffee-compiled-buffer-name'."
     (,coffee-keywords-regexp 1 font-lock-keyword-face)
     (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t)))
 
+(font-lock-add-keywords 'coffee-mode '(("\\s$.*\\s$" 0 'font-lock-constant-face)))
+
 ;;
 ;; Helper Functions
 ;;
@@ -885,9 +887,8 @@ END lie."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
 
-  ;; Treat regular expressions as strings.
-  ;; FIXME: Causes everything following division to be highlighted as a string.
-  ;(modify-syntax-entry ?/ "|" coffee-mode-syntax-table)
+  ;; Treat slashes as paired delimiters; useful for finding regexps.
+  (modify-syntax-entry ?/ "$" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
