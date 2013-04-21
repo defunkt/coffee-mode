@@ -289,7 +289,8 @@ file.
 If there are compilation errors, point is moved to the first
 (see `coffee-compile-jump-to-error')."
   (interactive)
-  (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
+  (let* ((quoted-file-name (shell-quote-argument (buffer-file-name)))
+         (compiler-output (shell-command-to-string (coffee-command-compile quoted-file-name))))
     (if (string= compiler-output "")
         (let ((file-name (coffee-compiled-file-name)))
           (message "Compiled and saved %s" file-name)
