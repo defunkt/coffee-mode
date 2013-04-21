@@ -923,6 +923,10 @@ END lie."
   ;; imenu
   (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
 
+  ;; Don't let electric-indent-mode break coffee-mode.
+  (set (make-local-variable 'electric-indent-functions)
+       (list (lambda (arg) 'no-indent)))
+
   ;; no tabs
   (setq indent-tabs-mode nil))
 
