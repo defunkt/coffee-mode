@@ -254,7 +254,12 @@ with CoffeeScript."
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
             "env"
-            nil (append (list "NODE_NO_READLINE=1" coffee-command) coffee-args-repl))))
+            nil (append (list "NODE_NO_READLINE=1" coffee-command) coffee-args-repl)))
+
+    ;; Workaround: https://github.com/defunkt/coffee-mode/issues/30
+    (set (make-local-variable 'comint-preoutput-filter-functions)
+         (cons (lambda (string)
+                 (replace-regexp-in-string "\x1b\\[.[GJK]" "" string)) nil)))
 
   (pop-to-buffer coffee-repl-buffer))
 
