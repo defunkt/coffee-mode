@@ -158,7 +158,10 @@
   :group 'coffee)
 
 (defcustom coffee-js-directory ""
-  "The directory for compiled JavaScript files output"
+  "The directory for compiled JavaScript files output. This can
+be an absolute path starting with a `/`, or it can be path
+relative to the directory containing the coffeescript sources to
+be compiled."
   :type 'string
   :group 'coffee)
 
@@ -267,9 +270,11 @@ with CoffeeScript."
   (let ((working-on-file (expand-file-name (or filename (buffer-file-name)))))
     (unless (string= coffee-js-directory "")
       (setq working-on-file
-            (expand-file-name (concat (file-name-directory working-on-file)
-                                      coffee-js-directory
-                                      (file-name-nondirectory working-on-file)))))
+            (expand-file-name
+             (concat (if (not (string-match "^/" coffee-js-directory))
+                         (concat (file-name-directory working-on-file) "/"))
+                     coffee-js-directory "/"
+                     (file-name-nondirectory working-on-file)))))
     ;; Returns the name of the JavaScript file compiled from a CoffeeScript file.
     ;; If FILENAME is omitted, the current buffer's file name is used.
     (concat (file-name-sans-extension working-on-file) ".js")))
@@ -482,14 +487,18 @@ For details, see `comment-dwim'."
 
 (defun coffee-command-compile (file-name)
   "Run `coffee-command' to compile FILE."
-  (let ((full-file-name
-         (expand-file-name file-name))
-        (output-directory
-         (concat " -o " (file-name-directory (expand-file-name file-name))
-                 coffee-js-directory)))
-    (mapconcat 'identity (append (list coffee-command) coffee-args-compile
-                                 (list output-directory)
-                                 (list full-file-name)) " ")))
+  (let* ((full-file-name
+          (expand-file-name file-name))
+         (output-dir
+          (file-name-directory
+           (coffee-compiled-file-name full-file-name))))
+    (if (not (file-exists-p output-dir))
+        (make-directory output-dir t))
+    (mapconcat 'identity (append (list (shell-quote-argument coffee-command))
+                                 coffee-args-compile
+                                 (list "-o" (shell-quote-argument output-dir))
+                                 (list (shell-quote-argument full-file-name)))
+               " ")))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
