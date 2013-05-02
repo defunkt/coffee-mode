@@ -976,5 +976,7 @@ it on by default."
 (add-to-list 'auto-mode-alist '("\\.iced\\'" . coffee-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile\\'" . coffee-mode))
+;;;###autoload
+(add-to-list 'interpreter-mode-alist '("coffee" . coffee-mode))
 
 ;;; coffee-mode.el ends here
