@@ -945,6 +945,63 @@ END lie."
   (setq indent-tabs-mode nil))
 
 ;;
+;; Litcoffee major mode definition.
+;;
+
+(defun litcoffee-block-delimiter (match start end)
+  (goto-char match)
+  (beginning-of-line)
+  (if (< (point) start)
+      (goto-char start))
+  (add-text-properties (point) (1+ (point)) `(syntax-table (11 . nil)))
+  (end-of-line)
+  (if (<= (point) end)
+      (add-text-properties (1- (point)) (point) `(syntax-table (12 . nil)))
+    (goto-char end)))
+
+
+; Mark everything with a non-space in the first column.
+
+(defun litcoffee-propertize (start end)
+  ;; return if we don't have anything to parse
+  (unless (>= start end)
+    (save-excursion
+      (progn
+        (goto-char start)
+        (let ((match (re-search-forward
+                      "\n[^ \n\t]+[^\n]*" end t)))
+          (if match
+              (progn
+                (litcoffee-block-delimiter match start end)
+                (litcoffee-propertize (point) end))))))))
+
+
+(defun litcoffee-propertize-function (start end)
+  (goto-char start)
+  (if (nth 4 (syntax-ppss))
+    (progn ; We are in a comment.  Try to end it.
+      (end-of-line)
+      (if (<= (point) end)
+	  (progn
+	    (add-text-properties (1- (point)) (point) `(syntax-table (12 . nil)))
+	    (litcoffee-propertize (point) end))))
+    (progn
+      ; Do we need a comment starting right here?
+      (if (and (bolp) (not (eq (char-after) ?\ )))
+	  (progn ; Yup!
+	    (litcoffee-block-delimiter (point) start end)
+	    (litcoffee-propertize (point) end))
+	(litcoffee-propertize start end)))))
+
+;;;###autoload
+(define-derived-mode litcoffee-mode coffee-mode "LitCoffee"
+  "Major mode for editing Literate CoffeeScript."
+
+  (set (make-local-variable 'syntax-propertize-function) #'litcoffee-propertize-function)
+
+)
+
+;;
 ;; Compile-on-Save minor mode
 ;;
 
@@ -972,6 +1029,8 @@ it on by default."
 ;; Run coffee-mode for files ending in .coffee.
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.coffee\\'" . coffee-mode))
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.litcoffee\\'" . litcoffee-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.iced\\'" . coffee-mode))
 ;;;###autoload
