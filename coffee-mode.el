@@ -969,7 +969,7 @@ END lie."
       (progn
         (goto-char start)
         (let ((match (re-search-forward
-                      "\n[^ \n\t]+[^\n]*" end t)))
+                      "\n\\([[:space:]]\\{0,3\\}\\|\t\\)[^ \n\t][^\n]*" end t)))
           (if match
               (progn
                 (litcoffee-block-delimiter match start end)
