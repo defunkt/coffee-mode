@@ -232,6 +232,11 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
+;;
+;; Global variables
+;;
+(defvar coffee-is-literate nil)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -889,13 +894,13 @@ END lie."
   (progn
     (set-text-properties begin end nil)
     (add-text-properties begin (+ begin 1) `(syntax-table (14 . nil)))
-    (add-text-properties (- end 1) end `(syntax-table (14 . nil)))
-    ))
+    (add-text-properties (- end 1) end `(syntax-table (14 . nil)))))
 
-(defun coffee-block-comment-regex ()
-  "^[[:space:]]*###\\([[:space:]]+.*\\)?$")
 
-(defun coffee-propertize-block-comments (start end)
+(defun coffee-propertize-block-comments (begin-regex
+					 end-regex
+					 end-offset
+					 start end)
   ;; return if we don't have anything to parse
   (unless (>= start end)
       (save-excursion
@@ -903,20 +908,39 @@ END lie."
         (goto-char start)
         (let (comment-begin comment-end)
 	  (setq comment-begin
-		(if (re-search-forward (coffee-block-comment-regex) end t)
+		(if (re-search-forward begin-regex end t)
 		    (match-beginning 0)))
 	  (setq comment-end
 		(if comment-begin
-		    (if (re-search-forward (coffee-block-comment-regex) end t)
+		    (if (re-search-forward end-regex end t)
 			(match-end 0))))
           (if (and comment-begin comment-end)
               (progn
-                (coffee-block-comment-delimiter comment-begin comment-end)
-                (coffee-propertize-block-comments comment-end end))))))))
+                (coffee-block-comment-delimiter comment-begin
+						(+ comment-end end-offset))
+                (coffee-propertize-block-comments begin-regex end-regex
+						  end-offset
+						  comment-end end))))))))
+
+(defun coffee-block-comment-regex ()
+  "[^#]###\\([[:space:]]+.*\\)?$")
+(defun coffee-literate-begin-regex ()
+  "^ ? ? ?[^ ]")
+(defun coffee-literate-end-regex ()
+  "^    ")
 
 (defun coffee-propertize-function (start end)
-  ;; return if we don't have anything to parse
-  (coffee-propertize-block-comments 0 end))
+  ;; return if we don't have anything to parsse
+  (save-restriction
+    (widen)
+    (coffee-propertize-block-comments (coffee-block-comment-regex)
+				      (coffee-block-comment-regex)
+				      0 0 end)
+    (if coffee-is-literate
+	(coffee-propertize-block-comments (coffee-literate-begin-regex)
+					  (coffee-literate-end-regex)
+					  -1 0 end))
+    ))
 
 ;; For compatibility with Emacs < 24, derive conditionally
 (defalias 'coffee-parent-mode
@@ -969,6 +993,12 @@ END lie."
   ;; no tabs
   (setq indent-tabs-mode nil))
 
+
+;;;###autoload
+(define-derived-mode litcoffee-mode coffee-mode "LitCoffee"
+  (set (make-local-variable 'coffee-is-literate) coffee-tab-width))
+
+
 ;;
 ;; Compile-on-Save minor mode
 ;;
@@ -995,6 +1025,10 @@ it on by default."
 ;;
 
 ;; Run coffee-mode for files ending in .coffee.
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.litcoffee\\'" . litcoffee-mode))
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.coffee.md\\'" . litcoffee-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.coffee\\'" . coffee-mode))
 ;;;###autoload
