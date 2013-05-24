@@ -878,20 +878,39 @@ END lie."
 ;;     ###
 ;; examples of non-block comments:
 ;;   #### foobar
-(defun coffee-propertize-function (start end)
+
+(defun coffee-block-comment-delimiter (begin end)
+  (progn
+    (set-text-properties begin end nil)
+    (add-text-properties begin (+ begin 1) `(syntax-table (14 . nil)))
+    (add-text-properties (- end 1) end `(syntax-table (14 . nil)))
+    ))
+
+(defun coffee-block-comment-regex ()
+  "^[[:space:]]*###\\([[:space:]]+.*\\)?$")
+
+(defun coffee-propertize-block-comments (start end)
   ;; return if we don't have anything to parse
   (unless (>= start end)
-    (save-excursion
+      (save-excursion
       (progn
         (goto-char start)
-        (let ((match (re-search-forward
-                      "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
-          (if match
+        (let (comment-begin comment-end)
+	  (setq comment-begin
+		(if (re-search-forward (coffee-block-comment-regex) end t)
+		    (match-beginning 0)))
+	  (setq comment-end
+		(if comment-begin
+		    (if (re-search-forward (coffee-block-comment-regex) end t)
+			(match-end 0))))
+          (if (and comment-begin comment-end)
               (progn
-                (coffee-block-comment-delimiter match)
-                (goto-char match)
-                (forward-line)
-                (coffee-propertize-function (point) end))))))))
+                (coffee-block-comment-delimiter comment-begin comment-end)
+                (coffee-propertize-block-comments comment-end end))))))))
+
+(defun coffee-propertize-function (start end)
+  ;; return if we don't have anything to parse
+  (coffee-propertize-block-comments 0 end))
 
 ;; For compatibility with Emacs < 24, derive conditionally
 (defalias 'coffee-parent-mode
