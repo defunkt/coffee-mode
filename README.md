@@ -1,7 +1,7 @@
 CoffeeScript Major Mode
 =======================
 
-An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
+An Emacs major mode for [CoffeeScript][cs], [IcedCoffeeScript][ics] and [Literate CoffeeScript][csl].
 
 Provides syntax highlighting, indentation support, imenu support,
 a menu bar, and a few cute commands.
@@ -44,6 +44,7 @@ Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 
 [cs]: http://jashkenas.github.com/coffee-script/
 [ics]: http://maxtaco.github.com/coffee-script/
+[csl]: http://maxtaco.github.com/coffee-script/#literate
 [tm]: http://github.com/defunkt/textmate.el
 [im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
 [elpa]: http://elpa.gnu.org/
