@@ -860,7 +860,7 @@ END lie."
   (progn
     (goto-char match)
     (beginning-of-line)
-    (add-text-properties (point) (+ (point) 1) `(syntax-table (14 . nil)))))
+    (add-text-properties (point) (+ (point) 1) `(coffee-mode-syntax-table (14 . nil)))))
 
 ;; support coffescript block comments
 ;; examples:
