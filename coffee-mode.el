@@ -421,7 +421,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular expressions
-(defvar coffee-regexp-regexp "\\s$.*\\s$")
+(defvar coffee-regexp-regexp "\\s$\\(.*\\)\\s$")
 
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
@@ -856,46 +856,13 @@ END lie."
 ;; Define Major Mode
 ;;
 
-(defun coffee-block-comment-delimiter (match)
-  (progn
-    (goto-char match)
-    (beginning-of-line)
-    (add-text-properties (point) (+ (point) 1) `(coffee-mode-syntax-table (14 . nil)))))
-
-;; support coffescript block comments
-;; examples:
-;;   at indent level 0
-;;   ###
-;;        foobar
-;;   ###
-;;   at indent level 0 with text following it
-;;   ### foobar
-;;     moretext
-;;   ###
-;;   at indent level > 0
-;;     ###
-;;       foobar
-;;     ###
-;; examples of non-block comments:
-;;   #### foobar
-(defun coffee-propertize-function (start end)
-  ;; return if we don't have anything to parse
-  (unless (>= start end)
-    (save-excursion
-      (progn
-        (goto-char start)
-        (let ((match (re-search-forward
-                      "^[[:space:]]*###\\([[:space:]]+.*\\)?$" end t)))
-          (if match
-              (progn
-                (coffee-block-comment-delimiter match)
-                (goto-char match)
-                (forward-line)
-                (coffee-propertize-function (point) end))))))))
-
 ;; For compatibility with Emacs < 24, derive conditionally
 (defalias 'coffee-parent-mode
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
+
+(defvar coffee-propertize-via-font-lock
+  `((,coffee-regexp-regexp (1 (2 . nil)))
+    ("^[[:space:]]*###\\([[:space:]]+.*\\)?$" (0 (14 . nil)))))
 
 ;;;###autoload
 (define-derived-mode coffee-mode coffee-parent-mode "Coffee"
@@ -932,7 +899,7 @@ END lie."
   ;; indentation
   (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
-  (set (make-local-variable 'syntax-propertize-function) #'coffee-propertize-function)
+  (set (make-local-variable 'syntax-propertize-function) (syntax-propertize-via-font-lock coffee-propertize-via-font-lock))
 
   ;; imenu
   (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
