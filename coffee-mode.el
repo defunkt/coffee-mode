@@ -324,10 +324,10 @@ called `coffee-compiled-buffer-name'."
       (with-current-buffer buffer
         (erase-buffer))))
 
-  (apply (apply-partially 'call-process-region start end coffee-command nil
-                          (get-buffer-create coffee-compiled-buffer-name)
-                          nil)
-         (append coffee-args-compile (list "-s" "-p")))
+  (let ((command (format "%s %s -s -p" coffee-command
+                         (mapconcat 'identity coffee-args-compile " "))))
+    (shell-command-on-region start end command
+                             (get-buffer-create coffee-compiled-buffer-name)))
 
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
     (display-buffer buffer)
