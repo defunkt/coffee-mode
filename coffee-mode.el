@@ -992,6 +992,12 @@ END lie."
   (set (make-local-variable 'electric-indent-functions)
        (list (lambda (arg) 'no-indent)))
 
+  ;; support for hs-minor-mode
+  (add-to-list 'hs-special-modes-alist
+             `(coffee-mode "\\s-*\\(?:class\\|.+[-=]>$\\)" nil "#"
+                           ,(lambda (arg)
+                              (coffee-nav-end-of-block)) nil))
+
   ;; no tabs
   (setq indent-tabs-mode nil))
 
