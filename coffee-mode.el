@@ -852,6 +852,57 @@ END lie."
                   (coffee-indent-shift-amount start end 'right))))
     (indent-rigidly start end amount)))
 
+;; Define navigation functions
+
+(defun coffee-chomp (str)
+  "Chomp leading and tailing whitespace from STR."
+  (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
+                       str)
+    (setq str (replace-match "" t t str)))
+  str)
+
+(defun coffee-nav-end-of-block ()
+  "Move point to the end of the block."
+  (interactive)
+  (let ((beginning-of-block-indentation)
+        (current-line))
+    (back-to-indentation)
+    (while (or
+            (coffee-line-is-comment)
+            (coffee-nav-current-line-empty-p))
+      (forward-line))
+    (setq beginning-of-block-indentation (current-indentation))
+
+    (while (and (forward-line 1)
+                (not (eobp))
+                (or (> (current-indentation) beginning-of-block-indentation)
+                    (coffee-line-is-comment)
+                    (coffee-nav-current-line-empty-p))))
+
+    (forward-line -1)
+    (search-backward-regexp ".")
+    (end-of-line)))
+
+(defun coffee-nav-beginning-of-block ()
+  "Move point to the beginning of block"
+  (interactive)
+  (let ((last-indentation)
+        (current-line))
+
+    (back-to-indentation)
+    (setq last-indentation (current-indentation))
+
+    (while (and (forward-line -1)
+                (not (bobp))
+                (or (>= (current-indentation) last-indentation)
+                    (coffee-line-is-comment)
+                    (coffee-nav-current-line-empty-p))))
+    (back-to-indentation)))
+
+(defun coffee-nav-current-line-empty-p ()
+  "Check if current line is empty, ignoring whitespace."
+  (string= "" (coffee-chomp (thing-at-point 'line))))
+
 ;;
 ;; Define Major Mode
 ;;
