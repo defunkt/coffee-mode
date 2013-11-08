@@ -894,55 +894,55 @@ END lie."
                 (coffee-propertize-function (point) end))))))))
 
 ;; For compatibility with Emacs < 24, derive conditionally
-(defalias 'coffee-parent-mode
-  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
 ;;;###autoload
-(define-derived-mode coffee-mode coffee-parent-mode "Coffee"
-  "Major mode for editing CoffeeScript."
+(eval
+ `(define-derived-mode coffee-mode ,(if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode)
+ "Coffee"
+   "Major mode for editing CoffeeScript."
 
-  ;; code for syntax highlighting
-  (setq font-lock-defaults '((coffee-font-lock-keywords)))
+   ;; code for syntax highlighting
+   (setq font-lock-defaults '((coffee-font-lock-keywords)))
 
-  ;; treat "_" as part of a word
-  (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
+   ;; treat "_" as part of a word
+   (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
 
-  ;; perl style comment: "# ..."
-  (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
-  (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
+   ;; perl style comment: "# ..."
+   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
+   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
 
-  ;; Treat slashes as paired delimiters; useful for finding regexps.
-  (modify-syntax-entry ?/ "$" coffee-mode-syntax-table)
+   ;; Treat slashes as paired delimiters; useful for finding regexps.
+   (modify-syntax-entry ?/ "$" coffee-mode-syntax-table)
 
-  (set (make-local-variable 'comment-start) "#")
+   (set (make-local-variable 'comment-start) "#")
 
-  ;; single quote strings
-  (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
+   ;; single quote strings
+   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
-  ;; (setq font-lock-syntactic-keywords
-  ;;       ;; Make outer chars of matching triple-quote sequences into generic
-  ;;       ;; string delimiters.
-  ;;       ;; First avoid a sequence preceded by an odd number of backslashes.
-  ;;       `((,(concat "\\(?:^\\|[^\\]\\(?:\\\\.\\)*\\)" ;Prefix.
-  ;;                   "\\(?:\\('\\)\\('\\)\\('\\)\\|\\(?1:\"\\)\\(?2:\"\\)\\(?3:\"\\)\\)")
-  ;;          (1 (coffee-quote-syntax 1) nil lax)
-  ;;          (2 (coffee-quote-syntax 2))
-  ;;          (3 (coffee-quote-syntax 3)))))
+   ;; (setq font-lock-syntactic-keywords
+   ;;       ;; Make outer chars of matching triple-quote sequences into generic
+   ;;       ;; string delimiters.
+   ;;       ;; First avoid a sequence preceded by an odd number of backslashes.
+   ;;       `((,(concat "\\(?:^\\|[^\\]\\(?:\\\\.\\)*\\)" ;Prefix.
+   ;;                   "\\(?:\\('\\)\\('\\)\\('\\)\\|\\(?1:\"\\)\\(?2:\"\\)\\(?3:\"\\)\\)")
+   ;;          (1 (coffee-quote-syntax 1) nil lax)
+   ;;          (2 (coffee-quote-syntax 2))
+   ;;          (3 (coffee-quote-syntax 3)))))
 
-  ;; indentation
-  (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
-  (set (make-local-variable 'tab-width) coffee-tab-width)
-  (set (make-local-variable 'syntax-propertize-function) #'coffee-propertize-function)
+   ;; indentation
+   (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
+   (set (make-local-variable 'tab-width) coffee-tab-width)
+   (set (make-local-variable 'syntax-propertize-function) #'coffee-propertize-function)
 
-  ;; imenu
-  (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
+   ;; imenu
+   (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
 
-  ;; Don't let electric-indent-mode break coffee-mode.
-  (set (make-local-variable 'electric-indent-functions)
-       (list (lambda (arg) 'no-indent)))
+   ;; Don't let electric-indent-mode break coffee-mode.
+   (set (make-local-variable 'electric-indent-functions)
+		(list (lambda (arg) 'no-indent)))
 
-  ;; no tabs
-  (setq indent-tabs-mode nil))
+   ;; no tabs
+   (setq indent-tabs-mode nil)))
 
 ;;
 ;; Compile-on-Save minor mode
