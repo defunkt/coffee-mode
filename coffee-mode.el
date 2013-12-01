@@ -294,10 +294,14 @@ file.
 If there are compilation errors, point is moved to the first
 (see `coffee-compile-jump-to-error')."
   (interactive)
-  (let ((compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name)))))
+  (let* ((basename (file-name-sans-extension (buffer-file-name)))
+         (output-file (if (string= (substring basename -3) ".js")
+                          basename
+                        (concat basename ".js")))
+         (compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name) output-file))))
     (if (string= compiler-output "")
         (let ((file-name (coffee-compiled-file-name)))
-          (message "Compiled and saved %s" file-name)
+          (message "Compiled and saved %s" output-file)
           (coffee-revert-buffer-compiled-file file-name))
       (let* ((msg (car (split-string compiler-output "[\n\r]+")))
              (line (and (string-match "on line \\([0-9]+\\)" msg)
@@ -485,8 +489,9 @@ For details, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
-(defun coffee-command-compile (file-name)
-  "Run `coffee-command' to compile FILE."
+(defun coffee-command-compile (file-name &optional output-file-name)
+  "Run `coffee-command' to compile FILE-NAME to file with default
+.js output file, or optionally to OUTPUT-FILE-NAME."
   (let* ((full-file-name
           (expand-file-name file-name))
          (output-dir
@@ -494,11 +499,14 @@ For details, see `comment-dwim'."
            (coffee-compiled-file-name full-file-name))))
     (if (not (file-exists-p output-dir))
         (make-directory output-dir t))
-    (mapconcat 'identity (append (list (shell-quote-argument coffee-command))
-                                 coffee-args-compile
-                                 (list "-o" (shell-quote-argument output-dir))
-                                 (list (shell-quote-argument full-file-name)))
-               " ")))
+    (let ((compile-args (if output-file-name
+                            (append coffee-args-compile (list "-j" output-file-name))
+                          coffee-args-compile)))
+      (mapconcat 'identity (append (list (shell-quote-argument coffee-command))
+                                   compile-args
+                                   (list "-o" (shell-quote-argument output-dir))
+                                   (list (shell-quote-argument full-file-name)))
+                 " "))))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
