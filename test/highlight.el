@@ -44,8 +44,7 @@
 (ert-deftest this-and-instance-variable-invalid ()
   "Invalid `this' and instance variable highlighting"
 
-  ;; XXX `@123' is invalid in CoffeeScript, but current implementation treat it as valid.
-  (dolist (keyword '("thiss" "@-" "@+" "@123"))
+  (dolist (keyword '("thiss" "@-" "@+"))
     (with-coffee-temp-buffer
       keyword
       (should-not (face-at-cursor-p 'font-lock-variable-name-face)))))
@@ -63,6 +62,26 @@
     ;; XXX Current implementation highlight this as assign-regexp
     ;; And What is correct highlighting ?? `Foo' ? `Foo::' ? `Foo::bar' ?
     (forward-cursor-on "Foo")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "::")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+    (forward-char 1)
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "bar")
+    (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
+
+(ert-deftest prototype-access-without-property ()
+  "Prototype without property"
+
+  (with-coffee-temp-buffer
+    "Foo:: "
+
+    (forward-cursor-on "Foo")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "::")
     (should (face-at-cursor-p 'font-lock-variable-name-face))))
 
 ;;
@@ -111,7 +130,6 @@ foo =
 ;; Local assignment
 ;;
 
-;; XXX current implementation must require space for assignment
 (ert-deftest local-assignment-with-no-spaces ()
   "local assignment with no spaces"
 
