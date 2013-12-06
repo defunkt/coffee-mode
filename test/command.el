@@ -303,4 +303,30 @@ bar
         (forward-cursor-on "bar")
         (should (= (current-column) 5))))))
 
+;;
+;; fill paragraph
+;;
+
+(ert-deftest fill-paragraph-with-block-comment ()
+  "Block comment should be preserved if `fill-paragraph' is applied to
+block comment paragraph"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+func = ->
+  ###
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+  Donec ut tellus et felis vulputate tincidunt.
+  ###
+"
+      (forward-cursor-on "Lorem")
+      (fill-paragraph)
+
+      (goto-char (point-min))
+      (forward-cursor-on "###")
+      (let ((comment-start-line (buffer-substring-no-properties
+                                 (point) (line-end-position))))
+        (should (string-match-p "###$" comment-start-line))))))
+
 ;;; command.el end here
