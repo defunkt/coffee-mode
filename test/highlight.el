@@ -418,6 +418,27 @@ after_comment
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-constant-face))))
 
+(ert-deftest regular-expression-with-slash-in-same-line ()
+  "Regular expression with slash in same line"
+  (with-coffee-temp-buffer
+    "bar = replace /foo/ig, \"<b>bar</b>\""
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-constant-face))
+
+    (forward-cursor-on "bar")
+    (should-not (face-at-cursor-p 'font-lock-constant-face))
+    (should (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest regular-expression-with-escape-slash ()
+  "Regular expression with escape slash"
+  (with-coffee-temp-buffer
+    "/foo \\/ bar/"
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-constant-face))
+
+    (forward-cursor-on "bar")
+    (should (face-at-cursor-p 'font-lock-constant-face))))
+
 ;;
 ;; Block Strings(#159)
 ;;
