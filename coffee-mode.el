@@ -425,7 +425,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular expressions
-(defvar coffee-regexp-regexp "\\s$\\(.*\\)\\s$")
+(defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$")
 
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
