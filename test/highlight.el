@@ -421,13 +421,19 @@ after_comment
 (ert-deftest regular-expression-with-slash-in-same-line ()
   "Regular expression with slash in same line"
   (with-coffee-temp-buffer
-    "bar = replace /foo/ig, \"<b>bar</b>\""
+    "
+bar = replace /foo/ig, \"<b>bar</b>\"
+baz = \"</span>\""
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-constant-face))
 
     (forward-cursor-on "bar")
     (should-not (face-at-cursor-p 'font-lock-constant-face))
-    (should (face-at-cursor-p 'font-lock-string-face))))
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    ;; check for syntax-propertize-function
+    (forward-cursor-on "baz")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
 
 (ert-deftest regular-expression-with-escape-slash ()
   "Regular expression with escape slash"
