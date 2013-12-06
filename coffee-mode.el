@@ -861,6 +861,28 @@ END lie."
     (indent-rigidly start end amount)))
 
 ;;
+;; Fill
+;;
+
+(defun coffee-fill-forward-paragraph-function (&optional count)
+  "`fill-forward-paragraph-function' which correctly handles block
+comments such as the following:
+
+  class Klass
+    method: ->
+      ###
+      This is a method doc comment that spans multiple lines.
+      If `fill-paragraph' is applied to this paragraph, the comment
+      should preserve its format, with the delimiters on separate lines.
+      ###
+      ..."
+  (let ((ret (forward-paragraph count)))
+    (when (and (= count -1)
+               (looking-at "[[:space:]]*###[[:space:]]*$"))
+      (forward-line))
+    ret))
+
+;;
 ;; Define Major Mode
 ;;
 
@@ -908,6 +930,9 @@ END lie."
   (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
   (set (make-local-variable 'syntax-propertize-function) (syntax-propertize-via-font-lock coffee-propertize-via-font-lock))
+
+  ;; fill
+  (set (make-local-variable 'fill-forward-paragraph-function) #'coffee-fill-forward-paragraph-function)
 
   ;; imenu
   (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
