@@ -870,7 +870,8 @@ END lie."
 
 (defvar coffee-propertize-via-font-lock
   `((,coffee-regexp-regexp (1 (2 . nil)))
-    ("^[[:space:]]*###\\([[:space:]]+.*\\)?$" (0 (14 . nil)))))
+    ("^[[:space:]]*###\\([[:space:]]+.*\\)?$" (0 (14 . nil)))
+    ("\\(\"\"\"\\)\\(?:.\\|[\r\n]\\)*?\\(\"\"\"\\)" (1 "|") (2 "|"))))
 
 ;;;###autoload
 (define-derived-mode coffee-mode coffee-parent-mode "Coffee"

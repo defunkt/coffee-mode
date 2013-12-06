@@ -402,4 +402,110 @@ after_comment
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-constant-face))))
 
+;;
+;; Block Strings(#159)
+;;
+
+(ert-deftest block-strings-single-line ()
+  "Block Strings in single line"
+  (with-coffee-temp-buffer
+    " \"\"\"<a class=\"btn btn-mini\" href=\"#{data}\"<i class=\"icon-search\"></i></a>\"\"\" block-strings-end"
+    (forward-cursor-on "<a")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "btn")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "<i")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "icon-search")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest block-strings-multiple-line ()
+  "Block Strings in multiple lines"
+  (with-coffee-temp-buffer
+    "
+html = \"\"\"
+       <strong>
+         cup of #{data}
+       </strong>
+       \"\"\"
+block-strings-end
+"
+    (forward-cursor-on "html")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "<strong>")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "</strong>")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+    (should (face-at-cursor-p nil))))
+
+(ert-deftest block-strings-multiple-line-with-double-quote ()
+  "Block Strings in multiple lines with double quote"
+  (with-coffee-temp-buffer
+    " \"\"\"
+      <a class=\"btn btn-mini\" href=\"#{data}\"<i class=\"icon-search\"></i></a>
+      \"\"\"
+ block-strings-end"
+    (forward-cursor-on "<a")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "btn")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "<i")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "icon-search")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest block-strings-double-blocks ()
+  "Highligiting double Block Strings"
+  (with-coffee-temp-buffer
+    "
+a  = \"\"\"
+     alice
+     \"\"\"
+
+b = bob
+
+c  = \"\"\"
+     carol
+     \"\"\"
+block-strings-end
+"
+    (forward-cursor-on "alice")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "b =")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "carol")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+    (should (face-at-cursor-p nil))))
+
 ;;; highlight.el end here
