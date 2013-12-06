@@ -100,7 +100,6 @@ foo =
     (forward-cursor-on "key")
     (should (face-at-cursor-p 'font-lock-type-face))
 
-    ;; XXX Should `colon' be highlighted ? (now highlighted)
     (forward-cursor-on ":")
     (should (face-at-cursor-p 'font-lock-type-face))
 
@@ -119,7 +118,24 @@ foo =
     (forward-cursor-on "key")
     (should (face-at-cursor-p 'font-lock-type-face))
 
-    ;; XXX Same as above
+    (forward-cursor-on ":")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "value")
+    (should-not (face-at-cursor-p 'font-lock-type-face))))
+
+(ert-deftest assignment-with-dollar ()
+  "assignment with `$' sign"
+
+  (with-coffee-temp-buffer
+    "
+foo =
+  $key: value
+"
+
+    (forward-cursor-on "$key")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
     (forward-cursor-on ":")
     (should (face-at-cursor-p 'font-lock-type-face))
 
