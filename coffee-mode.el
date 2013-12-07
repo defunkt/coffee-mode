@@ -407,7 +407,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-this-regexp "\\(?:@\\w+\\|\\<this\\)\\>")
 
 ;; Prototype::access
-(defvar coffee-prototype-regexp "\\(\\(\\w\\|\\.\\| \\|$\\)+?\\)::\\(\\(\\w\\|\\.\\| \\|$\\)+?\\):")
+(defvar coffee-prototype-regexp "[[:word:].$]+?::")
 
 ;; Assignment
 (defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\s*\\):")
@@ -469,7 +469,7 @@ called `coffee-compiled-buffer-name'."
   ;; "state_entry" would be highlighted.
   `((,coffee-regexp-regexp . font-lock-constant-face)
     (,coffee-this-regexp . font-lock-variable-name-face)
-    (,coffee-prototype-regexp . font-lock-variable-name-face)
+    (,coffee-prototype-regexp . font-lock-type-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     (,coffee-boolean-regexp . font-lock-constant-face)

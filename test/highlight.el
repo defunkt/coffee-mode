@@ -59,18 +59,49 @@
   (with-coffee-temp-buffer
     " Foo::bar "
 
-    ;; XXX Current implementation highlight this as assign-regexp
-    ;; And What is correct highlighting ?? `Foo' ? `Foo::' ? `Foo::bar' ?
     (forward-cursor-on "Foo")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))
+    (should (face-at-cursor-p 'font-lock-type-face))
 
     (forward-cursor-on "::")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))
+    (should (face-at-cursor-p 'font-lock-type-face))
     (forward-char 1)
-    (should (face-at-cursor-p 'font-lock-variable-name-face))
+    (should (face-at-cursor-p 'font-lock-type-face))
 
     (forward-cursor-on "bar")
     (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
+
+(ert-deftest prototype-access-nested-access ()
+  "Prototype access"
+
+  (with-coffee-temp-buffer
+    " Foo::Bar::baz "
+
+    (forward-cursor-on "Foo")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "::")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "Bar")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "baz")
+    (should-not (face-at-cursor-p 'font-lock-type-face))))
+
+(ert-deftest prototype-access-with-dollar ()
+  "Prototype access"
+
+  (with-coffee-temp-buffer
+    " $Foo::bar "
+
+    (forward-cursor-on "$Foo")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "::")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "bar")
+    (should-not (face-at-cursor-p 'font-lock-type-face))))
 
 (ert-deftest prototype-access-without-property ()
   "Prototype without property"
@@ -79,10 +110,10 @@
     "Foo:: "
 
     (forward-cursor-on "Foo")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))
+    (should (face-at-cursor-p 'font-lock-type-face))
 
     (forward-cursor-on "::")
-    (should (face-at-cursor-p 'font-lock-variable-name-face))))
+    (should (face-at-cursor-p 'font-lock-type-face))))
 
 ;;
 ;; Assignment
