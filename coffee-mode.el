@@ -891,7 +891,7 @@ comments such as the following:
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
 (defvar coffee-propertize-via-font-lock
-  `((,coffee-regexp-regexp (1 (2 . nil)))
+  `((,coffee-regexp-regexp (1 (string-to-syntax "_")))
     ("^[[:space:]]*###\\([[:space:]]+.*\\)?$" (0 (14 . nil)))))
 
 ;;;###autoload
