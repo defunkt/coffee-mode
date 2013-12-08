@@ -432,21 +432,21 @@ called `coffee-compiled-buffer-name'."
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
-      '("if" "else" "new" "return" "try" "catch"
-        "finally" "throw" "break" "continue" "for" "in" "while"
-        "delete" "instanceof" "typeof" "switch" "super" "extends"
-        "class" "until" "loop"))
+  '("if" "else" "new" "return" "try" "catch"
+    "finally" "throw" "break" "continue" "for" "in" "while"
+    "delete" "instanceof" "typeof" "switch" "super" "extends"
+    "class" "until" "loop"))
 
 ;; Reserved keywords either by JS or CS.
 (defvar coffee-js-reserved
-      '("case" "default" "do" "function" "var" "void" "with"
-        "const" "let" "debugger" "enum" "export" "import" "native"
-        "__extends" "__hasProp"))
+  '("case" "default" "do" "function" "var" "void" "with"
+    "const" "let" "debugger" "enum" "export" "import" "native"
+    "__extends" "__hasProp"))
 
 ;; CoffeeScript keywords.
 (defvar coffee-cs-keywords
-      '("then" "unless" "and" "or" "is" "own"
-        "isnt" "not" "of" "by" "when"))
+  '("then" "unless" "and" "or" "is" "own"
+    "isnt" "not" "of" "by" "when"))
 
 ;; Iced CoffeeScript keywords
 (defvar iced-coffee-cs-keywords
@@ -570,11 +570,11 @@ output in a compilation buffer."
     (while (re-search-forward
             (concat "^\\(\\s *\\)"
                     "\\("
-                      coffee-assign-regexp
-                      ".+?"
-                      coffee-lambda-regexp
+                    coffee-assign-regexp
+                    ".+?"
+                    coffee-lambda-regexp
                     "\\|"
-                      coffee-namespace-regexp
+                    coffee-namespace-regexp
                     "\\)")
             (point-max)
             t)
@@ -595,26 +595,26 @@ output in a compilation buffer."
       ;; assigned. `Please.print:` will be `Please.print`, `block:`
       ;; will be `block`, etc.
       (when (setq assign (match-string 3))
-          ;; The position of the match in the buffer.
-          (setq pos (match-beginning 3))
+        ;; The position of the match in the buffer.
+        (setq pos (match-beginning 3))
 
-          ;; The indent level of this match
-          (setq indent (length (match-string 1)))
+        ;; The indent level of this match
+        (setq indent (length (match-string 1)))
 
-          ;; If we're within the context of a namespace, add that to the
-          ;; front of the assign, e.g.
-          ;; constructor: => Policeman::constructor
-          (when (and ns-name (> indent ns-indent))
-            (setq assign (concat ns-name assign)))
+        ;; If we're within the context of a namespace, add that to the
+        ;; front of the assign, e.g.
+        ;; constructor: => Policeman::constructor
+        (when (and ns-name (> indent ns-indent))
+          (setq assign (concat ns-name assign)))
 
-          ;; Clear the namespace if we're no longer indented deeper
-          ;; than it.
-          (when (and ns-name (<= indent ns-indent))
-            (setq ns-name nil)
-            (setq ns-indent nil))
+        ;; Clear the namespace if we're no longer indented deeper
+        ;; than it.
+        (when (and ns-name (<= indent ns-indent))
+          (setq ns-name nil)
+          (setq ns-indent nil))
 
-          ;; Add this to the alist. Done.
-          (push (cons assign pos) index-alist)))
+        ;; Add this to the alist. Done.
+        (push (cons assign pos) index-alist)))
 
     ;; Return the alist.
     index-alist))
