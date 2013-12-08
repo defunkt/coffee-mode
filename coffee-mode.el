@@ -410,19 +410,19 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-prototype-regexp "[[:word:].$]+?::")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\s*\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\\s-*\\):")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(\\w\\|\\$\\)+\\)\\s-*=[^>]")
+(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(?:\\w\\|\\$\\)+\\)\\s-*=[^>]")
 
 ;; Lambda
-(defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
+(defvar coffee-lambda-regexp "\\((.+)\\)?\\s-*\\(->\\|=>\\)")
 
 ;; Namespaces
-(defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
+(defvar coffee-namespace-regexp "\\b\\(class\\s-+\\(\\S-+\\)\\)\\b")
 
 ;; Booleans
-(defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
+(defvar coffee-boolean-regexp "\\b\\(?:true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular expressions
 (defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$")
