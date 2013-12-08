@@ -948,20 +948,20 @@ comments such as the following:
 ;; Compile-on-Save minor mode
 ;;
 
-(defvar coffee-cos-mode-line " CoS")
-(make-variable-buffer-local 'coffee-cos-mode-line)
+(defcustom coffee-cos-mode-line " CoS"
+  "Lighter of `coffee-cos-mode'"
+  :type 'string
+  :group 'coffee)
 
 (define-minor-mode coffee-cos-mode
   "Toggle compile-on-save for coffee-mode.
 
 Add `'(lambda () (coffee-cos-mode t))' to `coffee-mode-hook' to turn
 it on by default."
-  :group 'coffee-cos :lighter coffee-cos-mode-line
-  (cond
-   (coffee-cos-mode
-    (add-hook 'after-save-hook 'coffee-compile-file nil t))
-   (t
-    (remove-hook 'after-save-hook 'coffee-compile-file t))))
+  :group 'coffee :lighter coffee-cos-mode-line
+  (if coffee-cos-mode
+      (add-hook 'after-save-hook 'coffee-compile-file nil t)
+    (remove-hook 'after-save-hook 'coffee-compile-file t)))
 
 (provide 'coffee-mode)
 
