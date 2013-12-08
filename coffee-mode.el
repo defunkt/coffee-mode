@@ -410,19 +410,19 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-prototype-regexp "[[:word:].$]+?::")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\s*\\):")
+(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\\s-*\\):")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(\\w\\|\\$\\)+\\)\\s-*=[^>]")
+(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(?:\\w\\|\\$\\)+\\)\\s-*=[^>]")
 
 ;; Lambda
-(defvar coffee-lambda-regexp "\\((.+)\\)?\\s *\\(->\\|=>\\)")
+(defvar coffee-lambda-regexp "\\((.+)\\)?\\s-*\\(->\\|=>\\)")
 
 ;; Namespaces
-(defvar coffee-namespace-regexp "\\b\\(class\\s +\\(\\S +\\)\\)\\b")
+(defvar coffee-namespace-regexp "\\b\\(class\\s-+\\(\\S-+\\)\\)\\b")
 
 ;; Booleans
-(defvar coffee-boolean-regexp "\\b\\(true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
+(defvar coffee-boolean-regexp "\\b\\(?:true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular expressions
 (defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$")
@@ -432,21 +432,21 @@ called `coffee-compiled-buffer-name'."
 
 ;; JavaScript Keywords
 (defvar coffee-js-keywords
-      '("if" "else" "new" "return" "try" "catch"
-        "finally" "throw" "break" "continue" "for" "in" "while"
-        "delete" "instanceof" "typeof" "switch" "super" "extends"
-        "class" "until" "loop"))
+  '("if" "else" "new" "return" "try" "catch"
+    "finally" "throw" "break" "continue" "for" "in" "while"
+    "delete" "instanceof" "typeof" "switch" "super" "extends"
+    "class" "until" "loop"))
 
 ;; Reserved keywords either by JS or CS.
 (defvar coffee-js-reserved
-      '("case" "default" "do" "function" "var" "void" "with"
-        "const" "let" "debugger" "enum" "export" "import" "native"
-        "__extends" "__hasProp"))
+  '("case" "default" "do" "function" "var" "void" "with"
+    "const" "let" "debugger" "enum" "export" "import" "native"
+    "__extends" "__hasProp"))
 
 ;; CoffeeScript keywords.
 (defvar coffee-cs-keywords
-      '("then" "unless" "and" "or" "is" "own"
-        "isnt" "not" "of" "by" "when"))
+  '("then" "unless" "and" "or" "is" "own"
+    "isnt" "not" "of" "by" "when"))
 
 ;; Iced CoffeeScript keywords
 (defvar iced-coffee-cs-keywords
@@ -570,11 +570,11 @@ output in a compilation buffer."
     (while (re-search-forward
             (concat "^\\(\\s *\\)"
                     "\\("
-                      coffee-assign-regexp
-                      ".+?"
-                      coffee-lambda-regexp
+                    coffee-assign-regexp
+                    ".+?"
+                    coffee-lambda-regexp
                     "\\|"
-                      coffee-namespace-regexp
+                    coffee-namespace-regexp
                     "\\)")
             (point-max)
             t)
@@ -595,26 +595,26 @@ output in a compilation buffer."
       ;; assigned. `Please.print:` will be `Please.print`, `block:`
       ;; will be `block`, etc.
       (when (setq assign (match-string 3))
-          ;; The position of the match in the buffer.
-          (setq pos (match-beginning 3))
+        ;; The position of the match in the buffer.
+        (setq pos (match-beginning 3))
 
-          ;; The indent level of this match
-          (setq indent (length (match-string 1)))
+        ;; The indent level of this match
+        (setq indent (length (match-string 1)))
 
-          ;; If we're within the context of a namespace, add that to the
-          ;; front of the assign, e.g.
-          ;; constructor: => Policeman::constructor
-          (when (and ns-name (> indent ns-indent))
-            (setq assign (concat ns-name assign)))
+        ;; If we're within the context of a namespace, add that to the
+        ;; front of the assign, e.g.
+        ;; constructor: => Policeman::constructor
+        (when (and ns-name (> indent ns-indent))
+          (setq assign (concat ns-name assign)))
 
-          ;; Clear the namespace if we're no longer indented deeper
-          ;; than it.
-          (when (and ns-name (<= indent ns-indent))
-            (setq ns-name nil)
-            (setq ns-indent nil))
+        ;; Clear the namespace if we're no longer indented deeper
+        ;; than it.
+        (when (and ns-name (<= indent ns-indent))
+          (setq ns-name nil)
+          (setq ns-indent nil))
 
-          ;; Add this to the alist. Done.
-          (push (cons assign pos) index-alist)))
+        ;; Add this to the alist. Done.
+        (push (cons assign pos) index-alist)))
 
     ;; Return the alist.
     index-alist))
@@ -948,20 +948,20 @@ comments such as the following:
 ;; Compile-on-Save minor mode
 ;;
 
-(defvar coffee-cos-mode-line " CoS")
-(make-variable-buffer-local 'coffee-cos-mode-line)
+(defcustom coffee-cos-mode-line " CoS"
+  "Lighter of `coffee-cos-mode'"
+  :type 'string
+  :group 'coffee)
 
 (define-minor-mode coffee-cos-mode
   "Toggle compile-on-save for coffee-mode.
 
 Add `'(lambda () (coffee-cos-mode t))' to `coffee-mode-hook' to turn
 it on by default."
-  :group 'coffee-cos :lighter coffee-cos-mode-line
-  (cond
-   (coffee-cos-mode
-    (add-hook 'after-save-hook 'coffee-compile-file nil t))
-   (t
-    (remove-hook 'after-save-hook 'coffee-compile-file t))))
+  :group 'coffee :lighter coffee-cos-mode-line
+  (if coffee-cos-mode
+      (add-hook 'after-save-hook 'coffee-compile-file nil t)
+    (remove-hook 'after-save-hook 'coffee-compile-file t)))
 
 (provide 'coffee-mode)
 
