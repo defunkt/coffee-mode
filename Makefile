@@ -1,10 +1,10 @@
-.PHONY : test test-command test-highlight test-syntax
+.PHONY : test test-command test-imenu test-highlight test-syntax
 
 EMACS ?= emacs
 LOADPATH ?= -L . -L test
 
 test:
-	$(EMACS) -Q -batch $(LOADPATH) -l test/command.el \
+	$(EMACS) -Q -batch $(LOADPATH) -l test/command.el -l test/imenu.el \
 		-l test/highlight.el -l test/syntax.el \
 		-f ert-run-tests-batch-and-exit
 
@@ -16,3 +16,6 @@ test-syntax:
 
 test-command:
 	$(EMACS) -Q -batch $(LOADPATH) -l test/command.el -f ert-run-tests-batch-and-exit
+
+test-imenu:
+	$(EMACS) -Q -batch $(LOADPATH) -l test/imenu.el -f ert-run-tests-batch-and-exit
