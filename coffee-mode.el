@@ -132,6 +132,7 @@
 (require 'comint)
 (require 'easymenu)
 (require 'font-lock)
+(require 'rx)
 
 (eval-when-compile
   (require 'cl))
@@ -425,7 +426,8 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-boolean-regexp "\\b\\(?:true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular expressions
-(defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$")
+(eval-and-compile
+  (defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$"))
 
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
@@ -890,9 +892,67 @@ comments such as the following:
 (defalias 'coffee-parent-mode
   (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
 
-(defvar coffee-propertize-via-font-lock
-  `((,coffee-regexp-regexp (1 (string-to-syntax "_")))
-    ("^[[:space:]]*###\\([[:space:]]+.*\\)?$" (0 (14 . nil)))))
+;;
+;; Based on triple quote of python.el
+;;
+(eval-and-compile
+  (defconst coffee-block-strings-delimiter
+    (rx (and
+         ;; Match even number of backslashes.
+         (or (not (any ?\\ ?\' ?\"))
+             point
+             ;; Quotes might be preceded by a escaped quote.
+             (and (or (not (any ?\\)) point)
+                  ?\\
+                  (* ?\\ ?\\)
+                  (any ?\' ?\")))
+         (* ?\\ ?\\)
+         ;; Match single or triple quotes of any kind.
+         (group (or "'''" "\"\"\""))))))
+
+(defsubst coffee-syntax-count-quotes (quote-char start-point limit)
+  (let ((i 0))
+    (while (and (< i 3)
+                (< (+ start-point i) limit)
+                (eq (char-after (+ start-point i)) quote-char))
+      (incf i))
+    i))
+
+(defun coffee-syntax-block-strings-stringify ()
+  (let* ((ppss (prog2
+                   (backward-char 3)
+                   (syntax-ppss)
+                 (forward-char 3)))
+         (string-start (and (not (nth 4 ppss)) (nth 8 ppss)))
+         (quote-starting-pos (- (point) 3))
+         (quote-ending-pos (point))
+         (num-closing-quotes
+          (and string-start
+               (coffee-syntax-count-quotes
+                (char-before) string-start quote-starting-pos))))
+    (cond ((and string-start (= num-closing-quotes 0))
+           ;; This set of quotes doesn't match the string starting
+           ;; kind. Do nothing.
+           nil)
+          ((not string-start)
+           ;; This set of quotes delimit the start of a string.
+           (put-text-property quote-starting-pos (1+ quote-starting-pos)
+                              'syntax-table (string-to-syntax "|")))
+          ((= num-closing-quotes 3)
+           ;; This set of quotes delimit the end of a string.
+           (put-text-property (1- quote-ending-pos) quote-ending-pos
+                              'syntax-table (string-to-syntax "|"))))))
+
+(defun coffee-syntax-propertize-function (start end)
+  (goto-char start)
+  (funcall
+   (syntax-propertize-rules
+    (coffee-block-strings-delimiter
+     (0 (ignore (coffee-syntax-block-strings-stringify))))
+    (coffee-regexp-regexp (1 (string-to-syntax "_")))
+    ("^[[:space:]]*\\(###\\)\\(?:[[:space:]]+.*\\)?$"
+     (1 (string-to-syntax "!"))))
+   (point) end))
 
 ;;;###autoload
 (define-derived-mode coffee-mode coffee-parent-mode "Coffee"
@@ -916,20 +976,12 @@ comments such as the following:
   ;; single quote strings
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
-  ;; (setq font-lock-syntactic-keywords
-  ;;       ;; Make outer chars of matching triple-quote sequences into generic
-  ;;       ;; string delimiters.
-  ;;       ;; First avoid a sequence preceded by an odd number of backslashes.
-  ;;       `((,(concat "\\(?:^\\|[^\\]\\(?:\\\\.\\)*\\)" ;Prefix.
-  ;;                   "\\(?:\\('\\)\\('\\)\\('\\)\\|\\(?1:\"\\)\\(?2:\"\\)\\(?3:\"\\)\\)")
-  ;;          (1 (coffee-quote-syntax 1) nil lax)
-  ;;          (2 (coffee-quote-syntax 2))
-  ;;          (3 (coffee-quote-syntax 3)))))
-
   ;; indentation
   (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
-  (set (make-local-variable 'syntax-propertize-function) (syntax-propertize-via-font-lock coffee-propertize-via-font-lock))
+
+  (set (make-local-variable 'syntax-propertize-function)
+       'coffee-syntax-propertize-function)
 
   ;; fill
   (set (make-local-variable 'fill-forward-paragraph-function) #'coffee-fill-forward-paragraph-function)

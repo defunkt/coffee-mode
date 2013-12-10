@@ -480,10 +480,23 @@ baz = \"</span>\""
 ;; Block Strings(#159)
 ;;
 
-(ert-deftest block-strings-single-line ()
-  "Block Strings in single line"
+(ert-deftest block-strings-dq-simple ()
+  "Double quoted Block Strings in single line"
   (with-coffee-temp-buffer
-    " \"\"\"<a class=\"btn btn-mini\" href=\"#{data}\"<i class=\"icon-search\"></i></a>\"\"\" block-strings-end"
+    " \"\"\"foo bar\"\"\" block-strings-end"
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "bar")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest block-strings-dq-contains-double-quote ()
+  "Double quoted Block Strings contains double quote"
+  (with-coffee-temp-buffer
+    " \"\"\"<a class=\"btn btn-mini\" href=\"#{data}\"><i class=\"icon-search\"></i></a>\"\"\" block-strings-end"
     (forward-cursor-on "<a")
     (should (face-at-cursor-p 'font-lock-string-face))
 
@@ -502,8 +515,8 @@ baz = \"</span>\""
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))))
 
-(ert-deftest block-strings-multiple-line ()
-  "Block Strings in multiple lines"
+(ert-deftest block-strings-dq-multiline ()
+  "Double quoted Block Strings among multiple lines"
   (with-coffee-temp-buffer
     "
 html = \"\"\"
@@ -529,8 +542,8 @@ block-strings-end
     (should-not (face-at-cursor-p 'font-lock-string-face))
     (should (face-at-cursor-p nil))))
 
-(ert-deftest block-strings-multiple-line-with-double-quote ()
-  "Block Strings in multiple lines with double quote"
+(ert-deftest multiline-block-strings-dq-contains-double-quote ()
+  "Double quoted Block Strings contains double quote among multiple lines"
   (with-coffee-temp-buffer
     " \"\"\"
       <a class=\"btn btn-mini\" href=\"#{data}\"<i class=\"icon-search\"></i></a>
@@ -554,8 +567,8 @@ block-strings-end
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))))
 
-(ert-deftest block-strings-double-blocks ()
-  "Highligiting double Block Strings"
+(ert-deftest multiple-block-strings-dq ()
+  "Multiple double quoted block strings"
   (with-coffee-temp-buffer
     "
 a  = \"\"\"
@@ -576,6 +589,172 @@ block-strings-end
     (should (face-at-cursor-p 'font-lock-variable-name-face))
 
     (forward-cursor-on "carol")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+    (should (face-at-cursor-p nil))))
+
+(ert-deftest block-strings-sq-simple ()
+  "Single quoted Block Strings in single line"
+  (with-coffee-temp-buffer
+    " '''foo bar''' block-strings-end"
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "bar")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest block-strings-sq-contains-double-quote ()
+  "Single quoted Block Strings contains double quote"
+  (with-coffee-temp-buffer
+    " '''<a class=\"btn btn-mini\" href=\"#{data}\"<i class=\"icon-search\"></i></a>''' block-strings-end"
+    (forward-cursor-on "<a")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "btn")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "<i")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "icon-search")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest block-strings-sq-multiline ()
+  "Single quoted Block Strings among multiple lines"
+  (with-coffee-temp-buffer
+    "
+html = '''
+       <strong>
+         cup of #{data}
+       </strong>
+       '''
+block-strings-end
+"
+    (forward-cursor-on "html")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "<strong>")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "</strong>")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+    (should (face-at-cursor-p nil))))
+
+(ert-deftest block-strings-sq-multiline-contains-double-quote ()
+  "Single quoted block Strings contains double quote among multiple lines"
+  (with-coffee-temp-buffer
+    " '''
+      <a class=\"btn btn-mini\" href=\"#{data}\"><i class=\"icon-search\"></i></a>
+      '''
+ block-strings-end"
+    (forward-cursor-on "<a")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "btn")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "<i")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "icon-search")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest block-strings-sq-multiple-line-contains-single-quote ()
+  "Single quoteed block Strings contains single quote among multiple lines"
+  (with-coffee-temp-buffer
+    " '''
+      <a class='btn btn-mini' href='#{data}'<i class='icon-search'></i></a>
+      '''
+ block-strings-end"
+    (forward-cursor-on "<a")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "btn")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "data")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "<i")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "icon-search")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+(ert-deftest multiple-block-strings-sq ()
+  "Multiple single quoted block strings"
+  (with-coffee-temp-buffer
+    "
+a  = '''
+     alice
+     '''
+
+b = bob
+
+c  = '''
+     carol
+     '''
+block-strings-end
+"
+    (forward-cursor-on "alice")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "b =")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "carol")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "block-strings-end")
+    (should-not (face-at-cursor-p 'font-lock-string-face))
+    (should (face-at-cursor-p nil))))
+
+(ert-deftest block-string-sq-in-block-strings-dq ()
+  "Single quoted block string in double quoted block strings"
+  (with-coffee-temp-buffer
+    "
+\"\"\"
+foo
+'''
+bar
+'''
+baz
+\"\"\"
+block-strings-end
+"
+    (forward-cursor-on "foo")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "bar")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "baz")
     (should (face-at-cursor-p 'font-lock-string-face))
 
     (forward-cursor-on "block-strings-end")
