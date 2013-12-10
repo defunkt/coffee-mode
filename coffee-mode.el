@@ -426,7 +426,8 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-boolean-regexp "\\b\\(?:true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
 
 ;; Regular expressions
-(defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$")
+(eval-and-compile
+  (defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$"))
 
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
@@ -894,19 +895,20 @@ comments such as the following:
 ;;
 ;; Based on triple quote of python.el
 ;;
-(defconst coffee-block-strings-delimiter
-  (rx (and
-       ;; Match even number of backslashes.
-       (or (not (any ?\\ ?\' ?\"))
-           point
-           ;; Quotes might be preceded by a escaped quote.
-           (and (or (not (any ?\\)) point)
-                ?\\
-                (* ?\\ ?\\)
-                (any ?\' ?\")))
-       (* ?\\ ?\\)
-       ;; Match single or triple quotes of any kind.
-       (group (or "'''" "\"\"\"")))))
+(eval-and-compile
+  (defconst coffee-block-strings-delimiter
+    (rx (and
+         ;; Match even number of backslashes.
+         (or (not (any ?\\ ?\' ?\"))
+             point
+             ;; Quotes might be preceded by a escaped quote.
+             (and (or (not (any ?\\)) point)
+                  ?\\
+                  (* ?\\ ?\\)
+                  (any ?\' ?\")))
+         (* ?\\ ?\\)
+         ;; Match single or triple quotes of any kind.
+         (group (or "'''" "\"\"\""))))))
 
 (defsubst coffee-syntax-count-quotes (quote-char start-point limit)
   (let ((i 0))
