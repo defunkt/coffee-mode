@@ -73,7 +73,25 @@ a =
 "
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 2))
-      (dolist (expected '("minus" "block"))
+      (dolist (expected '("a.minus" "a.block"))
+        (should (loop for index in got
+                      for assign = (car index)
+                      thereis (string= assign expected)))))))
+
+(ert-deftest object-properties-with-braces ()
+  "Creating object property indice with braces"
+  (with-coffee-temp-buffer
+    "
+a = {
+  num: 10
+  minus: (x, y) -> x - y
+  block: ->
+    print('potion')
+}
+"
+    (let ((got (coffee-imenu-create-index)))
+      (should (= (length got) 2))
+      (dolist (expected '("a.minus" "a.block"))
         (should (loop for index in got
                       for assign = (car index)
                       thereis (string= assign expected)))))))
@@ -96,6 +114,26 @@ a =
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 4))
       (dolist (expected '("Foo::constructor" "Foo::print" "a.minus" "a.block"))
+        (should (loop for index in got
+                      for assign = (car index)
+                      thereis (string= assign expected)))))))
+
+(ert-deftest class-members-and-named-function ()
+  "Creating class member and named function"
+  (with-coffee-temp-buffer
+    "
+class Foo
+  constructor: (rank) ->
+    @rank = rank
+  print: ->
+    print 'My name is ' + this.name + \" and I'm a \" + this.rank + '.'
+
+named_func = (x, y) ->
+  x + y
+"
+    (let ((got (coffee-imenu-create-index)))
+      (should (= (length got) 3))
+      (dolist (expected '("Foo::constructor" "Foo::print" "named_func"))
         (should (loop for index in got
                       for assign = (car index)
                       thereis (string= assign expected)))))))

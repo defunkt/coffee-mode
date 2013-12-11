@@ -411,16 +411,16 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-prototype-regexp "[[:word:].$]+?::")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(\\(\\w\\|\\.\\|$\\)+?\\s-*\\):")
+(defvar coffee-assign-regexp "\\([[:word:].$]+?\\)\\s-*:")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\(?:^\\|\\s-\\)\\(\\(?:\\w\\|\\$\\)+\\)\\s-*=[^>]")
+(defvar coffee-local-assign-regexp "\\s-*\\([[:word:].$]+\\)\\s-*=\\(?:[^>]\\|$\\)")
 
 ;; Lambda
-(defvar coffee-lambda-regexp "\\((.+)\\)?\\s-*\\(->\\|=>\\)")
+(defvar coffee-lambda-regexp "\\(?:(.+)\\)?\\s-*\\(->\\|=>\\)")
 
 ;; Namespaces
-(defvar coffee-namespace-regexp "\\b\\(class\\s-+\\(\\S-+\\)\\)\\b")
+(defvar coffee-namespace-regexp "\\b\\(?:class\\s-+\\(\\S-+\\)\\)\\b")
 
 ;; Booleans
 (defvar coffee-boolean-regexp "\\b\\(?:true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
@@ -475,7 +475,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
     (,coffee-boolean-regexp . font-lock-constant-face)
-    (,coffee-lambda-regexp 2 font-lock-function-name-face)
+    (,coffee-lambda-regexp 1 font-lock-function-name-face)
     (,coffee-keywords-regexp 1 font-lock-keyword-face)
     (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t)))
 
@@ -523,41 +523,18 @@ output in a compilation buffer."
 ;; imenu support
 ;;
 
-;; This is a pretty naive but workable way of doing it. First we look
-;; for any lines that starting with `coffee-assign-regexp' that include
-;; `coffee-lambda-regexp' then add those tokens to the list.
-;;
-;; Should cover cases like these:
-;;
-;; minus: (x, y) -> x - y
-;; String::length: -> 10
-;; block: ->
-;;   print('potion')
-;;
-;; Next we look for any line that starts with `class' or
-;; `coffee-assign-regexp' followed by `{` and drop into a
-;; namespace. This means we search one indentation level deeper for
-;; more assignments and add them to the alist prefixed with the
-;; namespace name.
-;;
-;; Should cover cases like these:
-;;
-;; class Person
-;;   print: ->
-;;     print 'My name is ' + this.name + '.'
-;;
-;; class Policeman extends Person
-;;   constructor: (rank) ->
-;;     @rank: rank
-;;   print: ->
-;;     print 'My name is ' + this.name + " and I'm a " + this.rank + '.'
-;;
-;; TODO:
-;; app = {
-;;   window:  {width: 200, height: 200}
-;;   para:    -> 'Welcome.'
-;;   button:  -> 'OK'
-;; }
+(defconst coffee-imenu-index-regexp
+  (concat "^\\(\\s-*\\)" ; $1
+          "\\(?:"
+          coffee-assign-regexp ; $2
+          "\\s-+"
+          coffee-lambda-regexp
+          "\\|"
+          coffee-namespace-regexp ; $4
+          "\\|"
+          coffee-local-assign-regexp ; $5
+          "\\(?:" "\\s-*" "\\(" coffee-lambda-regexp "\\)" "\\)?" ; $6
+          "\\)"))
 
 (defun coffee-imenu-create-index ()
   "Create an imenu index of all methods in the buffer."
@@ -566,59 +543,36 @@ output in a compilation buffer."
   ;; This function is called within a `save-excursion' so we're safe.
   (goto-char (point-min))
 
-  (let ((index-alist '()) assign pos indent ns-name ns-indent)
+  (let ((index-alist '())
+        (ns-indent 0)
+        ns-name)
     ;; Go through every assignment that includes -> or => on the same
     ;; line or starts with `class'.
-    (while (re-search-forward
-            (concat "^\\(\\s *\\)"
-                    "\\("
-                    coffee-assign-regexp
-                    ".+?"
-                    coffee-lambda-regexp
-                    "\\|"
-                    coffee-namespace-regexp
-                    "\\)")
-            (point-max)
-            t)
+    (while (re-search-forward coffee-imenu-index-regexp nil t)
+      (let ((current-indent (- (match-end 1) (match-beginning 1)))
+            (property-name (match-string-no-properties 2))
+            (class-name (match-string-no-properties 4))
+            (variable-name (match-string-no-properties 5))
+            (func-assign (match-string-no-properties 6)))
 
-      ;; If this is the start of a new namespace, save the namespace's
-      ;; indentation level and name.
-      (when (match-string 8)
-        ;; Set the name.
-        (setq ns-name (match-string 8))
+        ;; If this is the start of a new namespace, save the namespace's
+        ;; indentation level and name.
+        (if class-name
+            (setq ns-name (concat class-name "::")
+                  ns-indent current-indent)
+          (when (and variable-name (<= current-indent ns-indent))
+            (setq ns-name (concat variable-name ".")
+                  ns-indent current-indent)))
 
-        ;; If this is a class declaration, add :: to the namespace.
-        (setq ns-name (concat ns-name "::"))
-
-        ;; Save the indentation level.
-        (setq ns-indent (length (match-string 1))))
-
-      ;; If this is an assignment, save the token being
-      ;; assigned. `Please.print:` will be `Please.print`, `block:`
-      ;; will be `block`, etc.
-      (when (setq assign (match-string 3))
-        ;; The position of the match in the buffer.
-        (setq pos (match-beginning 3))
-
-        ;; The indent level of this match
-        (setq indent (length (match-string 1)))
-
-        ;; If we're within the context of a namespace, add that to the
-        ;; front of the assign, e.g.
-        ;; constructor: => Policeman::constructor
-        (when (and ns-name (> indent ns-indent))
-          (setq assign (concat ns-name assign)))
-
-        ;; Clear the namespace if we're no longer indented deeper
-        ;; than it.
-        (when (and ns-name (<= indent ns-indent))
-          (setq ns-name nil)
-          (setq ns-indent nil))
-
-        ;; Add this to the alist. Done.
-        (push (cons assign pos) index-alist)))
-
-    ;; Return the alist.
+        (if func-assign
+            (push (cons variable-name (match-beginning 5)) index-alist)
+          (when (and ns-name property-name)
+            (let ((index-pos (match-beginning 2)))
+              (if (<= current-indent ns-indent)
+                  ;; Clear the namespace if we're no longer indented deeper
+                  (setq ns-name nil ns-indent nil)
+                ;; Register as index-name if we are within the context of a namespace
+                (push (cons (concat ns-name property-name) index-pos) index-alist)))))))
     index-alist))
 
 ;;
