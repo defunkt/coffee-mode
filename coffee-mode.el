@@ -258,7 +258,10 @@ with CoffeeScript."
     (set-buffer
      (apply 'make-comint "CoffeeREPL"
             "env"
-            nil (append (list "NODE_NO_READLINE=1" coffee-command) coffee-args-repl)))
+            nil
+            "NODE_NO_READLINE=1"
+            coffee-command
+            coffee-args-repl))
 
     ;; Workaround: https://github.com/defunkt/coffee-mode/issues/30
     (set (make-local-variable 'comint-preoutput-filter-functions)
@@ -268,17 +271,17 @@ with CoffeeScript."
   (pop-to-buffer coffee-repl-buffer))
 
 (defun coffee-compiled-file-name (&optional filename)
-  (let ((working-on-file (expand-file-name (or filename (buffer-file-name)))))
+  ;; Returns the name of the JavaScript file compiled from a CoffeeScript file.
+  ;; If FILENAME is omitted, the current buffer's file name is used.
+  (let ((input (expand-file-name (or filename (buffer-file-name)))))
     (unless (string= coffee-js-directory "")
-      (setq working-on-file
+      (setq input
             (expand-file-name
-             (concat (if (not (string-match "^/" coffee-js-directory))
-                         (concat (file-name-directory working-on-file) "/"))
-                     coffee-js-directory "/"
-                     (file-name-nondirectory working-on-file)))))
-    ;; Returns the name of the JavaScript file compiled from a CoffeeScript file.
-    ;; If FILENAME is omitted, the current buffer's file name is used.
-    (concat (file-name-sans-extension working-on-file) ".js")))
+             (concat (unless (file-name-absolute-p coffee-js-directory)
+                       (file-name-directory input))
+                     (file-name-as-directory coffee-js-directory)
+                     (file-name-nondirectory input)))))
+    (concat (file-name-sans-extension input) ".js")))
 
 (defun coffee-revert-buffer-compiled-file (file-name)
   "Revert a buffer of compiled file when the buffer exist and is not modified."
@@ -293,20 +296,22 @@ base name, with extension `.js'.  Subsequent runs will overwrite the
 file.
 
 If there are compilation errors, point is moved to the first
-(see `coffee-compile-jump-to-error')."
+See `coffee-compile-jump-to-error'."
   (interactive)
-  (let* ((basename (file-name-sans-extension (buffer-file-name)))
-         (output-file (if (string= (substring basename -3) ".js")
-                          basename
-                        (concat basename ".js")))
-         (compiler-output (shell-command-to-string (coffee-command-compile (buffer-file-name) output-file))))
+  (let* ((input (buffer-file-name))
+         (basename (file-name-sans-extension input))
+         (output (if (string-match-p "\\.js\\'" basename)
+                     basename
+                   (concat basename ".js")))
+         (compile-cmd (coffee-command-compile input output))
+         (compiler-output (shell-command-to-string compile-cmd)))
     (if (string= compiler-output "")
-        (let ((file-name (coffee-compiled-file-name)))
-          (message "Compiled and saved %s" output-file)
+        (let ((file-name (coffee-compiled-file-name (buffer-file-name))))
+          (message "Compiled and saved %s" output)
           (coffee-revert-buffer-compiled-file file-name))
       (let* ((msg (car (split-string compiler-output "[\n\r]+")))
-             (line (and (string-match "on line \\([0-9]+\\)" msg)
-                        (string-to-number (match-string 1 msg)))))
+             (line (when (string-match "on line \\([0-9]+\\)" msg)
+                     (string-to-number (match-string 1 msg)))))
         (message msg)
         (when (and coffee-compile-jump-to-error line (> line 0))
           (goto-char (point-min))
@@ -337,7 +342,8 @@ called `coffee-compiled-buffer-name'."
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
     (display-buffer buffer)
     (with-current-buffer buffer
-      (let ((buffer-file-name "tmp.js")) (set-auto-mode)))))
+      (let ((buffer-file-name "tmp.js"))
+        (set-auto-mode)))))
 
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
@@ -493,24 +499,24 @@ For details, see `comment-dwim'."
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
     (comment-dwim arg)))
 
-(defun coffee-command-compile (file-name &optional output-file-name)
+(defsubst coffee-command-compile-arg-as-string (output)
+  (mapconcat 'identity
+             (or (and output (append coffee-args-compile (list "-j" output)))
+                 coffee-args-compile)
+             " "))
+
+(defun coffee-command-compile (input &optional output)
   "Run `coffee-command' to compile FILE-NAME to file with default
 .js output file, or optionally to OUTPUT-FILE-NAME."
-  (let* ((full-file-name
-          (expand-file-name file-name))
-         (output-dir
-          (file-name-directory
-           (coffee-compiled-file-name full-file-name))))
-    (if (not (file-exists-p output-dir))
-        (make-directory output-dir t))
-    (let ((compile-args (if output-file-name
-                            (append coffee-args-compile (list "-j" output-file-name))
-                          coffee-args-compile)))
-      (mapconcat 'identity (append (list (shell-quote-argument coffee-command))
-                                   compile-args
-                                   (list "-o" (shell-quote-argument output-dir))
-                                   (list (shell-quote-argument full-file-name)))
-                 " "))))
+  (let* ((full-file-name (expand-file-name input))
+         (output-dir (coffee-compiled-file-name full-file-name)))
+    (unless (file-exists-p output-dir)
+      (make-directory output-dir t))
+    (format "%s %s -o %s %s"
+            (shell-quote-argument coffee-command)
+            (coffee-command-compile-arg-as-string output)
+            (shell-quote-argument (file-name-directory output-dir))
+            (shell-quote-argument full-file-name))))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
@@ -587,7 +593,7 @@ output in a compilation buffer."
   "Indent current line as CoffeeScript."
   (interactive)
 
-  (if (= (point) (point-at-bol))
+  (if (= (point) (line-beginning-position))
       (insert-tab)
     (save-excursion
       (let ((prev-indent (coffee-previous-indent))
@@ -610,9 +616,9 @@ output in a compilation buffer."
     (forward-line -1)
     (if (bobp)
         0
-      (progn
-        (while (and (looking-at "^[ \t]*$") (not (bobp))) (forward-line -1))
-        (current-indentation)))))
+      (while (and (looking-at "^[ \t]*$") (not (bobp)))
+        (forward-line -1))
+      (current-indentation))))
 
 (defun coffee-newline-and-indent ()
   "Insert a newline and indent it to the same level as the previous line."
@@ -621,7 +627,8 @@ output in a compilation buffer."
   ;; Remember the current line indentation level,
   ;; insert a newline, and indent the newline to the same
   ;; level as the previous line.
-  (let ((prev-indent (current-indentation)) (indent-next nil))
+  (let ((prev-indent (current-indentation))
+        (indent-next nil))
     (delete-horizontal-space t)
     (newline)
     (insert-tab (/ prev-indent coffee-tab-width))
@@ -677,7 +684,7 @@ previous line."
   (interactive)
 
   (save-excursion
-    (let ((indenter-at-bol) (indenter-at-eol))
+    (let (indenter-at-bol indenter-at-eol)
       ;; Go back a line and to the first character.
       (forward-line -1)
       (backward-to-indentation 0)
@@ -698,8 +705,8 @@ previous line."
           (while indenters
             (if (and (char-before) (/= (char-before) (car indenters)))
                 (setq indenters (cdr indenters))
-              (setq indenter-at-eol t)
-              (setq indenters nil)))))
+              (setq indenter-at-eol t
+                    indenters nil)))))
 
       ;; If we found an indenter, return `t'.
       (or indenter-at-bol indenter-at-eol))))
@@ -718,19 +725,20 @@ previous line."
 
 (defun coffee-indent-shift-amount (start end dir)
   "Compute distance to the closest increment of `coffee-tab-width'."
-  (let ((min most-positive-fixnum) rem)
+  (let ((min most-positive-fixnum))
     (save-excursion
       (goto-char start)
       (while (< (point) end)
         (let ((current (current-indentation)))
-          (when (< current min) (setq min current)))
+          (when (< current min)
+            (setq min current)))
         (forward-line))
-      (setq rem (% min coffee-tab-width))
-      (if (zerop rem)
-          coffee-tab-width
-        (cond ((eq dir 'left) rem)
-              ((eq dir 'right) (- coffee-tab-width rem))
-              (t 0))))))
+      (let ((rem (% min coffee-tab-width)))
+        (if (zerop rem)
+            coffee-tab-width
+          (cond ((eq dir 'left) rem)
+                ((eq dir 'right) (- coffee-tab-width rem))
+                (t 0)))))))
 
 (defun coffee-indent-shift-left (start end &optional count)
   "Shift lines contained in region START END by COUNT columns to the left.
