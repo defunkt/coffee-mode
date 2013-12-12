@@ -532,7 +532,7 @@ output in a compilation buffer."
           "\\|"
           coffee-namespace-regexp ; $4
           "\\|"
-          coffee-local-assign-regexp ; $5
+          "\\([[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
           "\\(?:" "\\s-*" "\\(" coffee-lambda-regexp "\\)" "\\)?" ; $6
           "\\)"))
 
