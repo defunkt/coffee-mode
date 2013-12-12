@@ -931,17 +931,19 @@ comments such as the following:
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
   ;; indentation
-  (set (make-local-variable 'indent-line-function) #'coffee-indent-line)
+  (set (make-local-variable 'indent-line-function) 'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
 
   (set (make-local-variable 'syntax-propertize-function)
        'coffee-syntax-propertize-function)
 
   ;; fill
-  (set (make-local-variable 'fill-forward-paragraph-function) #'coffee-fill-forward-paragraph-function)
+  (set (make-local-variable 'fill-forward-paragraph-function)
+       'coffee-fill-forward-paragraph-function)
 
   ;; imenu
-  (set (make-local-variable 'imenu-create-index-function) #'coffee-imenu-create-index)
+  (set (make-local-variable 'imenu-create-index-function)
+       'coffee-imenu-create-index)
 
   ;; Don't let electric-indent-mode break coffee-mode.
   (set (make-local-variable 'electric-indent-functions)
