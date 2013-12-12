@@ -423,7 +423,9 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-namespace-regexp "\\b\\(?:class\\s-+\\(\\S-+\\)\\)\\b")
 
 ;; Booleans
-(defvar coffee-boolean-regexp "\\b\\(?:true\\|false\\|yes\\|no\\|on\\|off\\|null\\|undefined\\)\\b")
+(defvar coffee-boolean-regexp
+  (regexp-opt '("true" "false" "yes" "no" "on" "off" "null" "undefined")
+              'words))
 
 ;; Regular expressions
 (eval-and-compile
