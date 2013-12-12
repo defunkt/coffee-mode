@@ -138,4 +138,23 @@ named_func = (x, y) ->
                       for assign = (car index)
                       thereis (string= assign expected)))))))
 
+(ert-deftest prototype-access-declaration ()
+  "Prototype access function declaration"
+  (with-coffee-temp-buffer
+    "
+Coffee::foo = (a, b) ->
+  a + b
+
+Coffee::bar =
+  minus: (x, y) -> x - y
+  block: ->
+    print('potion')
+"
+    (let ((got (coffee-imenu-create-index)))
+      (should (= (length got) 3))
+      (dolist (expected '("Coffee::foo" "Coffee::bar.minus" "Coffee::bar.block"))
+        (should (loop for index in got
+                      for assign = (car index)
+                      thereis (string= assign expected)))))))
+
 ;;; imenu.el end here
