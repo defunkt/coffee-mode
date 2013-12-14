@@ -45,6 +45,22 @@ class Person
                       for assign = (car index)
                       thereis (string= assign expected)))))))
 
+(ert-deftest class-members-with-property ()
+  "Creating class member indice with property (`@')"
+  (with-coffee-temp-buffer
+    "
+class Person
+  minus: (x, y) -> x - y
+  @print: =>
+    print 'My name is ' + this.name + '.'
+"
+    (let ((got (coffee-imenu-create-index)))
+      (should (= (length got) 2))
+      (dolist (expected '("Person::minus" "Person::@print"))
+        (should (loop for index in got
+                      for assign = (car index)
+                      thereis (string= assign expected)))))))
+
 (ert-deftest extended-class-members ()
   "Creating extended class member indice"
   (with-coffee-temp-buffer

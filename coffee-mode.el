@@ -420,7 +420,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-prototype-regexp "[[:word:].$]+?::")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\([[:word:].$]+?\\)\\s-*:")
+(defvar coffee-assign-regexp "\\(@?[[:word:].$]+?\\)\\s-*:")
 
 ;; Local Assignment
 (defvar coffee-local-assign-regexp "\\s-*\\([[:word:].$]+\\)\\s-*=\\(?:[^>]\\|$\\)")
@@ -543,7 +543,7 @@ output in a compilation buffer."
           "\\|"
           coffee-namespace-regexp ; $4
           "\\|"
-          "\\([[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
+          "\\(@?[[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
           "\\(?:" "\\s-*" "\\(" coffee-lambda-regexp "\\)" "\\)?" ; $6
           "\\)"))
 
@@ -819,7 +819,7 @@ comments such as the following:
           "\\|"
           coffee-namespace-regexp
           "\\|"
-          "[[:word:]:.$]+\\s-*=\\(?:[^>]\\|$\\)"
+          "@?[[:word:]:.$]+\\s-*=\\(?:[^>]\\|$\\)"
           "\\s-*"
           coffee-lambda-regexp
           "\\)"))
@@ -842,10 +842,18 @@ comments such as the following:
     (goto-char (line-end-position))
     (re-search-backward coffee-defun-regexp (line-beginning-position) t)))
 
+(defun coffee-current-line-is-assignment ()
+  (save-excursion
+    (goto-char (line-end-position))
+    (re-search-backward "^[[:word:].$]+\\s-*=\\(?:[^>]\\|$\\)"
+                        (line-beginning-position) t)))
+
 (defun coffee-curline-defun-type (parent-indent start-is-defun)
   (save-excursion
     (goto-char (line-end-position))
-    (when (re-search-backward coffee-defun-regexp (line-beginning-position) t)
+    (if (not (re-search-backward coffee-defun-regexp (line-beginning-position) t))
+        (when (and (zerop parent-indent) (coffee-current-line-is-assignment))
+          'other)
       (if (not start-is-defun)
           'other
         (if (< parent-indent (current-indentation))
@@ -918,6 +926,15 @@ comments such as the following:
     (coffee-end-of-block)
     (push-mark (point) nil be-actived)
     (coffee-beginning-of-defun)))
+
+;;
+;; hs-minor-mode
+;;
+
+;; support for hs-minor-mode
+(add-to-list 'hs-special-modes-alist
+             '(coffee-mode "\\s-*\\(?:class\\|.+[-=]>$\\)" nil "#"
+                           coffee-end-of-block nil))
 
 ;;
 ;; Define Major Mode
