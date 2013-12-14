@@ -6,6 +6,7 @@
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
 ;; URL: http://github.com/defunkt/coffee-mode
+;; Package-Requires: ((emacs "24.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -938,14 +939,6 @@ comments such as the following:
                            coffee-end-of-block nil))
 
 ;;
-;; Define Major Mode
-;;
-
-;; For compatibility with Emacs < 24, derive conditionally
-(defalias 'coffee-parent-mode
-  (if (fboundp 'prog-mode) 'prog-mode 'fundamental-mode))
-
-;;
 ;; Based on triple quote of python.el
 ;;
 (eval-and-compile
@@ -1007,8 +1000,12 @@ comments such as the following:
      (1 (string-to-syntax "!"))))
    (point) end))
 
+;;
+;; Define Major Mode
+;;
+
 ;;;###autoload
-(define-derived-mode coffee-mode coffee-parent-mode "Coffee"
+(define-derived-mode coffee-mode prog-mode "Coffee"
   "Major mode for editing CoffeeScript."
 
   ;; code for syntax highlighting
