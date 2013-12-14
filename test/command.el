@@ -329,4 +329,161 @@ func = ->
                                  (point) (line-end-position))))
         (should (string-match-p "###$" comment-start-line))))))
 
+;;
+;; forward/backward defun
+;;
+
+(ert-deftest beginning-of-defun ()
+  "Move to beginning of defun"
+
+  (with-coffee-temp-buffer
+   "
+foo: (apple, orange) ->
+  apple + orange
+"
+   (forward-cursor-on "orange")
+   (coffee-beginning-of-defun)
+
+   (should (looking-at "^foo:"))))
+
+(ert-deftest beginning-of-defun-same-line-not-bol ()
+  "Move to beginning of defun in same line but cursor is not beginning of line"
+
+  (with-coffee-temp-buffer
+   "
+foo: (apple, orange) ->
+  apple + orange
+"
+   (forward-cursor-on "->")
+   (coffee-beginning-of-defun)
+
+   (should (looking-at "^foo:"))))
+
+(ert-deftest end-of-defun ()
+  "Move to end of defun"
+
+  (with-coffee-temp-buffer
+   "
+foo: (apple, orange) ->
+  apple + orange
+"
+   (forward-cursor-on "foo")
+   (coffee-end-of-block)
+   (should (eobp))))
+
+(ert-deftest end-of-defun-multiple-defuns ()
+  "Move to end of defun"
+
+  (with-coffee-temp-buffer
+   "
+foo: (apple) ->
+  apple + 10
+
+bar: (melon) ->
+  melon + 20
+"
+   (forward-cursor-on "foo")
+   (coffee-end-of-block)
+
+   (save-excursion
+     (forward-line 1)
+     (should (looking-at "^bar:")))
+
+   (coffee-end-of-block)
+   (should (eobp))))
+
+(ert-deftest moving-by-defun-for-nested-defun ()
+  "Move by defun for nested defun"
+
+  (with-coffee-temp-buffer
+   "
+class Foo
+  constructor: (name, age) ->
+    @name = name
+    @age  = age
+
+  hear: (regex, callback) ->
+    register regex, callback, 99
+"
+   (forward-cursor-on "99")
+
+   (coffee-beginning-of-defun)
+   (should (looking-at "hear:"))
+
+   (coffee-beginning-of-defun)
+   (should (looking-at "constructor:"))
+
+   (save-excursion
+     (coffee-end-of-block)
+     (forward-line 1)
+     (should (looking-at "^\\s-+hear:")))
+
+   (coffee-beginning-of-defun)
+   (should (looking-at "^class"))
+
+   (coffee-beginning-of-defun)
+   (should (bobp))
+
+   (coffee-end-of-block)
+   (should (eobp))))
+
+(ert-deftest mark-defun ()
+  "Mark-defun"
+
+  (with-coffee-temp-buffer
+   "
+human: (name, age) ->
+  @name = name
+  @age  = age
+"
+   (forward-cursor-on "human")
+   (let ((start (point)))
+     (coffee-mark-defun)
+     (should (= (region-beginning) start))
+     (should (= (region-end) (point-max))))))
+
+(ert-deftest mark-defun-for-nested-defun ()
+  "Move by defun for nested defun"
+
+  (with-coffee-temp-buffer
+   "
+class Foo
+  constructor: (name, age) ->
+    @name = name
+    @age  = age
+
+  hear: (regex, callback) ->
+    register regex, callback, 99
+"
+   (forward-cursor-on "class")
+   (let ((start (point)))
+     (coffee-mark-defun)
+     (should (= (region-beginning) start))
+     (should (= (region-end) (point-max))))))
+
+(ert-deftest move-defun-commands-with-prototype-access ()
+  "Move defun commands with prototype access"
+
+  (with-coffee-temp-buffer
+   "
+Foo::bar::baz = (apple, orange) ->
+  apple + orange
+
+add = (a, b) ->
+  a + b
+"
+   (forward-cursor-on "Foo")
+   (coffee-end-of-block)
+
+   (save-excursion
+     (forward-line 1)
+     (should (looking-at "^add")))
+
+   (save-excursion
+     (coffee-beginning-of-defun)
+     (looking-at "^Foo"))
+
+   (coffee-end-of-block)
+   (should (eobp))))
+
 ;;; command.el end here
