@@ -461,4 +461,29 @@ class Foo
      (should (= (region-beginning) start))
      (should (= (region-end) (point-max))))))
 
+(ert-deftest move-defun-commands-with-prototype-access ()
+  "Move defun commands with prototype access"
+
+  (with-coffee-temp-buffer
+   "
+Foo::bar::baz = (apple, orange) ->
+  apple + orange
+
+add = (a, b) ->
+  a + b
+"
+   (forward-cursor-on "Foo")
+   (coffee-end-of-block)
+
+   (save-excursion
+     (forward-line 1)
+     (should (looking-at "^add")))
+
+   (save-excursion
+     (coffee-beginning-of-defun)
+     (looking-at "^Foo"))
+
+   (coffee-end-of-block)
+   (should (eobp))))
+
 ;;; command.el end here
