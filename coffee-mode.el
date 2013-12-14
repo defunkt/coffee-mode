@@ -244,6 +244,9 @@ with CoffeeScript."
     (define-key map (kbd "C-c C-r") 'coffee-send-region)
     (define-key map (kbd "C-c C-b") 'coffee-send-buffer)
     (define-key map (kbd "<backtab>") 'coffee-indent-shift-left)
+    (define-key map (kbd "C-M-a") 'coffee-beginning-of-defun)
+    (define-key map (kbd "C-M-e") 'coffee-end-of-block)
+    (define-key map (kbd "C-M-h") 'coffee-mark-defun)
     map)
   "Keymap for CoffeeScript major mode.")
 
@@ -803,6 +806,118 @@ comments such as the following:
                (looking-at "[[:space:]]*###[[:space:]]*$"))
       (forward-line))
     ret))
+
+;;
+;; Define navigation functions
+;;
+
+(defconst coffee-defun-regexp
+  (concat "^\\s-*\\(?:"
+          coffee-assign-regexp
+          "\\s-+"
+          coffee-lambda-regexp
+          "\\|"
+          coffee-namespace-regexp
+          "\\|"
+          "[[:word:]:.$]+\\s-*=\\(?:[^>]\\|$\\)"
+          "\\s-*"
+          coffee-lambda-regexp
+          "\\)"))
+
+(defun coffee-in-comment-p ()
+  (unless (eobp)
+    (save-excursion
+      (back-to-indentation)
+      (when (eq (char-after) ?#)
+        (forward-char 1))
+      (nth 4 (syntax-ppss)))))
+
+(defsubst coffee-current-line-empty-p ()
+  (let ((line (buffer-substring-no-properties
+               (line-beginning-position) (line-end-position))))
+    (string-match-p "^\\s-*$" line)))
+
+(defun coffee-current-line-is-defun ()
+  (save-excursion
+    (goto-char (line-end-position))
+    (re-search-backward coffee-defun-regexp (line-beginning-position) t)))
+
+(defun coffee-curline-defun-type (parent-indent start-is-defun)
+  (save-excursion
+    (goto-char (line-end-position))
+    (when (re-search-backward coffee-defun-regexp (line-beginning-position) t)
+      (if (not start-is-defun)
+          'other
+        (if (< parent-indent (current-indentation))
+            'child
+          'other)))))
+
+(defun coffee-same-block-p (block-indent start-is-defun)
+  (let ((type (coffee-curline-defun-type block-indent start-is-defun)))
+    (cond ((eq type 'child) t)
+          ((eq type 'other) nil)
+          (t (>= (current-indentation) block-indent)))))
+
+(defsubst coffee-skip-line-p ()
+  (or (coffee-in-comment-p) (coffee-current-line-empty-p)))
+
+(defun coffee-skip-forward-lines (arg)
+  (while (and (not (eobp)) (coffee-skip-line-p))
+    (forward-line arg)))
+
+(defun coffee-beginning-of-defun (&optional count)
+  (interactive "p")
+  (unless count
+    (setq count 1))
+  (coffee-skip-forward-lines -1)
+  (let ((start-indent (current-indentation)))
+    (when (and (not (eq this-command 'coffee-mark-defun)) (looking-back "^\\s-*"))
+      (forward-line -1))
+    (let ((finish nil))
+      (goto-char (line-end-position))
+      (while (and (not finish) (re-search-backward coffee-defun-regexp nil 'move))
+        (let ((cur-indent (current-indentation)))
+          (when (<= cur-indent start-indent)
+            (setq start-indent cur-indent)
+            (decf count)))
+        (when (<= count 0)
+          (back-to-indentation)
+          (setq finish t))))))
+
+(defun coffee-end-of-block (&optional count)
+  "Move point to the end of the block."
+  (interactive "p")
+  (unless count
+    (setq count 1))
+  (dotimes (i count)
+    (let* ((curline-is-defun (coffee-current-line-is-defun))
+           start-indent)
+      (coffee-skip-forward-lines 1)
+      (setq start-indent (current-indentation))
+      (when (and (zerop start-indent) (not curline-is-defun))
+        (when (re-search-forward coffee-defun-regexp nil 'move)
+          (back-to-indentation)
+          (setq curline-is-defun t)))
+      (let ((finish nil))
+        (while (not finish)
+          (forward-line 1)
+          (coffee-skip-forward-lines 1)
+          (when (or (not (coffee-same-block-p start-indent curline-is-defun))
+                    (eobp))
+            (setq finish t)))
+        (forward-line -1)
+        (coffee-skip-forward-lines -1)
+        (forward-line 1)))))
+
+(defun coffee-mark-defun ()
+  (interactive)
+  (let ((be-actived transient-mark-mode))
+    (push-mark (point))
+    (coffee-beginning-of-defun)
+    (push-mark (point))
+    (coffee-end-of-block)
+    (push-mark (point) nil be-actived)
+    (coffee-beginning-of-defun)))
 
 ;;
 ;; Define Major Mode
