@@ -486,4 +486,28 @@ add = (a, b) ->
    (coffee-end-of-block)
    (should (eobp))))
 
+(ert-deftest move-defun-commands-with-toplevel-assignments ()
+  "Move defun commands with toplevel assignmentsprototype access"
+
+  (with-coffee-temp-buffer
+   "
+Foo::bar::baz = (apple, orange) ->
+  apple + orange
+
+value = 10
+"
+   (forward-cursor-on "Foo")
+   (coffee-end-of-block)
+
+   (save-excursion
+     (forward-line 1)
+     (should (looking-at "^value")))
+
+   (save-excursion
+     (coffee-beginning-of-defun)
+     (looking-at "^Foo"))
+
+   (coffee-end-of-block)
+   (should (eobp))))
+
 ;;; command.el end here
