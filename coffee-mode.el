@@ -512,13 +512,14 @@ For details, see `comment-dwim'."
   "Run `coffee-command' to compile FILE-NAME to file with default
 .js output file, or optionally to OUTPUT-FILE-NAME."
   (let* ((full-file-name (expand-file-name input))
-         (output-dir (coffee-compiled-file-name full-file-name)))
-    (unless (file-exists-p output-dir)
+         (output-file (coffee-compiled-file-name full-file-name))
+         (output-dir (file-name-directory output-file)))
+    (unless (file-directory-p output-dir)
       (make-directory output-dir t))
     (format "%s %s -o %s %s"
             (shell-quote-argument coffee-command)
             (coffee-command-compile-arg-as-string output)
-            (shell-quote-argument (file-name-directory output-dir))
+            (shell-quote-argument output-dir)
             (shell-quote-argument full-file-name))))
 
 (defun coffee-run-cmd (args)
