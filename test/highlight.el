@@ -339,6 +339,24 @@ foo =
       (should (face-at-cursor-p 'font-lock-keyword-face)))))
 
 ;;
+;; class keywords(#99)
+;;
+(ert-deftest class-keyword-highlighting ()
+  "highlight of `class' keywords"
+
+  (with-coffee-temp-buffer
+   "class Foo\n\nclass Bar"
+
+   (forward-cursor-on "class")
+   (should (face-at-cursor-p 'font-lock-keyword-face))
+
+   (forward-cursor-on "Foo")
+   (should-not (face-at-cursor-p 'font-lock-keyword-face))
+
+   (forward-cursor-on "class")
+   (should (face-at-cursor-p 'font-lock-keyword-face))))
+
+;;
 ;; Boolean highlight
 ;;
 
@@ -472,6 +490,16 @@ baz = \"</span>\""
     "/foo \\/ bar/"
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-constant-face))
+
+    (forward-cursor-on "bar")
+    (should (face-at-cursor-p 'font-lock-constant-face))))
+
+(ert-deftest regular-expression-with-quoted-slash ()
+  "Regular expression with quoted slash"
+  (with-coffee-temp-buffer
+    "foo += '/' unless /bar/"
+    (forward-cursor-on "unless")
+    (should-not (face-at-cursor-p 'font-lock-constant-face))
 
     (forward-cursor-on "bar")
     (should (face-at-cursor-p 'font-lock-constant-face))))
