@@ -107,4 +107,105 @@ baz = 20
     (forward-cursor-on "baz")
     (should-not (coffee-previous-line-is-comment))))
 
+;;
+;; want new line
+;;
+
+(ert-deftest wants-indent-within-object ()
+  "want indent within object"
+  (with-coffee-temp-buffer
+    "
+a = {
+  foo: 'bar'
+}
+"
+    (forward-cursor-on "foo")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-array ()
+  "want indent within array"
+  (with-coffee-temp-buffer
+    "
+a = [
+  'apple'
+]
+"
+    (forward-cursor-on "apple")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-function ()
+  "want indent within function"
+  (with-coffee-temp-buffer
+    "
+foo = (arg) ->
+  arg + 10
+"
+    (forward-cursor-on "10")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-class ()
+  "want indent within class"
+  (with-coffee-temp-buffer
+    "
+class Foo
+  @bar = 10
+"
+    (forward-cursor-on "10")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-for ()
+  "want indent within for"
+  (with-coffee-temp-buffer
+    "
+for i in ['a', 'b', 'c']
+  print i
+"
+    (forward-cursor-on "print")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-if ()
+  "want indent within if"
+  (with-coffee-temp-buffer
+    "
+if true
+  foo = bar
+"
+    (forward-cursor-on "foo")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-try ()
+  "want indent within try"
+  (with-coffee-temp-buffer
+    "
+try
+  undefined_func
+catch error
+  print foo
+"
+    (forward-cursor-on "undefined_func")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-within-while ()
+  "want indent within while"
+  (with-coffee-temp-buffer
+    "
+while bar -= 1
+  foo -= 1
+"
+    (forward-cursor-on "foo")
+    (should (coffee-line-wants-indent))))
+
+(ert-deftest wants-indent-with-multiple-newlines ()
+  "want indent with multiple newlines"
+  (with-coffee-temp-buffer
+    "
+class Foo
+
+
+
+  @bar = 1
+"
+    (forward-cursor-on "1")
+    (should (coffee-line-wants-indent))))
+
 ;;; private.el end here
