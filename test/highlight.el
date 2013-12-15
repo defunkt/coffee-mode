@@ -476,6 +476,16 @@ baz = \"</span>\""
     (forward-cursor-on "bar")
     (should (face-at-cursor-p 'font-lock-constant-face))))
 
+(ert-deftest regular-expression-with-quoted-slash ()
+  "Regular expression with quoted slash"
+  (with-coffee-temp-buffer
+    "foo += '/' unless /bar/"
+    (forward-cursor-on "unless")
+    (should-not (face-at-cursor-p 'font-lock-constant-face))
+
+    (forward-cursor-on "bar")
+    (should (face-at-cursor-p 'font-lock-constant-face))))
+
 ;;
 ;; Block Strings(#159)
 ;;
