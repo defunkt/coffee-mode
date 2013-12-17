@@ -973,6 +973,14 @@ comments such as the following:
    (syntax-propertize-rules
     (coffee-block-strings-delimiter
      (0 (ignore (coffee-syntax-block-strings-stringify))))
+    ("\\(?:[^\\]\\)\\(/\\)"
+     (1 (ignore
+         (let ((ppss (progn
+                       (goto-char (match-beginning 1))
+                       (syntax-ppss))))
+           (when (nth 8 ppss)
+             (put-text-property (match-beginning 1) (match-end 1)
+                                'syntax-table (string-to-syntax "_")))))))
     (coffee-regexp-regexp (1 (string-to-syntax "_")))
     ("^[[:space:]]*\\(###\\)\\(?:[[:space:]]+.*\\)?$"
      (1 (string-to-syntax "!"))))
