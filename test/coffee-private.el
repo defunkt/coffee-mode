@@ -25,8 +25,6 @@
   (require 'cl))
 
 (require 'ert)
-(require 'test-helper)
-
 (require 'coffee-mode)
 
 (ert-deftest coffee-command-compile-without-output-argument ()

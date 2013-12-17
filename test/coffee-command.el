@@ -25,8 +25,6 @@
   (require 'cl))
 
 (require 'ert)
-(require 'test-helper)
-
 (require 'coffee-mode)
 
 ;;
