@@ -10,21 +10,29 @@ a menu bar, and a few cute commands.
 
 ## Installation
 
-Install from the [GNU Emacs Lisp Package Archive][elpa].
+Install from the [GNU Emacs Lisp Package Archive][elpa] or [MELPA][melpa].
 
 coffee-mode used to offer automatic deletion of trailing whitespace.
 This is now left to whitespace-mode. See its documentation for full
 details, but as a hint, configure:
 
-    (setq whitespace-action '(auto-cleanup)) ;; automatically clean up bad whitespace
-    (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
+```lisp
+;; automatically clean up bad whitespace
+(setq whitespace-action '(auto-cleanup))
+;; only show bad whitespace
+(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
+```
 
-Then turn on whitespace-mode, or global-whitespace-mode.]
+Then turn on whitespace-mode, or global-whitespace-mode.
 
-To set the number of spaces used with each additional indentation, add this to your `.emacs` or other initialization file:
+To set the number of spaces used with each additional indentation, add this to your `.emacs` or
+`init.el` or other initialization file:
 
-    (custom-set-variables '(coffee-tab-width 2))
-    ;; This gives you a tab of 2 spaces
+```lisp
+;; This gives you a tab of 2 spaces
+(custom-set-variables '(coffee-tab-width 2))
+```
+
 
 ## imenu
 
@@ -52,3 +60,4 @@ Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 [tm]: http://github.com/defunkt/textmate.el
 [im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
 [elpa]: http://elpa.gnu.org/
+[melpa]: http://melpa.milkbox.net/
