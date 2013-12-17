@@ -142,6 +142,19 @@ $('#demo').click ->"
     (back-to-indentation)
     (should (looking-at "^#"))))
 
+(ert-deftest not-insert-hashmark-case ()
+  "Don't insert hashmark if previous line is statement comment"
+  (with-coffee-temp-buffer
+    "
+foo = 10 # bar
+"
+    (forward-cursor-on "bar")
+    (goto-char (line-end-position))
+    (coffee-newline-and-indent)
+
+    (back-to-indentation)
+    (should-not (looking-at "^#"))))
+
 (ert-deftest insert-hashmark-after-single-line-comment-not-three-hashmarks ()
   "Insert hashmark next line of single line comment with not three hashmarks"
   (with-coffee-temp-buffer
@@ -176,6 +189,20 @@ $('#demo').click ->"
 
     (back-to-indentation)
     (should-not (looking-at "^#"))))
+
+(ert-deftest indent-inserted-comment-newline ()
+  "indent next line comment"
+  (with-coffee-temp-buffer
+    "
+    # foo
+"
+    (forward-cursor-on "foo")
+    (let ((prev-indent (current-indentation)))
+      (coffee-newline-and-indent)
+      (back-to-indentation)
+      (should (looking-at "#"))
+      (should-not (zerop (current-indentation)))
+      (should (= prev-indent (current-indentation))))))
 
 ;;
 ;; indent left
