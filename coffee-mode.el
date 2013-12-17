@@ -639,13 +639,15 @@ output in a compilation buffer."
 
     ;; We need to insert an additional tab because the last line was special.
     (when (coffee-line-wants-indent)
-      (insert-tab)))
+      (insert-tab))
 
-  ;; Last line was a comment so this one should probably be,
-  ;; too. Makes it easy to write multi-line comments (like the one I'm
-  ;; writing right now).
-  (when (coffee-previous-line-is-single-line-comment)
-    (insert "# ")))
+    ;; Last line was a comment so this one should probably be,
+    ;; too. Makes it easy to write multi-line comments (like the one I'm
+    ;; writing right now).
+    (when (coffee-previous-line-is-single-line-comment)
+      (dotimes (i prev-indent)
+        (insert " "))
+      (insert "# "))))
 
 (defun coffee-dedent-line-backspace (arg)
   "Unindent to increment of `coffee-tab-width' with ARG==1 when
@@ -700,7 +702,10 @@ previous line."
     (forward-line -1)
     (back-to-indentation)
     (and (looking-at "#")
-         (not (looking-at "###\\(?:\\s-+.*\\)?$")))))
+         (not (looking-at "###\\(?:\\s-+.*\\)?$"))
+         (progn
+           (goto-char (line-end-position))
+           (nth 4 (syntax-ppss))))))
 
 (defun coffee-indent-shift-amount (start end dir)
   "Compute distance to the closest increment of `coffee-tab-width'."
