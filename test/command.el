@@ -30,6 +30,19 @@
 (require 'coffee-mode)
 
 ;;
+;; version
+;;
+
+(ert-deftest coffee-mode-version ()
+  "Check package version equals to version variable"
+  (let* ((library (locate-library "coffee-mode"))
+         (version (with-current-buffer (find-file-noselect library)
+                    (goto-char (point-min))
+                    (when (re-search-forward "^;; Version: \\([[:digit:].]+\\)$" nil t)
+                      (match-string-no-properties 1)))))
+    (should (string= version coffee-mode-version))))
+
+;;
 ;; tab command(indentation)
 ;;
 
