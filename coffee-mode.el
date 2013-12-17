@@ -644,7 +644,7 @@ output in a compilation buffer."
   ;; Last line was a comment so this one should probably be,
   ;; too. Makes it easy to write multi-line comments (like the one I'm
   ;; writing right now).
-  (when (coffee-previous-line-is-comment)
+  (when (coffee-previous-line-is-single-line-comment)
     (insert "# ")))
 
 (defun coffee-dedent-line-backspace (arg)
@@ -694,17 +694,13 @@ previous line."
             (back-to-indentation)
             (looking-at (coffee-indenters-bol-regexp)))))))
 
-(defun coffee-previous-line-is-comment ()
-  "Return t if the previous line is a CoffeeScript comment."
+(defun coffee-previous-line-is-single-line-comment ()
+  "Return t if the previous line is a CoffeeScript single line comment."
   (save-excursion
     (forward-line -1)
-    (coffee-line-is-comment)))
-
-(defun coffee-line-is-comment ()
-  "Return t if the current line is a CoffeeScript comment."
-  (save-excursion
-    (backward-to-indentation 0)
-    (= (char-after) (string-to-char "#"))))
+    (back-to-indentation)
+    (and (looking-at "#")
+         (not (looking-at "###\\(?:\\s-+.*\\)?$")))))
 
 (defun coffee-indent-shift-amount (start end dir)
   "Compute distance to the closest increment of `coffee-tab-width'."
