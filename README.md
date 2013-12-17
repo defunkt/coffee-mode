@@ -12,7 +12,7 @@ a menu bar, and a few cute commands.
 
 Install from the [GNU Emacs Lisp Package Archive][elpa].
 
-[coffee-mode used to offer automatic deletion of trailing whitespace.
+coffee-mode used to offer automatic deletion of trailing whitespace.
 This is now left to whitespace-mode. See its documentation for full
 details, but as a hint, configure:
 
@@ -20,6 +20,11 @@ details, but as a hint, configure:
     (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab)) ;; only show bad whitespace
 
 Then turn on whitespace-mode, or global-whitespace-mode.]
+
+To set the number of spaces used with each additional indentation, add this to your `.emacs` or other initialization file:
+
+    (custom-set-variables '(coffee-tab-width 2))
+    ;; This gives you a tab of 2 spaces
 
 ## imenu
 
