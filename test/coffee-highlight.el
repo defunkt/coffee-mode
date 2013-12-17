@@ -576,7 +576,7 @@ block-strings-end
 
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))
-    (should (face-at-cursor-p nil))))
+    (should (or (face-at-cursor-p nil) (face-at-cursor-p 'default)))))
 
 (ert-deftest multiline-block-strings-dq-contains-double-quote ()
   "Double quoted Block Strings contains double quote among multiple lines"
@@ -629,7 +629,7 @@ block-strings-end
 
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))
-    (should (face-at-cursor-p nil))))
+    (should (or (face-at-cursor-p nil) (face-at-cursor-p 'default)))))
 
 (ert-deftest block-strings-sq-simple ()
   "Single quoted Block Strings in single line"
@@ -691,7 +691,7 @@ block-strings-end
 
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))
-    (should (face-at-cursor-p nil))))
+    (should (or (face-at-cursor-p nil) (face-at-cursor-p 'default)))))
 
 (ert-deftest block-strings-sq-multiline-contains-double-quote ()
   "Single quoted block Strings contains double quote among multiple lines"
@@ -769,7 +769,7 @@ block-strings-end
 
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))
-    (should (face-at-cursor-p nil))))
+    (should (or (face-at-cursor-p nil) (face-at-cursor-p 'default)))))
 
 (ert-deftest block-string-sq-in-block-strings-dq ()
   "Single quoted block string in double quoted block strings"
@@ -795,6 +795,6 @@ block-strings-end
 
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))
-    (should (face-at-cursor-p nil))))
+    (should (or (face-at-cursor-p nil)  (face-at-cursor-p 'default)))))
 
 ;;; coffee-highlight.el end here
