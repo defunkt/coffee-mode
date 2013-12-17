@@ -1,4 +1,4 @@
-;;; private.el --- Test for private functions of coffee-mode.el
+;;; coffee-private.el --- Test for private functions of coffee-mode.el
 
 ;; Copyright (C) 2013 by Syohei YOSHIDA
 
@@ -25,8 +25,6 @@
   (require 'cl))
 
 (require 'ert)
-(require 'test-helper)
-
 (require 'coffee-mode)
 
 (ert-deftest coffee-command-compile-without-output-argument ()
@@ -209,4 +207,4 @@ class Foo
     (forward-cursor-on "1")
     (should (coffee-line-wants-indent))))
 
-;;; private.el end here
+;;; coffee-private.el end here

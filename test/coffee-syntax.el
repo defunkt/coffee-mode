@@ -1,4 +1,4 @@
-;;; syntax.el --- Test for syntax of coffee-mode.el
+;;; coffee-syntax.el --- Test for syntax of coffee-mode.el
 
 ;; Copyright (C) 2013 by Syohei YOSHIDA
 
@@ -25,8 +25,6 @@
   (require 'cl))
 
 (require 'ert)
-(require 'test-helper)
-
 (require 'coffee-mode)
 
 ;;
@@ -42,4 +40,4 @@
     (backward-word 1)
     (should (bobp))))
 
-;;; syntax.el end here
+;;; coffee-syntax.el end here

@@ -1,4 +1,4 @@
-;;; command.el --- Test for commands of coffee-mode.el
+;;; coffee-command.el --- Test for commands of coffee-mode.el
 
 ;; Copyright (C) 2013 by Syohei YOSHIDA
 
@@ -25,8 +25,6 @@
   (require 'cl))
 
 (require 'ert)
-(require 'test-helper)
-
 (require 'coffee-mode)
 
 ;;
@@ -575,4 +573,4 @@ value = 10
    (coffee-end-of-block)
    (should (eobp))))
 
-;;; command.el end here
+;;; coffee-command.el end here
