@@ -1,4 +1,4 @@
-;;; private.el --- Test for private functions of coffee-mode.el
+;;; coffee-private.el --- Test for private functions of coffee-mode.el
 
 ;; Copyright (C) 2013 by Syohei YOSHIDA
 
@@ -209,4 +209,4 @@ class Foo
     (forward-cursor-on "1")
     (should (coffee-line-wants-indent))))
 
-;;; private.el end here
+;;; coffee-private.el end here

@@ -1,4 +1,4 @@
-;;; highlight.el --- Test for highlighting of coffee-mode.el
+;;; coffee-highlight.el --- Test for highlighting of coffee-mode.el
 
 ;; Copyright (C) 2013 by Syohei YOSHIDA
 
@@ -799,4 +799,4 @@ block-strings-end
     (should-not (face-at-cursor-p 'font-lock-string-face))
     (should (face-at-cursor-p nil))))
 
-;;; highlight.el end here
+;;; coffee-highlight.el end here

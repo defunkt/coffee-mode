@@ -1,4 +1,4 @@
-;;; imenu.el --- Test for imenu of coffee-mode.el
+;;; coffee-imenu.el --- Test for imenu of coffee-mode.el
 
 ;; Copyright (C) 2013 by Syohei YOSHIDA
 
@@ -173,4 +173,4 @@ Coffee::bar =
                       for assign = (car index)
                       thereis (string= assign expected)))))))
 
-;;; imenu.el end here
+;;; coffee-imenu.el end here
