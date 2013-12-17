@@ -115,6 +115,58 @@ $('#demo').click ->"
       (should (= (current-column) 2)))))
 
 ;;
+;; newline and insert comment(#)
+;;
+
+(ert-deftest insert-hashmark-after-single-line-comment ()
+  "Insert hashmark next line of single line comment"
+  (with-coffee-temp-buffer
+    "
+# foo
+"
+    (forward-cursor-on "foo")
+    (goto-char (line-end-position))
+    (coffee-newline-and-indent)
+
+    (back-to-indentation)
+    (should (looking-at "^#"))))
+
+(ert-deftest insert-hashmark-after-single-line-comment-not-three-hashmarks ()
+  "Insert hashmark next line of single line comment with not three hashmarks"
+  (with-coffee-temp-buffer
+    "
+## foo
+
+####
+"
+    (forward-cursor-on "foo")
+    (goto-char (line-end-position))
+    (coffee-newline-and-indent)
+
+    (back-to-indentation)
+    (should (looking-at "^#"))
+
+    (forward-cursor-on "####")
+    (goto-char (line-end-position))
+    (coffee-newline-and-indent)
+
+    (back-to-indentation)
+    (should (looking-at "^#"))))
+
+(ert-deftest not-insert-hashmark-after-block-comment ()
+  "Don't insert hash mark next line of block comment line"
+  (with-coffee-temp-buffer
+    "
+###
+"
+    (forward-cursor-on "###")
+    (goto-char (line-end-position))
+    (coffee-newline-and-indent)
+
+    (back-to-indentation)
+    (should-not (looking-at "^#"))))
+
+;;
 ;; indent left
 ;;
 
