@@ -607,10 +607,10 @@ output in a compilation buffer."
         (insert-tab)
 
         (when (= (point-at-bol) (point))
-          (forward-char coffee-tab-width))
+          (forward-char tab-width))
 
         ;; We're too far, remove all indentation.
-        (when (> (- (current-indentation) prev-indent) coffee-tab-width)
+        (when (> (- (current-indentation) prev-indent) tab-width)
           (backward-to-indentation 0)
           (delete-region (point-at-bol) (point)))))))
 
@@ -635,7 +635,7 @@ output in a compilation buffer."
         (indent-next nil))
     (delete-horizontal-space t)
     (newline)
-    (insert-tab (/ prev-indent coffee-tab-width))
+    (insert-tab (/ prev-indent tab-width))
 
     ;; We need to insert an additional tab because the last line was special.
     (when (coffee-line-wants-indent)
@@ -650,7 +650,7 @@ output in a compilation buffer."
       (insert "# "))))
 
 (defun coffee-dedent-line-backspace (arg)
-  "Unindent to increment of `coffee-tab-width' with ARG==1 when
+  "Unindent to increment of `tab-width' with ARG==1 when
 called from first non-blank char of line.
 
 Delete ARG spaces if ARG!=1."
@@ -660,10 +660,10 @@ Delete ARG spaces if ARG!=1."
                         (back-to-indentation)
                         (point)))
            (not (bolp)))
-      (let ((extra-space-count (% (current-column) coffee-tab-width)))
+      (let ((extra-space-count (% (current-column) tab-width)))
         (backward-delete-char-untabify
          (if (zerop extra-space-count)
-             coffee-tab-width
+             tab-width
            extra-space-count)))
     (backward-delete-char-untabify arg)))
 
@@ -708,7 +708,7 @@ previous line."
            (nth 4 (syntax-ppss))))))
 
 (defun coffee-indent-shift-amount (start end dir)
-  "Compute distance to the closest increment of `coffee-tab-width'."
+  "Compute distance to the closest increment of `tab-width'."
   (let ((min most-positive-fixnum))
     (save-excursion
       (goto-char start)
@@ -717,17 +717,17 @@ previous line."
           (when (< current min)
             (setq min current)))
         (forward-line))
-      (let ((rem (% min coffee-tab-width)))
+      (let ((rem (% min tab-width)))
         (if (zerop rem)
-            coffee-tab-width
+            tab-width
           (cond ((eq dir 'left) rem)
-                ((eq dir 'right) (- coffee-tab-width rem))
+                ((eq dir 'right) (- tab-width rem))
                 (t 0)))))))
 
 (defun coffee-indent-shift-left (start end &optional count)
   "Shift lines contained in region START END by COUNT columns to the left.
 If COUNT is not given, indents to the closest increment of
-`coffee-tab-width'. If region isn't active, the current line is
+`tab-width'. If region isn't active, the current line is
 shifted. The shifted region includes the lines in which START and
 END lie. An error is signaled if any lines in the region are
 indented less than COUNT columns."
@@ -754,7 +754,7 @@ indented less than COUNT columns."
 (defun coffee-indent-shift-right (start end &optional count)
   "Shift lines contained in region START END by COUNT columns to the right.
 if COUNT is not given, indents to the closest increment of
-`coffee-tab-width'. If region isn't active, the current line is
+`tab-width'. If region isn't active, the current line is
 shifted. The shifted region includes the lines in which START and
 END lie."
   (interactive
