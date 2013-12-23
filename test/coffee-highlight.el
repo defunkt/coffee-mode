@@ -425,8 +425,8 @@ after_comment
     (should-not (face-at-cursor-p 'font-lock-comment-face))))
 
 ;; #190
-(ert-deftest block-comment-invalid-case ()
-  "Invalid case block comment"
+(ert-deftest block-comment-in-one-line ()
+  "Block comment in one line"
   (with-coffee-temp-buffer
     "
 ### Comment ###
