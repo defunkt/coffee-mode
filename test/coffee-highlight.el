@@ -443,6 +443,28 @@ notAComment()
     (forward-cursor-on "Comment")
     (should (face-at-cursor-p 'font-lock-comment-face))))
 
+(ert-deftest block-comment-comment-after-triple-hash ()
+  "Block comment with comment in same line as triple hash"
+  (with-coffee-temp-buffer
+    "
+### Comment
+notAComment()
+###
+after_comment
+"
+    (forward-cursor-on "Comment")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "notAComment")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+    (goto-char (line-end-position))
+
+    (forward-cursor-on "###")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "after_comment")
+    (should-not (face-at-cursor-p 'font-lock-comment-face))))
+
 ;;
 ;; Regular Expression Tests (#141)
 ;;
