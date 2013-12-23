@@ -204,6 +204,20 @@ foo = 10 # bar
       (should-not (zerop (current-indentation)))
       (should (= prev-indent (current-indentation))))))
 
+(ert-deftest indent-inserted-comment-newline-deep-indent ()
+  "indent next line comment deep indent case"
+  (with-coffee-temp-buffer
+    "
+              # foo
+"
+    (forward-cursor-on "foo")
+    (let ((prev-indent (current-indentation)))
+      (coffee-newline-and-indent)
+      (back-to-indentation)
+      (should (looking-at "#"))
+      (should-not (zerop (current-indentation)))
+      (should (= prev-indent (current-indentation))))))
+
 ;;
 ;; indent left
 ;;

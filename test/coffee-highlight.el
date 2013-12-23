@@ -424,6 +424,25 @@ after_comment
     (forward-cursor-on "after_comment")
     (should-not (face-at-cursor-p 'font-lock-comment-face))))
 
+;; #190
+(ert-deftest block-comment-invalid-case ()
+  "Invalid case block comment"
+  (with-coffee-temp-buffer
+    "
+### Comment ###
+notAComment()
+### Comment ###
+"
+    (forward-cursor-on "Comment")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "notAComment")
+    (should-not (face-at-cursor-p 'font-lock-comment-face))
+    (goto-char (line-end-position))
+
+    (forward-cursor-on "Comment")
+    (should (face-at-cursor-p 'font-lock-comment-face))))
+
 ;;
 ;; Regular Expression Tests (#141)
 ;;
