@@ -592,6 +592,9 @@ output in a compilation buffer."
 ;; Indentation
 ;;
 
+(defsubst coffee-insert-spaces (count)
+  (insert-char ?  count))
+
 ;;; The theory is explained in the README.
 
 (defun coffee-indent-line ()
@@ -599,13 +602,13 @@ output in a compilation buffer."
   (interactive)
 
   (if (= (point) (line-beginning-position))
-      (insert-char ?  coffee-tab-width)
+      (coffee-insert-spaces coffee-tab-width)
     (save-excursion
       (let ((prev-indent (coffee-previous-indent))
             (cur-indent (current-indentation)))
         ;; Shift one column to the left
         (beginning-of-line)
-        (insert-char ?  coffee-tab-width)
+        (coffee-insert-spaces coffee-tab-width)
 
         (when (= (point-at-bol) (point))
           (forward-char coffee-tab-width))
@@ -636,11 +639,11 @@ output in a compilation buffer."
         (indent-next nil))
     (delete-horizontal-space t)
     (newline)
-    (insert-char ?  prev-indent)
+    (coffee-insert-spaces prev-indent)
 
     ;; We need to insert an additional tab because the last line was special.
     (when (coffee-line-wants-indent)
-      (insert-char ?  coffee-tab-width))
+      (coffee-insert-spaces coffee-tab-width))
 
     ;; Last line was a comment so this one should probably be,
     ;; too. Makes it easy to write multi-line comments (like the one I'm
