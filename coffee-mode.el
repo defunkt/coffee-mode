@@ -982,8 +982,13 @@ comments such as the following:
              (put-text-property (match-beginning 1) (match-end 1)
                                 'syntax-table (string-to-syntax "_")))))))
     (coffee-regexp-regexp (1 (string-to-syntax "_")))
-    ("^[[:space:]]*\\(###\\)\\(?:[[:space:]]+.*\\)?$"
-     (1 (string-to-syntax "!"))))
+    ("^[[:space:]]*\\(###\\)\\([[:space:]]+.*\\)?$"
+     (1 (ignore
+         (let ((after-triple-hash (match-string-no-properties 2)))
+           (when (or (not after-triple-hash)
+                     (not (string-match-p "###\\'" after-triple-hash)))
+             (put-text-property (match-beginning 1) (match-end 1)
+                                'syntax-table (string-to-syntax "!"))))))))
    (point) end))
 
 ;;
