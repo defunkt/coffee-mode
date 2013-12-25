@@ -853,14 +853,18 @@ comments such as the following:
   (or (coffee-in-comment-p) (coffee-current-line-empty-p)))
 
 (defun coffee-skip-forward-lines (arg)
-  (while (and (not (eobp)) (coffee-skip-line-p))
-    (forward-line arg)))
+  (let ((pred (if (> arg 0)
+                  (lambda () (not (eobp)))
+                (lambda () (not (bobp))))))
+   (while (and (funcall pred) (coffee-skip-line-p))
+     (forward-line arg))))
 
 (defun coffee-beginning-of-defun (&optional count)
   (interactive "p")
   (unless count
     (setq count 1))
-  (coffee-skip-forward-lines -1)
+  (unless (eq this-command 'coffee-mark-defun)
+    (coffee-skip-forward-lines -1))
   (let ((start-indent (current-indentation)))
     (when (and (not (eq this-command 'coffee-mark-defun)) (looking-back "^\\s-*"))
       (forward-line -1))
