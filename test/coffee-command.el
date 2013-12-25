@@ -542,7 +542,8 @@ human: (name, age) ->
 "
    (forward-cursor-on "human")
    (let ((start (point)))
-     (coffee-mark-defun)
+     (let ((this-command 'coffee-mark-defun))
+       (coffee-mark-defun))
      (should (= (region-beginning) start))
      (should (= (region-end) (point-max))))))
 
@@ -561,7 +562,8 @@ class Foo
 "
    (forward-cursor-on "class")
    (let ((start (point)))
-     (coffee-mark-defun)
+     (let ((this-command 'coffee-mark-defun))
+       (call-interactively 'coffee-mark-defun))
      (should (= (region-beginning) start))
      (should (= (region-end) (point-max))))))
 

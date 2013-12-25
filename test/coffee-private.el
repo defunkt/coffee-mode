@@ -207,4 +207,48 @@ class Foo
     (forward-cursor-on "1")
     (should (coffee-line-wants-indent))))
 
+;;
+;; move command utility
+;;
+
+(ert-deftest skip-line-predicate ()
+  "skip line predicate"
+  (with-coffee-temp-buffer
+    "
+# comment
+
+end
+"
+    (forward-cursor-on "comment")
+    (should (coffee-skip-line-p))
+
+    (forward-line 1)
+    (should (coffee-skip-line-p))
+
+    (forward-cursor-on "end")
+    (should-not (coffee-skip-line-p))))
+
+(ert-deftest skip-forward-line ()
+  "skip line if line is comment or empty"
+  (with-coffee-temp-buffer
+    "
+# foo
+# bar
+# baz
+boo
+end
+"
+    (goto-char (point-min))
+    (coffee-skip-forward-lines -1)
+    (should (= (point) (point-min)))
+
+    (forward-cursor-on "foo")
+    (coffee-skip-forward-lines +1)
+
+    (should (looking-at "^boo"))
+
+    (goto-char (point-max))
+    (coffee-skip-forward-lines +1)
+    (should (= (point) (point-max)))))
+
 ;;; coffee-private.el end here
