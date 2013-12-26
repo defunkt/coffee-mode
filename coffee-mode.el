@@ -1048,6 +1048,11 @@ comments such as the following:
   (set (make-local-variable 'fill-forward-paragraph-function)
        'coffee-fill-forward-paragraph-function)
 
+  (set (make-local-variable 'beginning-of-defun-function)
+       'coffee-beginning-of-defun)
+  (set (make-local-variable 'end-of-defun-function)
+       'coffee-end-of-block)
+
   ;; imenu
   (set (make-local-variable 'imenu-create-index-function)
        'coffee-imenu-create-index)
