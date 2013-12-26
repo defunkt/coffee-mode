@@ -565,7 +565,20 @@ class Foo
      (let ((this-command 'coffee-mark-defun))
        (call-interactively 'coffee-mark-defun))
      (should (= (region-beginning) start))
-     (should (= (region-end) (point-max))))))
+     (should (= (region-end) (point-max))))
+
+
+   (forward-cursor-on "hear:")
+   (let ((expected-start (point))
+         (expected-end (save-excursion
+                         (forward-line +1)
+                         (goto-char (line-end-position))
+                         (1+ (point)))))
+     (goto-char (line-end-position))
+     (let ((this-command 'coffee-mark-defun))
+       (call-interactively 'coffee-mark-defun))
+     (should (= (region-beginning) expected-start))
+     (should (= (region-end) expected-end)))))
 
 (ert-deftest move-defun-commands-with-prototype-access ()
   "Move defun commands with prototype access"
