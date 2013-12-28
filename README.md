@@ -8,12 +8,21 @@ a menu bar, and a few cute commands.
 
 ![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png)
 
+
+## Requirement
+
+- Emacs 24.1 or higher
+
+
 ## Installation
 
 Install from the [GNU Emacs Lisp Package Archive][elpa] or [MELPA][melpa].
 
-coffee-mode used to offer automatic deletion of trailing whitespace.
-This is now left to whitespace-mode. See its documentation for full
+
+## Whitespace
+
+`coffee-mode` used to offer automatic deletion of trailing whitespace.
+This is now left to `whitespace-mode`. See its documentation for full
 details, but as a hint, configure:
 
 ```lisp
@@ -23,7 +32,10 @@ details, but as a hint, configure:
 (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
 ```
 
-Then turn on whitespace-mode, or global-whitespace-mode.
+Then turn on `whitespace-mode`, or `global-whitespace-mode`.
+
+
+## Indentation
 
 To set the number of spaces used with each additional indentation, add this to your `.emacs` or
 `init.el` or other initialization file:
@@ -46,10 +58,32 @@ file.
 
 ## Commands
 
+### easymenu
+
 If you have `easymenu` you can get to any of these commands from the
 menu bar:
 
 ![coffee-mode menu bar](http://img.skitch.com/20100308-tt5yn51h2jww2pmjqaawed6eq8.png)
+
+### coffee-repl
+
+Launch a CoffeeScript REPL
+
+### coffee-compile-file
+
+Compile buffer to JavaScript.
+
+### coffee-compile-buffer
+
+Compile region to JavaScript
+
+### coffee-watch
+
+Run `coffee` with the `--watch` flag on a directory or file.
+
+### coffee-cos-mode
+
+Minor mode for compiling to JavaScript at save file.
 
 ## Bugs
 
