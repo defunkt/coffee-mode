@@ -105,6 +105,29 @@ class Animal"
 
       (should (= (current-column) 4)))))
 
+(ert-deftest newline-and-indent-indenters-bol ()
+  "indenters bol keywords"
+  (let ((coffee-tab-width 4))
+    (dolist (keyword '("class" "for" "if" "else" "while" "until"
+                       "try" "catch" "finally" "switch"))
+      (with-coffee-temp-buffer
+        (format "\n    %s" keyword)
+        (goto-char (point-max))
+        (let ((cur-indent (current-indentation)))
+          (call-interactively 'coffee-newline-and-indent)
+          (should (= (current-column) (+ cur-indent coffee-tab-width))))))))
+
+(ert-deftest newline-and-indent-not-indenters-bol ()
+  "indenters bol keywords"
+  (let ((coffee-tab-width 4))
+    (dolist (keyword '("new" "return"))
+      (with-coffee-temp-buffer
+        (format "\n    %s" keyword)
+        (goto-char (point-max))
+        (let ((cur-indent (current-indentation)))
+          (call-interactively 'coffee-newline-and-indent)
+          (should (= (current-column) cur-indent)))))))
+
 (ert-deftest newline-and-indent-deeper ()
   "
 $('#demo').click ->
