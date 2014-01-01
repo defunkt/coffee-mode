@@ -554,12 +554,48 @@ class Foo
    (coffee-end-of-block)
    (should (eobp))))
 
+;;
+;; mark defun
+;;
+
 (ert-deftest mark-defun ()
   "Mark-defun"
 
   (with-coffee-temp-buffer
    "
 human: (name, age) ->
+  @name = name
+  @age  = age
+"
+   (forward-cursor-on "human")
+   (let ((start (point)))
+     (let ((this-command 'coffee-mark-defun))
+       (coffee-mark-defun))
+     (should (= (region-beginning) start))
+     (should (= (region-end) (point-max))))))
+
+(ert-deftest mark-defun-with-no-argument ()
+  "Mark-defun for no argument function"
+
+  (with-coffee-temp-buffer
+   "
+human: () ->
+  @name = 'Alice'
+  @age  = 49
+"
+   (forward-cursor-on "human")
+   (let ((start (point)))
+     (let ((this-command 'coffee-mark-defun))
+       (coffee-mark-defun))
+     (should (= (region-beginning) start))
+     (should (= (region-end) (point-max))))))
+
+(ert-deftest mark-defun-with-no-spaces ()
+  "Mark-defun for no space function"
+
+  (with-coffee-temp-buffer
+   "
+human:(name,age)->
   @name = name
   @age  = age
 "

@@ -219,7 +219,7 @@ foo =
   "Highlight lambda expression with fat arrow"
 
   (with-coffee-temp-buffer
-    "foo =>
+    "(foo) =>
       \"bar\""
 
     (forward-cursor-on "=>")
@@ -229,8 +229,18 @@ foo =
   "Highlight lambda expression with thin arrow"
 
   (with-coffee-temp-buffer
-    "foo ->
+    "(foo) ->
       \"bar\""
+
+    (forward-cursor-on "->")
+    (should (face-at-cursor-p 'font-lock-function-name-face))))
+
+(ert-deftest lambda-expression-multiple-arguments ()
+  "Highlight lambda expression with multiple arguments"
+
+  (with-coffee-temp-buffer
+    "(foo, bar) ->
+      foo + bar"
 
     (forward-cursor-on "->")
     (should (face-at-cursor-p 'font-lock-function-name-face))))
