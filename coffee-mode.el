@@ -428,7 +428,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-local-assign-regexp "\\s-*\\([[:word:].$]+\\)\\s-*=\\(?:[^>]\\|$\\)")
 
 ;; Lambda
-(defvar coffee-lambda-regexp "\\(?:(.+)\\)?\\s-*\\(->\\|=>\\)")
+(defvar coffee-lambda-regexp "\\(?:(.*)\\)?\\s-*\\(->\\|=>\\)")
 
 ;; Namespaces
 (defvar coffee-namespace-regexp "\\b\\(?:class\\s-+\\(\\S-+\\)\\)\\b")
@@ -540,7 +540,7 @@ output in a compilation buffer."
   (concat "^\\(\\s-*\\)" ; $1
           "\\(?:"
           coffee-assign-regexp ; $2
-          "\\s-+"
+          "\\s-*"
           coffee-lambda-regexp
           "\\|"
           coffee-namespace-regexp ; $4
@@ -798,7 +798,7 @@ comments such as the following:
 (defconst coffee-defun-regexp
   (concat "^\\s-*\\(?:"
           coffee-assign-regexp
-          "\\s-+"
+          "\\s-*"
           coffee-lambda-regexp
           "\\|"
           coffee-namespace-regexp
