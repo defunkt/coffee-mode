@@ -66,9 +66,9 @@ file.
 | `C-M-a`              | Move to beginning of defun              |
 | `C-M-e`              | Move to end of defun                    |
 | `C-M-h`              | Mark this defun                         |
-| `A-r`                | Compile buffer to JavaScript            |
+| `A-r`, `C-c C-k`     | Compile buffer to JavaScript            |
 | `A-R`                | Compile content of region to JavaScript |
-| `A-M-r`              | Run CoffeeScript REPL                   |
+| `A-M-r`, `C-c C-z`   | Run CoffeeScript REPL                   |
 | `C-c C-l`            | Send this line to REPL buffer           |
 | `C-c C-r`            | Send content of region to REPL buffer   |
 | `C-c C-b`            | Send content of buffer to REPL buffer   |
