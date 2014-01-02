@@ -328,8 +328,7 @@ See `coffee-compile-jump-to-error'."
   "Compiles the current buffer and displays the JavaScript in a buffer
 called `coffee-compiled-buffer-name'."
   (interactive)
-  (save-excursion
-    (coffee-compile-region (point-min) (point-max))))
+  (coffee-compile-region (point-min) (point-max)))
 
 (defun coffee-compile-region (start end)
   "Compiles a region and displays the JavaScript in a buffer called
@@ -339,6 +338,7 @@ called `coffee-compiled-buffer-name'."
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
     (when buffer
       (with-current-buffer buffer
+        (setq buffer-read-only nil)
         (erase-buffer))))
 
   (apply (apply-partially 'call-process-region start end coffee-command nil
@@ -347,10 +347,13 @@ called `coffee-compiled-buffer-name'."
          (append coffee-args-compile (list "-s" "-p")))
 
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
-    (display-buffer buffer)
-    (with-current-buffer buffer
-      (let ((buffer-file-name "tmp.js"))
-        (set-auto-mode)))))
+    (save-selected-window
+      (pop-to-buffer buffer)
+      (with-current-buffer buffer
+        (let ((buffer-file-name "tmp.js"))
+          (setq buffer-read-only t)
+          (set-auto-mode)
+          (goto-char (point-min)))))))
 
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
