@@ -211,6 +211,15 @@ foo =
 
     (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
 
+(ert-deftest local-assignment-not-highlight-eqeq ()
+  "Don't highlight left operand of '=='"
+
+  (with-coffee-temp-buffer
+    "foo == 10"
+
+    (forward-cursor-on "foo")
+    (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
+
 ;;
 ;; Lambda expression
 ;;
