@@ -355,6 +355,18 @@ foo =
       iced-keyword
       (should (face-at-cursor-p 'font-lock-keyword-face)))))
 
+(ert-deftest keywords-js-keywords-property-name ()
+  "Don't highlight property name whose name is JavaScript keywords"
+
+  (dolist (js-keyword '("if" "else" "new" "return" "try" "catch"
+                        "finally" "throw" "break" "continue" "for" "in" "while"
+                        "delete" "instanceof" "typeof" "switch" "super" "extends"
+                        "class" "until" "loop"))
+    (with-coffee-temp-buffer
+      (format "foo.%s" js-keyword)
+      (forward-cursor-on js-keyword)
+      (should-not (face-at-cursor-p 'font-lock-keyword-face)))))
+
 ;;
 ;; class keywords(#99)
 ;;
@@ -384,6 +396,15 @@ foo =
     (with-coffee-temp-buffer
       keyword
       (should (face-at-cursor-p 'font-lock-constant-face)))))
+
+(ert-deftest boolean-property ()
+  "Don't highlight property name whose name is boolean keyword"
+
+  (dolist (keyword '("true" "false" "yes" "no" "on" "off" "null" "undefined"))
+    (with-coffee-temp-buffer
+      (format "foo.%s" keyword)
+      (forward-cursor-on keyword)
+      (should-not (face-at-cursor-p 'font-lock-constant-face)))))
 
 ;;
 ;; Single line comment
