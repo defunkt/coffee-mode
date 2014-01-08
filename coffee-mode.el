@@ -994,6 +994,23 @@ comments such as the following:
            (put-text-property (1- quote-ending-pos) quote-ending-pos
                               'syntax-table (string-to-syntax "|"))))))
 
+(defun coffee-syntax-peropertize-block-comment ()
+  (let ((curpoint (point))
+        (inhibit-changing-match-data t))
+    (let* ((valid-comment-start nil)
+           (valid-comment-end (looking-at-p "\\s-*$"))
+           (ppss (prog2
+                     (backward-char 3)
+                     (syntax-ppss)
+                   (setq valid-comment-start (looking-back "^\\s-*"))
+                   (forward-char 3)))
+           (in-comment (nth 4 ppss))
+           (in-string (nth 3 ppss)))
+      (when (or (and (not in-comment) (not in-string) valid-comment-start)
+                (and in-comment valid-comment-end))
+        (put-text-property (- curpoint 3) curpoint
+                           'syntax-table (string-to-syntax "!"))))))
+
 (defun coffee-syntax-propertize-function (start end)
   (goto-char start)
   (funcall
@@ -1009,13 +1026,8 @@ comments such as the following:
              (put-text-property (match-beginning 1) (match-end 1)
                                 'syntax-table (string-to-syntax "_")))))))
     (coffee-regexp-regexp (1 (string-to-syntax "_")))
-    ("^[[:space:]]*\\(###\\)\\([[:space:]]+.*\\)?$"
-     (1 (ignore
-         (let ((after-triple-hash (match-string-no-properties 2)))
-           (when (or (not after-triple-hash)
-                     (not (string-match-p "###\\'" after-triple-hash)))
-             (put-text-property (match-beginning 1) (match-end 1)
-                                'syntax-table (string-to-syntax "!"))))))))
+    ("###"
+     (0 (ignore (coffee-syntax-peropertize-block-comment)))))
    (point) end))
 
 ;;

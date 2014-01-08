@@ -505,6 +505,25 @@ after_comment
     (forward-cursor-on "after_comment")
     (should-not (face-at-cursor-p 'font-lock-comment-face))))
 
+;; #205
+(ert-deftest block-comment-end-comment-is-not-beginning-of-line ()
+  "Highlight block comment if comment end is not beginning of line "
+  (with-coffee-temp-buffer
+    "
+myFunction: (callback) =>
+        ### My block comment that
+        maybe goes a few lines ###
+        doStuff
+"
+    (forward-cursor-on "My")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "lines")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "doStuff")
+    (should-not (face-at-cursor-p 'font-lock-comment-face))))
+
 ;;
 ;; Regular Expression Tests (#141)
 ;;
