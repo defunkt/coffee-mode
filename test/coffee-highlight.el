@@ -524,6 +524,36 @@ myFunction: (callback) =>
     (forward-cursor-on "doStuff")
     (should-not (face-at-cursor-p 'font-lock-comment-face))))
 
+;; #205 -- more hashes
+(ert-deftest block-comment-with-more-hash-marks ()
+  "Highlight block comment whose block ends is more than 3 hash marks"
+  (with-coffee-temp-buffer
+    "
+myFunction: (callback) =>
+    ### This comment ends with to many hashes ####
+    doStuff
+"
+    (forward-cursor-on "doStuff")
+    (should-not (face-at-cursor-p 'font-lock-comment-face))))
+
+(ert-deftest block-comment-with-more-hash-marks2 ()
+  "Highlight block comment whose block ends is more than 3 hash marks another case"
+  (with-coffee-temp-buffer
+    "
+myFunction: (callback) =>
+    ### same
+    here #####
+    doStuff
+"
+    (forward-cursor-on "same")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "here")
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "doStuff")
+    (should-not (face-at-cursor-p 'font-lock-comment-face))))
+
 ;;
 ;; Regular Expression Tests (#141)
 ;;

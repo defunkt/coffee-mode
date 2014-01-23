@@ -998,7 +998,7 @@ comments such as the following:
   (let ((curpoint (point))
         (inhibit-changing-match-data t))
     (let* ((valid-comment-start nil)
-           (valid-comment-end (looking-at-p "\\s-*$"))
+           (valid-comment-end (looking-at-p "#\\{0,2\\}\\s-*$"))
            (ppss (prog2
                      (backward-char 3)
                      (syntax-ppss)
