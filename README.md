@@ -45,6 +45,15 @@ To set the number of spaces used with each additional indentation, add this to y
 (custom-set-variables '(coffee-tab-width 2))
 ```
 
+`coffee-tab-width` is buffer local variable. You can set indentation size
+per buffer by using `File Variables`.
+
+```coffee
+# Local variables:
+# coffee-tab-width: 4
+# End:
+```
+
 
 ## imenu
 
@@ -103,6 +112,22 @@ Run `coffee` with the `--watch` flag on a directory or file.
 ### coffee-cos-mode
 
 Minor mode for compiling to JavaScript at save file.
+
+
+## Sample Configuration
+
+```lisp
+;; coffeescript
+(custom-set-variables
+ '(coffee-tab-width 2)
+ '(coffee-args-compile '("-c" "--bare")))
+
+(eval-after-load "coffee-mode"
+  '(progn
+     (define-key coffee-mode-map [(meta r)] 'coffee-compile-buffer)
+     (define-key coffee-mode-map (kbd "C-j") 'coffee-newline-and-indent)))
+```
+
 
 ## Bugs
 
