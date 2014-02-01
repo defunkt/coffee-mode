@@ -294,14 +294,13 @@ See `coffee-compile-jump-to-error'."
   (interactive)
   (let* ((input (buffer-file-name))
          (basename (file-name-sans-extension input))
-         (output (if (string-match-p "\\.js\\'" basename)
-                     basename
-                   (concat basename ".js")))
+         (output (when (string-match-p "\\.js\\'" basename) ;; for Rails '.js.coffee' file
+                   basename))
          (compile-cmd (coffee-command-compile input output))
          (compiler-output (shell-command-to-string compile-cmd)))
     (if (string= compiler-output "")
         (let ((file-name (coffee-compiled-file-name (buffer-file-name))))
-          (message "Compiled and saved %s" output)
+          (message "Compiled and saved %s" (or output (concat basename ".js")))
           (coffee-revert-buffer-compiled-file file-name))
       (let* ((msg (car (split-string compiler-output "[\n\r]+")))
              (line (when (string-match "on line \\([0-9]+\\)" msg)
