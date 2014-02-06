@@ -155,6 +155,10 @@
   :group 'coffee
   :safe 'integerp)
 
+(defcustom coffee-indent-tabs-mode indent-tabs-mode
+  "Indentation can insert tabs if this is t."
+  :group 'coffee)
+
 (defcustom coffee-command "coffee"
   "The CoffeeScript command used for evaluating code."
   :type 'string
@@ -586,7 +590,9 @@ output in a compilation buffer."
 ;;
 
 (defsubst coffee-insert-spaces (count)
-  (insert-char ?  count))
+  (if coffee-indent-tabs-mode
+    (insert-char ?	 (floor count coffee-tab-width))
+    (insert-char ?  count)))
 
 ;;; The theory is explained in the README.
 
@@ -1044,8 +1050,10 @@ comments such as the following:
 
   ;; indentation
   (make-local-variable 'coffee-tab-width)
+  (make-local-variable 'coffee-indent-tabs-mode)
   (set (make-local-variable 'indent-line-function) 'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
+  (set (make-local-variable 'indent-tabs-mode) coffee-indent-tabs-mode)
 
   (set (make-local-variable 'syntax-propertize-function)
        'coffee-syntax-propertize-function)
