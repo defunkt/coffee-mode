@@ -216,6 +216,11 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
+(defcustom coffee-indent-tabs-mode nil
+  "Indentation can insert tabs if this is t."
+  :group 'coffee
+  :type 'boolean)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -586,7 +591,9 @@ output in a compilation buffer."
 ;;
 
 (defsubst coffee-insert-spaces (count)
-  (insert-char ?  count))
+  (if coffee-indent-tabs-mode
+      (insert-char (string-to-char "\t")  (floor count coffee-tab-width))
+    (insert-char ?  count)))
 
 ;;; The theory is explained in the README.
 
@@ -1044,6 +1051,7 @@ comments such as the following:
 
   ;; indentation
   (make-local-variable 'coffee-tab-width)
+  (make-local-variable 'coffee-indent-tabs-mode)
   (set (make-local-variable 'indent-line-function) 'coffee-indent-line)
   (set (make-local-variable 'tab-width) coffee-tab-width)
 
@@ -1068,7 +1076,7 @@ comments such as the following:
        (list (lambda (arg) 'no-indent)))
 
   ;; no tabs
-  (setq indent-tabs-mode nil))
+  (setq indent-tabs-mode coffee-indent-tabs-mode))
 
 ;;
 ;; Compile-on-Save minor mode

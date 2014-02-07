@@ -82,6 +82,29 @@ line1()
       (should (= (current-column) 0)))))
 
 ;;
+;; enable coffee-indent-tabs-mode
+;;
+
+(ert-deftest inserting-tab ()
+  "inserting tab when `coffee-indent-tabs-mode' is enable"
+
+  (let ((coffee-tab-width 8)
+        (coffee-indent-tabs-mode t))
+    (with-coffee-temp-buffer
+      "
+line1()
+line2()
+"
+      (should coffee-indent-tabs-mode)
+      (forward-cursor-on "line2")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-column) 8))
+      (should (looking-back "^\t"))
+
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-column) 0)))))
+
+;;
 ;; newline and indent
 ;;
 
