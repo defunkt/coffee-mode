@@ -54,6 +54,10 @@ per buffer by using `File Variables`.
 # End:
 ```
 
+### Using TAB
+
+Set `coffee-indent-tabs-mode` t if you want to use **TAB** instead of spaces.
+
 
 ## imenu
 
