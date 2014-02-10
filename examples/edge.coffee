@@ -9,8 +9,21 @@ console.log string
 string = 'Something with a \'single quote'
 console.log string
 
-# TODO
 heredoc = """
   Heredoc with a " double quote
 """
 console.log heredoc
+
+###
+foo
+bar
+###
+console.log "foo bar is commented with block comment"
+
+### this is
+block comment ###
+console.log "after block comment"
+
+### this is
+block comment ####
+console.log "after block comment with 4 hash marks"
