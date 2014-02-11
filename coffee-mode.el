@@ -437,7 +437,7 @@ called `coffee-compiled-buffer-name'."
 
 ;; Regular expressions
 (eval-and-compile
-  (defvar coffee-regexp-regexp "\\s$\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s$"))
+  (defvar coffee-regexp-regexp "\\s/\\(\\(?:\\\\/\\|[^/\n\r]\\)*\\)\\s/"))
 
 ;; String Interpolation(This regexp is taken from ruby-mode)
 (defvar coffee-string-interpolation-regexp "#{[^}\n\\\\]*\\(?:\\\\.[^}\n\\\\]*\\)*}")
@@ -1042,7 +1042,7 @@ comments such as the following:
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
 
   ;; Treat slashes as paired delimiters; useful for finding regexps.
-  (modify-syntax-entry ?/ "$" coffee-mode-syntax-table)
+  (modify-syntax-entry ?/ "/" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
 
