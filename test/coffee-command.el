@@ -82,6 +82,89 @@ line1()
       (should (= (current-column) 0)))))
 
 ;;
+;; dedent(backspace behavior)
+;;
+
+(ert-deftest dedent-command-multiple-of-coffee-tab-width ()
+  "dedent - current column is multiple of coffee-tab-width"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+line1()
+  line2()
+"
+      (forward-cursor-on "line2")
+      (call-interactively 'coffee-dedent-line-backspace)
+      (should (= (current-column) 0)))))
+
+(ert-deftest dedent-command-not-multiple-of-coffee-tab-width ()
+  "dedent - current column is not multiple of coffee-tab-width"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+line1()
+   line2()
+"
+      (forward-cursor-on "line2")
+      (call-interactively 'coffee-dedent-line-backspace)
+      (should (= (current-column) 2)))))
+
+(ert-deftest dedent-command-at-not-beginning-of-line ()
+  "dedent - current position is not beginning of line"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "foo"
+      (goto-char (point-max))
+      (call-interactively 'coffee-dedent-line-backspace)
+      (should (= (current-column) 2))
+      (should (string= (buffer-string) "fo")))))
+
+(ert-deftest dedent-command-with-numeric-prefix ()
+  "dedent - with numeric prefix"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+line1()
+   line2()
+"
+      (forward-cursor-on "line2")
+      (coffee-dedent-line-backspace 2)
+      (should (= (current-column) 1)))))
+
+(ert-deftest dedent-command-with-electric-pair-mode ()
+  "dedent - with electric-pair-mode"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+line1()
+  line2()
+"
+      (electric-pair-mode +1)
+      (forward-cursor-on "line2")
+      (call-interactively 'coffee-dedent-line-backspace)
+      (should (= (current-column) 0)))
+
+    (with-coffee-temp-buffer
+      "
+line1()
+   line2()
+"
+      (electric-pair-mode +1)
+      (forward-cursor-on "line2")
+      (call-interactively 'coffee-dedent-line-backspace)
+      (should (= (current-column) 2)))))
+
+(ert-deftest dedent-command-delete-pair-with-electric-pair-mode ()
+  "dedent - deleting pair with electric-pair-mode"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "foo()"
+      (electric-pair-mode +1)
+      (forward-cursor-on ")")
+      (call-interactively 'coffee-dedent-line-backspace)
+      (should (string= (buffer-string) "foo")))))
+
+;;
 ;; enable coffee-indent-tabs-mode
 ;;
 
