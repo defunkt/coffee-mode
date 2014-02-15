@@ -664,12 +664,13 @@ Delete ARG spaces if ARG!=1."
                         (back-to-indentation)
                         (point)))
            (not (bolp)))
-      (let ((extra-space-count (% (current-column) coffee-tab-width)))
+      (let* ((extra-space-count (% (current-column) coffee-tab-width))
+             (deleted-chars (if (zerop extra-space-count)
+                                coffee-tab-width
+                              extra-space-count)))
         (if electric-pair-mode
-            (electric-pair-backward-delete-char-untabify
-             (if (zerop extra-space-count) coffee-tab-width extra-space-count))
-          (backward-delete-char-untabify
-           (if (zerop extra-space-count) coffee-tab-width extra-space-count))))
+            (electric-pair-backward-delete-char-untabify deleted-chars)
+          (backward-delete-char-untabify deleted-chars)))
     (if electric-pair-mode
         (electric-pair-backward-delete-char-untabify arg)
       (backward-delete-char-untabify arg))))
