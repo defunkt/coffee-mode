@@ -138,6 +138,8 @@
 (eval-when-compile
   (require 'cl))
 
+(declare-function electric-pair-backward-delete-char-untabify "elec-pair")
+
 ;;
 ;; Customizable Variables
 ;;
