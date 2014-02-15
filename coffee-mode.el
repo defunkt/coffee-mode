@@ -993,7 +993,7 @@ comments such as the following:
            (put-text-property (1- quote-ending-pos) quote-ending-pos
                               'syntax-table (string-to-syntax "|"))))))
 
-(defun coffee-syntax-peropertize-block-comment ()
+(defun coffee-syntax-propertize-block-comment ()
   (let ((curpoint (point))
         (inhibit-changing-match-data t))
     (let* ((valid-comment-start nil)
@@ -1026,7 +1026,7 @@ comments such as the following:
                                 'syntax-table (string-to-syntax "_")))))))
     (coffee-regexp-regexp (1 (string-to-syntax "_")))
     ("###"
-     (0 (ignore (coffee-syntax-peropertize-block-comment)))))
+     (0 (ignore (coffee-syntax-propertize-block-comment)))))
    (point) end))
 
 ;;
