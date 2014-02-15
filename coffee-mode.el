@@ -663,11 +663,14 @@ Delete ARG spaces if ARG!=1."
                         (point)))
            (not (bolp)))
       (let ((extra-space-count (% (current-column) coffee-tab-width)))
-        (backward-delete-char-untabify
-         (if (zerop extra-space-count)
-             coffee-tab-width
-           extra-space-count)))
-    (backward-delete-char-untabify arg)))
+        (if electric-pair-mode
+            (electric-pair-backward-delete-char-untabify
+             (if (zerop extra-space-count) coffee-tab-width extra-space-count))
+          (backward-delete-char-untabify
+           (if (zerop extra-space-count) coffee-tab-width extra-space-count))))
+    (if electric-pair-mode
+        (electric-pair-backward-delete-char-untabify arg)
+      (backward-delete-char-untabify arg))))
 
 ;; Indenters help determine whether the current line should be
 ;; indented further based on the content of the previous line. If a
