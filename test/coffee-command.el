@@ -162,7 +162,10 @@ line1()
       (electric-pair-mode +1)
       (forward-cursor-on ")")
       (call-interactively 'coffee-dedent-line-backspace)
-      (should (string= (buffer-string) "foo")))))
+      (if (featurep 'elec-pair)
+          (should (string= (buffer-string) "foo"))
+        ;; #225
+        (should (string= (buffer-string) "foo)"))))))
 
 ;;
 ;; enable coffee-indent-tabs-mode
