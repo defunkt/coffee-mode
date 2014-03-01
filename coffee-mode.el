@@ -668,10 +668,10 @@ Delete ARG spaces if ARG!=1."
              (deleted-chars (if (zerop extra-space-count)
                                 coffee-tab-width
                               extra-space-count)))
-        (if electric-pair-mode
+        (if (featurep 'elec-pair)
             (electric-pair-backward-delete-char-untabify deleted-chars)
           (backward-delete-char-untabify deleted-chars)))
-    (if electric-pair-mode
+    (if (featurep 'elec-pair)
         (electric-pair-backward-delete-char-untabify arg)
       (backward-delete-char-untabify arg))))
 
