@@ -322,6 +322,14 @@ called `coffee-compiled-buffer-name'."
   (interactive)
   (coffee-compile-region (point-min) (point-max)))
 
+(defsubst coffee-generate-sourcemap-p ()
+  (cl-find-if (lambda (opt) (member opt '("-m" "--map"))) coffee-args-compile))
+
+(defun coffee-generate-sourcemap ()
+  (let ((file (buffer-file-name)))
+    (unless (zerop (call-process coffee-command nil nil nil "-m" file))
+      (error "Can't generate sourcemap %s" (file-name-nondirectory file)))))
+
 (defun coffee-compile-region (start end)
   "Compiles a region and displays the JavaScript in a buffer called
 `coffee-compiled-buffer-name'."
@@ -338,6 +346,8 @@ called `coffee-compiled-buffer-name'."
                           nil)
          (append coffee-args-compile (list "-s" "-p")))
 
+  (when (coffee-generate-sourcemap-p)
+    (coffee-generate-sourcemap))
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
     (save-selected-window
       (pop-to-buffer buffer)
