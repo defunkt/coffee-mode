@@ -1,4 +1,4 @@
-;;; coffee-mode.el --- Major mode to edit CoffeeScript files in Emacs
+;;; coffee-mode.el --- Major mode to edit CoffeeScript files in Emacs -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2010 Chris Wanstrath
 
@@ -527,7 +527,7 @@ For details, see `comment-dwim'."
 output in a compilation buffer."
   (interactive "sArguments: ")
   (let ((compilation-buffer-name-function
-         (lambda (this-mode)
+         (lambda (_this-mode)
            (generate-new-buffer-name coffee-compiled-buffer-name))))
     (compile (concat coffee-command " " args))))
 
@@ -605,8 +605,7 @@ output in a compilation buffer."
   (if (= (point) (line-beginning-position))
       (coffee-insert-spaces coffee-tab-width)
     (save-excursion
-      (let ((prev-indent (coffee-previous-indent))
-            (cur-indent (current-indentation)))
+      (let ((prev-indent (coffee-previous-indent)))
         ;; Shift one column to the left
         (beginning-of-line)
         (coffee-insert-spaces coffee-tab-width)
@@ -636,8 +635,7 @@ output in a compilation buffer."
   ;; Remember the current line indentation level,
   ;; insert a newline, and indent the newline to the same
   ;; level as the previous line.
-  (let ((prev-indent (current-indentation))
-        (indent-next nil))
+  (let ((prev-indent (current-indentation)))
     (delete-horizontal-space t)
     (newline)
     (coffee-insert-spaces prev-indent)
@@ -894,7 +892,7 @@ comments such as the following:
   (interactive "p")
   (unless count
     (setq count 1))
-  (dotimes (i count)
+  (dotimes (_i count)
     (let* ((curline-is-defun (coffee-current-line-is-defun))
            start-indent)
       (coffee-skip-forward-lines 1)
@@ -1078,7 +1076,7 @@ comments such as the following:
 
   ;; Don't let electric-indent-mode break coffee-mode.
   (set (make-local-variable 'electric-indent-functions)
-       (list (lambda (arg) 'no-indent)))
+       (list (lambda (_arg) 'no-indent)))
 
   ;; no tabs
   (setq indent-tabs-mode coffee-indent-tabs-mode))
