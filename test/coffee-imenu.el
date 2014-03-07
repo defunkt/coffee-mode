@@ -21,9 +21,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (require 'cl))
-
 (require 'ert)
 (require 'coffee-mode)
 
@@ -39,9 +36,9 @@ class Person
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 2))
       (dolist (expected '("Person::minus" "Person::print"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest class-members-with-property ()
   "Creating class member indice with property (`@')"
@@ -55,9 +52,9 @@ class Person
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 2))
       (dolist (expected '("Person::minus" "Person::@print"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest extended-class-members ()
   "Creating extended class member indice"
@@ -72,9 +69,9 @@ class Policeman extends Person
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 2))
       (dolist (expected '("Policeman::constructor" "Policeman::print"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest object-properties ()
   "Creating object property indice"
@@ -88,9 +85,9 @@ a =
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 2))
       (dolist (expected '("a.minus" "a.block"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest object-properties-with-braces ()
   "Creating object property indice with braces"
@@ -106,9 +103,9 @@ a = {
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 2))
       (dolist (expected '("a.minus" "a.block"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest class-members-and-object-properties ()
   "Creating class member and object property indice"
@@ -128,9 +125,9 @@ a =
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 4))
       (dolist (expected '("Foo::constructor" "Foo::print" "a.minus" "a.block"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest class-members-and-named-function ()
   "Creating class member and named function"
@@ -148,9 +145,9 @@ named_func = (x, y) ->
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 3))
       (dolist (expected '("Foo::constructor" "Foo::print" "named_func"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 (ert-deftest prototype-access-declaration ()
   "Prototype access function declaration"
@@ -167,8 +164,8 @@ Coffee::bar =
     (let ((got (coffee-imenu-create-index)))
       (should (= (length got) 3))
       (dolist (expected '("Coffee::foo" "Coffee::bar.minus" "Coffee::bar.block"))
-        (should (loop for index in got
-                      for assign = (car index)
-                      thereis (string= assign expected)))))))
+        (should (cl-loop for index in got
+                         for assign = (car index)
+                         thereis (string= assign expected)))))))
 
 ;;; coffee-imenu.el end here
