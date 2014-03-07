@@ -6,7 +6,7 @@
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
 ;; URL: http://github.com/defunkt/coffee-mode
-;; Package-Requires: ((emacs "24.1"))
+;; Package-Requires: ((emacs "24.1") (cl-lib "0.5"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -135,8 +135,7 @@
 (require 'font-lock)
 (require 'rx)
 
-(eval-when-compile
-  (require 'cl))
+(require 'cl-lib)
 
 (declare-function electric-pair-backward-delete-char-untabify "elec-pair")
 
@@ -885,7 +884,7 @@ comments such as the following:
           (let ((cur-indent (current-indentation)))
             (when (<= cur-indent start-indent)
               (setq start-indent cur-indent)
-              (decf count)))
+              (cl-decf count)))
           (when (<= count 0)
             (back-to-indentation)
             (setq finish t)))))))
@@ -965,7 +964,7 @@ comments such as the following:
     (while (and (< i 3)
                 (< (+ start-point i) limit)
                 (eq (char-after (+ start-point i)) quote-char))
-      (incf i))
+      (cl-incf i))
     i))
 
 (defun coffee-syntax-block-strings-stringify ()
