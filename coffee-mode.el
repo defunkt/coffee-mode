@@ -222,6 +222,11 @@ with CoffeeScript."
   :group 'coffee
   :type 'boolean)
 
+(defcustom coffee-after-compile-hook nil
+  "Hook called after compile to Javascript"
+  :type 'hook
+  :group 'coffee)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -348,14 +353,21 @@ called `coffee-compiled-buffer-name'."
 
   (when (coffee-generate-sourcemap-p)
     (coffee-generate-sourcemap))
-  (let ((buffer (get-buffer coffee-compiled-buffer-name)))
+  (let* ((buffer (get-buffer coffee-compiled-buffer-name))
+         (file (file-name-nondirectory (buffer-file-name)))
+         (props (list :sourcemap (concat (file-name-sans-extension file) ".map")
+                      :line (line-number-at-pos)
+                      :column (current-column)
+                      :source file)))
     (save-selected-window
       (pop-to-buffer buffer)
       (with-current-buffer buffer
         (let ((buffer-file-name "tmp.js"))
           (setq buffer-read-only t)
           (set-auto-mode)
-          (goto-char (point-min)))))))
+          (goto-char (point-min))
+          (forward-line 1) ;; 1st line is comment
+          (run-hook-with-args 'coffee-after-compile-hook props))))))
 
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
