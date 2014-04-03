@@ -269,9 +269,11 @@ with CoffeeScript."
             coffee-args-repl))
 
     ;; Workaround: https://github.com/defunkt/coffee-mode/issues/30
+    ;; Workaround for ansi colors
     (set (make-local-variable 'comint-preoutput-filter-functions)
          (cons (lambda (string)
-                 (replace-regexp-in-string "\x1b\\[.[GJK]" "" string)) nil)))
+                 (replace-regexp-in-string "\x1b\\[.[GJK]" "" string))
+               (cons 'ansi-color-apply nil))))
 
   (pop-to-buffer coffee-repl-buffer))
 
