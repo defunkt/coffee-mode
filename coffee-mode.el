@@ -255,6 +255,11 @@ with CoffeeScript."
 ;;
 ;; Commands
 ;;
+
+(defun coffee-comint-filter (string)
+  (ansi-color-apply
+   (replace-regexp-in-string "\x1b\\[.[GJK]" "" string)))
+
 (defun coffee-repl ()
   "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
   (interactive)
@@ -268,12 +273,8 @@ with CoffeeScript."
             coffee-command
             coffee-args-repl))
 
-    ;; Workaround: https://github.com/defunkt/coffee-mode/issues/30
     ;; Workaround for ansi colors
-    (set (make-local-variable 'comint-preoutput-filter-functions)
-         (cons (lambda (string)
-                 (replace-regexp-in-string "\x1b\\[.[GJK]" "" string))
-               (cons 'ansi-color-apply nil))))
+    (add-hook 'comint-preoutput-filter-functions 'coffee-comint-filter nil t))
 
   (pop-to-buffer coffee-repl-buffer))
 
