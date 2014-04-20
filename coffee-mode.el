@@ -333,44 +333,68 @@ called `coffee-compiled-buffer-name'."
 (defsubst coffee-generate-sourcemap-p ()
   (cl-find-if (lambda (opt) (member opt '("-m" "--map"))) coffee-args-compile))
 
-(defun coffee-generate-sourcemap ()
-  (let ((file (buffer-file-name)))
-    (unless (zerop (call-process coffee-command nil nil nil "-m" file))
-      (error "Can't generate sourcemap %s" (file-name-nondirectory file)))))
+(defun coffee-compile-sentinel ()
+  (lambda (proc _event)
+    (when (eq (process-status proc) 'exit)
+      (if (not (= (process-exit-status proc) 0))
+          (message "Failed: compiling to JavaScript")
+        (let* ((buffer (get-buffer coffee-compiled-buffer-name))
+               (file (file-name-nondirectory (buffer-file-name)))
+               (props (list :sourcemap (concat (file-name-sans-extension file) ".map")
+                            :line (line-number-at-pos)
+                            :column (current-column)
+                            :source file)))
+          (save-selected-window
+            (pop-to-buffer buffer)
+            (with-current-buffer buffer
+              (let ((buffer-file-name "tmp.js"))
+                (setq buffer-read-only t)
+                (set-auto-mode)
+                (goto-char (point-min))
+                (forward-line 1) ;; 1st line is comment
+                (run-hook-with-args 'coffee-after-compile-hook props)))))))))
+
+(defun coffee-start-compile-process (curbuf)
+  (lambda (start end)
+    (let ((proc (apply 'start-process "coffee-mode"
+                       (get-buffer-create coffee-compiled-buffer-name)
+                       coffee-command (append coffee-args-compile '("-s" "-p")))))
+      (set-process-query-on-exit-flag proc nil)
+      (set-process-sentinel proc (coffee-compile-sentinel))
+      (with-current-buffer curbuf
+        (process-send-region proc start end))
+      (process-send-eof proc))))
+
+(defun coffee-start-generate-sourcemap-process (start end)
+  (let* ((file (buffer-file-name))
+         (sourcemap-buf (get-buffer-create "*coffee-sourcemap*"))
+         (proc (start-process "coffee-sourcemap" sourcemap-buf
+                              coffee-command "-m" file)))
+    (set-process-query-on-exit-flag proc nil)
+    (set-process-sentinel
+     proc
+     (lambda (proc _event)
+       (when (eq (process-status proc) 'exit)
+         (if (not (= (process-exit-status proc) 0))
+             (message "Error: generating sourcemap file")
+           (kill-buffer sourcemap-buf)
+           (funcall (coffee-start-compile-process (current-buffer)) start end)))))))
+
+(defun coffee-cleanup-compile-buffer ()
+  (let ((buffer (get-buffer coffee-compiled-buffer-name)))
+    (when buffer
+      (with-current-buffer buffer
+        (setq buffer-read-only nil)
+        (erase-buffer)))))
 
 (defun coffee-compile-region (start end)
   "Compiles a region and displays the JavaScript in a buffer called
 `coffee-compiled-buffer-name'."
   (interactive "r")
-
-  (let ((buffer (get-buffer coffee-compiled-buffer-name)))
-    (when buffer
-      (with-current-buffer buffer
-        (setq buffer-read-only nil)
-        (erase-buffer))))
-
-  (apply (apply-partially 'call-process-region start end coffee-command nil
-                          (get-buffer-create coffee-compiled-buffer-name)
-                          nil)
-         (append coffee-args-compile (list "-s" "-p")))
-
-  (when (coffee-generate-sourcemap-p)
-    (coffee-generate-sourcemap))
-  (let* ((buffer (get-buffer coffee-compiled-buffer-name))
-         (file (file-name-nondirectory (buffer-file-name)))
-         (props (list :sourcemap (concat (file-name-sans-extension file) ".map")
-                      :line (line-number-at-pos)
-                      :column (current-column)
-                      :source file)))
-    (save-selected-window
-      (pop-to-buffer buffer)
-      (with-current-buffer buffer
-        (let ((buffer-file-name "tmp.js"))
-          (setq buffer-read-only t)
-          (set-auto-mode)
-          (goto-char (point-min))
-          (forward-line 1) ;; 1st line is comment
-          (run-hook-with-args 'coffee-after-compile-hook props))))))
+  (coffee-cleanup-compile-buffer)
+  (if (coffee-generate-sourcemap-p)
+      (coffee-start-generate-sourcemap-process start end)
+    (funcall (coffee-start-compile-process (current-buffer)) start end)))
 
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
