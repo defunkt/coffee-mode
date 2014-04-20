@@ -137,7 +137,7 @@
 
 (require 'cl-lib)
 
-(declare-function electric-pair-backward-delete-char-untabify "elec-pair")
+(declare-function electric-pair-delete-pair "elec-pair")
 
 ;;
 ;; Customizable Variables
@@ -691,10 +691,10 @@ Delete ARG spaces if ARG!=1."
                                 coffee-tab-width
                               extra-space-count)))
         (if (and electric-pair-mode (featurep 'elec-pair))
-            (electric-pair-backward-delete-char-untabify deleted-chars)
+            (electric-pair-delete-pair deleted-chars)
           (backward-delete-char-untabify deleted-chars)))
     (if (and electric-pair-mode (featurep 'elec-pair))
-        (electric-pair-backward-delete-char-untabify arg)
+        (electric-pair-delete-pair arg)
       (backward-delete-char-untabify arg))))
 
 ;; Indenters help determine whether the current line should be
