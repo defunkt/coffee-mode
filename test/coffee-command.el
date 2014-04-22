@@ -151,19 +151,6 @@ line1()
       (call-interactively 'coffee-dedent-line-backspace)
       (should (= (current-column) 2)))))
 
-(ert-deftest dedent-command-delete-pair-with-electric-pair-mode ()
-  "dedent - deleting pair with electric-pair-mode"
-  (let ((coffee-tab-width 2))
-    (with-coffee-temp-buffer
-      "foo()"
-      (electric-pair-mode +1)
-      (forward-cursor-on ")")
-      (call-interactively 'coffee-dedent-line-backspace)
-      (if (featurep 'elec-pair)
-          (should (string= (buffer-string) "foo"))
-        ;; #225
-        (should (string= (buffer-string) "foo)"))))))
-
 ;;
 ;; enable coffee-indent-tabs-mode
 ;;
