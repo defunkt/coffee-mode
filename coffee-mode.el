@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2010 Chris Wanstrath
 
-;; Version: 0.5.1
+;; Version: 0.5.0
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
 ;; URL: http://github.com/defunkt/coffee-mode
@@ -683,13 +683,19 @@ output in a compilation buffer."
   ;; insert a newline, and indent the newline to the same
   ;; level as the previous line.
   (let ((prev-indent (current-indentation)))
+    (while (< (current-column) (current-indentation))
+      (right-char))
     (delete-horizontal-space t)
     (newline)
-    (coffee-insert-spaces prev-indent)
 
-    ;; We need to insert an additional tab because the last line was special.
-    (when (coffee-line-wants-indent)
-      (coffee-insert-spaces coffee-tab-width))
+    (if (coffee-line-wants-indent)
+      ;; We need to insert an additional tab because the last line was special.
+      (progn
+        (delete-horizontal-space t)
+        (coffee-insert-spaces (coffee-previous-indent))
+        (coffee-insert-spaces coffee-tab-width))
+      ;; otherwise keep at the same indentation level
+      (coffee-insert-spaces prev-indent))
 
     ;; Last line was a comment so this one should probably be,
     ;; too. Makes it easy to write multi-line comments (like the one I'm
