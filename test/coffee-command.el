@@ -334,6 +334,63 @@ foo = 10 # bar
       (should-not (zerop (current-indentation)))
       (should (= prev-indent (current-indentation))))))
 
+;; #239
+(ert-deftest newline-and-indent-twice-issue ()
+  "indent-new-line twice"
+  (with-coffee-temp-buffer
+    "
+if true
+"
+    (forward-cursor-on "if")
+    (goto-char (line-end-position))
+    (coffee-newline-and-indent)
+    (coffee-newline-and-indent)
+    (should (= (current-indentation) coffee-tab-width))))
+
+;; #239
+(ert-deftest newline-and-indent-start-of-block ()
+  "Don't insert indentation after block"
+  (with-coffee-temp-buffer
+    "
+if true
+  if true
+"
+    (let ((coffee-tab-width 2))
+      (goto-char (point-max))
+      (backward-cursor-on "if")
+      (let ((indent (current-indentation)))
+        (coffee-newline-and-indent)
+        (should (= (current-indentation) indent))))))
+
+;; #239
+(ert-deftest newline-and-indent-from-bol ()
+  "newline-and-indent from beginning of line"
+  (with-coffee-temp-buffer
+    "
+if true
+  if false
+
+"
+    (let ((coffee-tab-width 2))
+      (forward-cursor-on "false")
+      (goto-char (line-beginning-position))
+      (coffee-newline-and-indent)
+      (should (= (current-indentation) coffee-tab-width)))))
+
+(ert-deftest newline-and-indent-not-additional-indent ()
+  "Don't insert indentation after normal line"
+  (with-coffee-temp-buffer
+    "
+if true
+  foo = hoge
+
+"
+    (let ((coffee-tab-width 2))
+      (forward-cursor-on "foo")
+      (goto-char (line-end-position))
+      (coffee-newline-and-indent)
+      (should (= (current-indentation) coffee-tab-width)))))
+
 ;;
 ;; indent left
 ;;
