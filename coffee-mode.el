@@ -697,8 +697,9 @@ output in a compilation buffer."
     ;; Last line was a comment so this one should probably be,
     ;; too. Makes it easy to write multi-line comments (like the one I'm
     ;; writing right now).
-    (when (coffee-previous-line-is-single-line-comment)
-      (insert "# "))))
+    (unless (and auto-fill-function comment-auto-fill-only-comments)
+      (when (coffee-previous-line-is-single-line-comment)
+        (insert "# ")))))
 
 (defun coffee-dedent-line-backspace (arg)
   "Unindent to increment of `coffee-tab-width' with ARG==1 when
