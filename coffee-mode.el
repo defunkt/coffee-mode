@@ -1161,6 +1161,8 @@ it on by default."
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("Cakefile\\'" . coffee-mode))
 ;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.cson\\'" . coffee-mode))
+;;;###autoload
 (add-to-list 'interpreter-mode-alist '("coffee" . coffee-mode))
 
 ;;; coffee-mode.el ends here
