@@ -424,9 +424,8 @@ called `coffee-compiled-buffer-name'."
       (kill-buffer buffer)))
 
   (call-process-region start end
-                       js2coffee-command nil
-                       (current-buffer))
-  (delete-region start end))
+                       js2coffee-command t
+                       (current-buffer)))
 
 (defun coffee-version ()
   "Show the `coffee-mode' version in the echo area."
