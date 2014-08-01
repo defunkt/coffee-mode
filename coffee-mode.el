@@ -124,10 +124,6 @@
 ;; http://xahlee.org/emacs/elisp_syntax_coloring.html, Jason
 ;; Blevins's markdown-mode.el and Steve Yegge's js2-mode for guidance.
 
-;; TODO:
-;; - Make prototype accessor assignments like `String::length: -> 10` pretty.
-;; - mirror-mode - close brackets and parens automatically
-
 ;;; Code:
 
 (require 'comint)
@@ -141,7 +137,7 @@
 ;; Customizable Variables
 ;;
 
-(defconst coffee-mode-version "0.5.2"
+(defconst coffee-mode-version "0.5.4"
   "The version of `coffee-mode'.")
 
 (defgroup coffee nil
