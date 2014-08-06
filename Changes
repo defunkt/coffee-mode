@@ -1,0 +1,39 @@
+Revision history for coffee-mode.el
+
+Revision v0.5.5 2014/08/04
+   - Improve compiling command(Thanks Gunnar Wrobel)
+
+Revision v0.5.4 2014-07-14
+  - Fix js2coffee-replace-region issue(Thanks Mihir Rege)
+
+Revision v0.5.3 2014-06-27
+  - Support CSON file
+
+Revision v0.5.2 2014-05-25
+  - Fix new line and indentation issue
+
+Revision v0.5.1 2014-05-19
+  - Many bug fixes
+    - Fix highlighting issues
+    - Fix defun command
+    - Fix indentation issue
+
+Revision v0.5.0 2013-12-14
+  - Drop Emacs 23 support
+  - Support block comment and triple quote
+  - Many bug fix
+
+Revision v0.4.0 2013-04-21
+  - Bug fix
+
+Revision v0.3.0 2013-03-07
+  - Bug fix
+  - Add compile command
+  - Documentation
+
+Revision v0.2.0 2013-03-07
+  - Bug fix
+  - Support imenu
+
+Revision v0.1.0 2013-03-07
+  - Initial implements
