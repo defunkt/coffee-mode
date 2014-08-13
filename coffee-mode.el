@@ -334,34 +334,32 @@ called `coffee-compiled-buffer-name'."
 (defsubst coffee-generate-sourcemap-p ()
   (cl-find-if (lambda (opt) (member opt '("-m" "--map"))) coffee-args-compile))
 
-(defun coffee-compile-sentinel ()
+(defun coffee-compile-sentinel (file)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
-      (if (not (= (process-exit-status proc) 0))
-          (message "Failed: compiling to JavaScript")
-        (let* ((buffer (get-buffer coffee-compiled-buffer-name))
-               (file (file-name-nondirectory (buffer-file-name)))
-               (props (list :sourcemap (concat (file-name-sans-extension file) ".map")
-                            :line (line-number-at-pos)
-                            :column (current-column)
-                            :source file)))
-          (save-selected-window
-            (pop-to-buffer buffer)
-            (with-current-buffer buffer
-              (let ((buffer-file-name "tmp.js"))
-                (setq buffer-read-only t)
-                (set-auto-mode)
-                (goto-char (point-min))
-                (forward-line 1) ;; 1st line is comment
-                (run-hook-with-args 'coffee-after-compile-hook props)))))))))
+      (save-selected-window
+        (pop-to-buffer (get-buffer coffee-compiled-buffer-name))
+        (ansi-color-apply-on-region (point-min) (point-max))
+        (goto-char (point-min))
+        (if (not (= (process-exit-status proc) 0))
+            (message "Failed: compiling to JavaScript")
+          (let ((props (list :sourcemap (concat (file-name-sans-extension file) ".map")
+                             :line (line-number-at-pos) :column (current-column)
+                             :source file)))
+            (let ((buffer-file-name "tmp.js"))
+              (setq buffer-read-only t)
+              (set-auto-mode)
+              (forward-line 1) ;; 1st line is comment
+              (run-hook-with-args 'coffee-after-compile-hook props))))))))
 
 (defun coffee-start-compile-process (curbuf)
   (lambda (start end)
     (let ((proc (apply 'start-process "coffee-mode"
                        (get-buffer-create coffee-compiled-buffer-name)
-                       coffee-command (append coffee-args-compile '("-s" "-p")))))
+                       coffee-command (append coffee-args-compile '("-s" "-p"))))
+          (curfile (buffer-file-name curbuf)))
       (set-process-query-on-exit-flag proc nil)
-      (set-process-sentinel proc (coffee-compile-sentinel))
+      (set-process-sentinel proc (coffee-compile-sentinel curfile))
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-eof proc))))
