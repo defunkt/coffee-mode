@@ -408,8 +408,18 @@ called `coffee-compiled-buffer-name'."
 (defun coffee-send-region (start end)
   "Send the current region to the inferior Coffee process."
   (interactive "r")
-  (comint-simple-send (coffee-get-repl-proc)
-                      (buffer-substring-no-properties start end)))
+  (deactivate-mark t)
+  (let ((string (buffer-substring-no-properties start end))
+        (multiline-p (> (count-lines start end) 1)))
+    (let ((proc (coffee-get-repl-proc)))
+      (if (not multiline-p)
+          (comint-simple-send proc string)
+        ;; Swith to multiline mode
+        (comint-send-string proc "\026\026")
+        (comint-simple-send proc string)
+        (unless (string-match-p "\n\\'" string)
+          (comint-send-string proc "\n"))
+        (comint-send-string proc "\026\026")))))
 
 (defun coffee-send-buffer ()
   "Send the current buffer to the inferior Coffee process."
