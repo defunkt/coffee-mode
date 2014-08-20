@@ -250,6 +250,8 @@ with CoffeeScript."
 ;; Commands
 ;;
 
+(defvar coffee--repl-multiline-initialized nil)
+
 (defun coffee-comint-filter (string)
   (ansi-color-apply
    (replace-regexp-in-string "\x1b\\[.[GJK]" "" string)))
@@ -266,7 +268,7 @@ with CoffeeScript."
             "NODE_NO_READLINE=1"
             coffee-command
             coffee-args-repl))
-
+    (make-local-variable 'coffee--repl-multiline-initialized)
     ;; Workaround for ansi colors
     (add-hook 'comint-preoutput-filter-functions 'coffee-comint-filter nil t))
 
@@ -408,8 +410,21 @@ called `coffee-compiled-buffer-name'."
 (defun coffee-send-region (start end)
   "Send the current region to the inferior Coffee process."
   (interactive "r")
-  (comint-simple-send (coffee-get-repl-proc)
-                      (buffer-substring-no-properties start end)))
+  (deactivate-mark t)
+  (let ((string (buffer-substring-no-properties start end))
+        (multiline-p (> (count-lines start end) 1)))
+    (let ((proc (coffee-get-repl-proc)))
+      (if (not multiline-p)
+          (comint-simple-send proc string)
+        ;; Swith to multiline mode
+        (with-current-buffer (process-buffer proc)
+          (let ((multiline-code (if coffee--repl-multiline-initialized "\026" "\026\026")))
+            (comint-send-string proc multiline-code)
+            (comint-simple-send proc string)
+            (unless (string-match-p "\n\\'" string)
+              (comint-send-string proc "\n"))
+            (comint-send-string proc multiline-code)
+            (setq coffee--repl-multiline-initialized t)))))))
 
 (defun coffee-send-buffer ()
   "Send the current buffer to the inferior Coffee process."
