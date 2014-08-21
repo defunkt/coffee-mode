@@ -423,8 +423,8 @@ called `coffee-compiled-buffer-name'."
             (comint-simple-send proc string)
             (unless (string-match-p "\n\\'" string)
               (comint-send-string proc "\n"))
-            (comint-send-string proc multiline-code)
-            (setq coffee--repl-multiline-initialized t)))))))
+            (comint-send-string proc multiline-code))))
+      (setq coffee--repl-multiline-initialized t))))
 
 (defun coffee-send-buffer ()
   "Send the current buffer to the inferior Coffee process."
