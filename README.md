@@ -19,7 +19,7 @@ a menu bar, and a few cute commands.
 You can install `coffee-mode` from [MELPA][melpa] with package.el.
 
 **Please do not install [GNU Emacs Lisp Package Archive][elpa] version.**
-It's too old and many feature(triple quote etc) is not implemented.
+It's too old and many features(triple quote etc) are not implemented.
 
 ## Whitespace
 
