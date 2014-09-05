@@ -152,6 +152,163 @@ line1()
       (should (= (current-column) 2)))))
 
 ;;
+;; indent for else line
+;;
+(ert-deftest indent-for-else ()
+  "Indent for else line"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+for a in [1]
+  for b in [2]
+    if true
+       a + b
+else
+"
+      (let (if-indent)
+        (forward-cursor-on "if")
+        (setq if-indent (current-indentation))
+        (forward-cursor-on "else")
+        (call-interactively 'indent-for-tab-command)
+        (should (= if-indent (current-indentation)))))))
+
+(ert-deftest indent-for-else-if ()
+  "Indent for else line"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+for a in [1]
+  for b in [2]
+    if true
+       a + b
+else if
+"
+      (let (if-indent)
+        (forward-cursor-on "if")
+        (setq if-indent (current-indentation))
+        (forward-cursor-on "else")
+        (call-interactively 'indent-for-tab-command)
+        (should (= if-indent (current-indentation)))))))
+
+(ert-deftest indent-for-nested ()
+  "Indent for else line in nested if blocks"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+if a
+  for b in [1]
+    if c
+      true
+    else if b
+else
+"
+      (goto-char (point-max))
+      (backward-cursor-on "else")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 0))))
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+    if 1 == 1
+      for name in ['taro', 'jiro', 'saburo']
+        if 2 == 2
+          true
+        else
+      if 3 == 3
+        true
+      else if
+        false
+        for name in ['hoge']
+          if true
+             1 + 2
+else if
+"
+      (goto-char (point-max))
+      (backward-cursor-on "else")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 6))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 10))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4)))))
+
+(ert-deftest indent-for-nested-function ()
+  "Indent for else line in nested if blocks"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+foo = () ->
+  if a
+     true
+
+bar = () ->
+  for b in [10]
+    if b == 10
+      false
+else
+"
+      (forward-cursor-on "else")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4)))))
+
+(ert-deftest indent-for-else-closed ()
+  "Indent for else line"
+
+  (with-coffee-temp-buffer
+    "
+for a in [1]
+  if true
+    a
+  for b in [2]
+    if true
+      a + b
+else
+"
+    (let (if-indent)
+      (forward-cursor-on "if" 2)
+      (setq if-indent (current-indentation))
+      (forward-cursor-on "else")
+      (call-interactively 'indent-for-tab-command)
+      (should (= if-indent (current-indentation)))
+      (call-interactively 'indent-for-tab-command)
+      (should (= if-indent (current-indentation))))))
+
+(ert-deftest indent-for-else-closed-else ()
+  "Indent for else line"
+
+  (with-coffee-temp-buffer
+    "
+for a in [1]
+  if true
+    a
+  else if true
+    a
+  for b in [2]
+    if true
+      a + b
+else
+"
+    (let (if-indent)
+      (forward-cursor-on "if" 3)
+      (setq if-indent (current-indentation))
+      (forward-cursor-on "else")
+      (call-interactively 'indent-for-tab-command)
+      (should (= if-indent (current-indentation)))
+      (call-interactively 'indent-for-tab-command)
+      (should (= if-indent (current-indentation))))))
+
+;;
 ;; enable coffee-indent-tabs-mode
 ;;
 
