@@ -723,9 +723,9 @@ output in a compilation buffer."
     (save-excursion
       (goto-char (line-beginning-position))
       (delete-horizontal-space)
-      (coffee-insert-spaces indent-size))
-    (when (< (current-column) (current-indentation))
-      (back-to-indentation))))
+      (coffee-insert-spaces indent-size)))
+  (when (< (current-column) (current-indentation))
+    (back-to-indentation)))
 
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript."
