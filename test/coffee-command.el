@@ -173,6 +173,24 @@ else
         (call-interactively 'indent-for-tab-command)
         (should (= if-indent (current-indentation)))))))
 
+(ert-deftest indent-for-else-not-indent-but-move-cursoor ()
+  "Indent for else line not indent case, but moving cursor at current-indentation"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+  if true
+     a + b
+  else
+"
+      (let (if-indent)
+        (forward-cursor-on "if")
+        (setq if-indent (current-indentation))
+        (forward-cursor-on "else")
+        (goto-char (line-beginning-position))
+        (call-interactively 'indent-for-tab-command)
+        (should (= if-indent (current-column)))))))
+
 (ert-deftest indent-for-else-if ()
   "Indent for else line"
 
