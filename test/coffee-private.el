@@ -248,4 +248,49 @@ end
     (coffee-skip-forward-lines +1)
     (should (= (point) (point-max)))))
 
+;;
+;; Judge block type utility
+;;
+
+(ert-deftest judge-block-type ()
+  "Judge block type of current-line. This function returns nil
+if cursor on line which is beginning of block."
+  (with-coffee-temp-buffer
+    "
+if bar == 1
+   do foo1
+else if bar == 2
+   do foo2
+else
+   do foo3
+"
+    (forward-cursor-on "if")
+    (should-not (coffee--block-type))
+
+    (forward-cursor-on "else if")
+    (should (eq (coffee--block-type) 'if-else))
+
+    (goto-char (line-end-position))
+    (forward-cursor-on "else")
+    (should (eq (coffee--block-type) 'if-else)))
+
+  (with-coffee-temp-buffer
+    "
+try
+   raise_exception
+catch error
+   console.log error
+finally
+   abort()
+"
+    (forward-cursor-on "try")
+    (should-not (coffee--block-type))
+
+    (forward-cursor-on "catch")
+    (should (eq (coffee--block-type) 'try-catch))
+
+    (goto-char (line-end-position))
+    (forward-cursor-on "finally")
+    (should (eq (coffee--block-type) 'try-catch))))
+
 ;;; coffee-private.el end here
