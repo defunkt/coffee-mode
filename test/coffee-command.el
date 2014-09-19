@@ -154,8 +154,8 @@ line1()
 ;;
 ;; indent for else line
 ;;
-(ert-deftest indent-for-else ()
-  "Indent for else line"
+(ert-deftest indent-if-else-else-line ()
+  "Indent for `else' line"
 
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
@@ -166,33 +166,15 @@ for a in [1]
        a + b
 else
 "
-      (let (if-indent)
-        (forward-cursor-on "if")
-        (setq if-indent (current-indentation))
-        (forward-cursor-on "else")
-        (call-interactively 'indent-for-tab-command)
-        (should (= if-indent (current-indentation)))))))
+     (let (if-indent)
+       (forward-cursor-on "if")
+       (setq if-indent (current-indentation))
+       (forward-cursor-on "else")
+       (call-interactively 'indent-for-tab-command)
+       (should (= if-indent (current-indentation)))))))
 
-(ert-deftest indent-for-else-not-indent-but-move-cursoor ()
-  "Indent for else line not indent case, but moving cursor at current-indentation"
-
-  (let ((coffee-tab-width 2))
-    (with-coffee-temp-buffer
-      "
-  if true
-     a + b
-  else
-"
-      (let (if-indent)
-        (forward-cursor-on "if")
-        (setq if-indent (current-indentation))
-        (forward-cursor-on "else")
-        (goto-char (line-beginning-position))
-        (call-interactively 'indent-for-tab-command)
-        (should (= if-indent (current-column)))))))
-
-(ert-deftest indent-for-else-if ()
-  "Indent for else line"
+(ert-deftest indent-if-else-else-if-line ()
+  "Indent for `else-if' line"
 
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
@@ -210,8 +192,26 @@ else if
         (call-interactively 'indent-for-tab-command)
         (should (= if-indent (current-indentation)))))))
 
-(ert-deftest indent-for-nested-if-else ()
-  "Indent for else line in nested if blocks"
+(ert-deftest indent-if-else-not-indent-but-moving-cursor ()
+  "Don't indent but moving cursor for if-else block"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+  if true
+     a + b
+  else
+"
+      (let (if-indent)
+        (forward-cursor-on "if")
+        (setq if-indent (current-indentation))
+        (forward-cursor-on "else")
+        (goto-char (line-beginning-position))
+        (call-interactively 'indent-for-tab-command)
+        (should (= if-indent (current-column)))))))
+
+(ert-deftest indent-if-else-nested ()
+  "Indent for nested if-else blocks"
 
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
@@ -258,8 +258,8 @@ else if
       (call-interactively 'indent-for-tab-command)
       (should (= (current-indentation) 4)))))
 
-(ert-deftest indent-for-nested-if-else-with-multpile-functions ()
-  "Indent for else line in nested if blocks"
+(ert-deftest indent-if-else-between-functions ()
+  "Don't indent size same as if-else block in another function"
 
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
@@ -280,8 +280,8 @@ else
       (call-interactively 'indent-for-tab-command)
       (should (= (current-indentation) 4)))))
 
-(ert-deftest indent-for-else-closed ()
-  "Indent for else line"
+(ert-deftest indent-if-else-with-closed-if-else-block ()
+  "Don't indent level same as already closed if-else block"
 
   (with-coffee-temp-buffer
     "
@@ -300,10 +300,7 @@ else
       (call-interactively 'indent-for-tab-command)
       (should (= if-indent (current-indentation)))
       (call-interactively 'indent-for-tab-command)
-      (should (= if-indent (current-indentation))))))
-
-(ert-deftest indent-for-else-closed-else ()
-  "Indent for else line"
+      (should (= if-indent (current-indentation)))))
 
   (with-coffee-temp-buffer
     "
@@ -386,7 +383,7 @@ finally
         (should (= try-indent (current-column)))))))
 
 (ert-deftest indent-try-catch-nested ()
-  "Indent for nested try-catch group"
+  "Indent for nested try-catch blocks"
 
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
@@ -435,7 +432,7 @@ finally
       (should (= (current-indentation) 4)))))
 
 (ert-deftest indent-try-catch-between-functions ()
-  "Don't indent same as try-catch block in another function"
+  "Don't indent size same as try-catch block in another function"
 
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
