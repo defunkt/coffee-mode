@@ -210,7 +210,7 @@ else if
         (call-interactively 'indent-for-tab-command)
         (should (= if-indent (current-indentation)))))))
 
-(ert-deftest indent-for-nested ()
+(ert-deftest indent-for-nested-if-else ()
   "Indent for else line in nested if blocks"
 
   (let ((coffee-tab-width 2))
@@ -258,7 +258,7 @@ else if
       (call-interactively 'indent-for-tab-command)
       (should (= (current-indentation) 4)))))
 
-(ert-deftest indent-for-nested-function ()
+(ert-deftest indent-for-nested-if-else-with-multpile-functions ()
   "Indent for else line in nested if blocks"
 
   (let ((coffee-tab-width 2))
@@ -325,6 +325,162 @@ else
       (should (= if-indent (current-indentation)))
       (call-interactively 'indent-for-tab-command)
       (should (= if-indent (current-indentation))))))
+
+;;
+;; indent for try-catch-finally block
+;;
+(ert-deftest indent-try-catch-cactch-line ()
+  "Indent for `catch' line of try-catch"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+for a in [1]
+  for b in [2]
+    try
+      raise_exception(a, b)
+catch
+"
+      (let (try-indent)
+        (forward-cursor-on "try")
+        (setq try-indent (current-indentation))
+        (forward-cursor-on "catch")
+        (call-interactively 'indent-for-tab-command)
+        (should (= try-indent (current-indentation)))))))
+
+(ert-deftest indent-try-catch-finally-line ()
+  "Indent for `finally' line of try-catch"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+for a in [1]
+  for b in [2]
+    try
+      raise_exception(a, b)
+finally
+"
+      (let (try-indent)
+        (forward-cursor-on "try")
+        (setq try-indent (current-indentation))
+        (forward-cursor-on "finally")
+        (call-interactively 'indent-for-tab-command)
+        (should (= try-indent (current-indentation)))))))
+
+(ert-deftest indent-try-catch-not-indent-but-moving-cursor ()
+  "Don't indent but moving cursor for try-catch block"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+  try
+     raise_exception(1, '2')
+  catch
+"
+      (let (try-indent)
+        (forward-cursor-on "try")
+        (setq try-indent (current-indentation))
+        (forward-cursor-on "catch")
+        (goto-char (line-beginning-position))
+        (call-interactively 'indent-for-tab-command)
+        (should (= try-indent (current-column)))))))
+
+(ert-deftest indent-try-catch-nested ()
+  "Indent for nested try-catch group"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+try
+  for b in [1]
+    try c
+      raise_exception
+    catch error
+      console.log error
+finally
+"
+      (goto-char (point-max))
+      (backward-cursor-on "finally")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 0))))
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+    try
+      for name in ['taro', 'jiro', 'saburo']
+        try
+          raise_exception1
+        catch error
+          console.log 'dummy'
+      try
+        raise_exception2
+      catch error2
+        for name in ['hoge']
+          try
+             raise_exception3
+finally
+"
+      (goto-char (point-max))
+      (backward-cursor-on "finally")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 6))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 10))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4)))))
+
+(ert-deftest indent-try-catch-between-functions ()
+  "Don't indent same as try-catch block in another function"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+foo = () ->
+  try
+    raise_some_exception
+  catch error
+    console.log error
+
+bar = () ->
+  for i in [1, 2, 3]
+    try
+      raise_some_exception2
+finally
+"
+      (forward-cursor-on "finally")
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4))
+      (call-interactively 'indent-for-tab-command)
+      (should (= (current-indentation) 4)))))
+
+(ert-deftest indent-try-catch-with-closed-block ()
+  "Indent try-catch block with already closed try-catch block"
+
+  (with-coffee-temp-buffer
+    "
+for a in [1]
+  try
+    raise_exception1
+  finally
+    die 'I am dying'
+  for b in [2]
+    try
+      raise_exception2
+catch
+"
+    (let (try-indent)
+      (forward-cursor-on "try" 2)
+      (setq try-indent (current-indentation))
+      (forward-cursor-on "catch")
+      (call-interactively 'indent-for-tab-command)
+      (should (= try-indent (current-indentation)))
+      (call-interactively 'indent-for-tab-command)
+      (should (= try-indent (current-indentation))))))
 
 ;;
 ;; enable coffee-indent-tabs-mode
