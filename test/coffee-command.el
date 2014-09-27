@@ -323,6 +323,23 @@ else
       (call-interactively 'indent-for-tab-command)
       (should (= if-indent (current-indentation))))))
 
+(ert-deftest indent-if-else-in-string ()
+  "Indent for `else' line in string"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+\"\"\"
+if true
+  a + b
+else
+\"\"\"
+"
+      (forward-cursor-on "else")
+      (call-interactively 'indent-for-tab-command)
+      (should-not (= (current-indentation) 0))
+      (should (= (current-indentation) coffee-tab-width)))))
+
 ;;
 ;; indent for try-catch-finally block
 ;;
