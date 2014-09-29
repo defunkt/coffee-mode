@@ -163,7 +163,7 @@ line1()
 for a in [1]
   for b in [2]
     if true
-       a + b
+      a + b
 else
 "
      (let (if-indent)
@@ -182,7 +182,7 @@ else
 for a in [1]
   for b in [2]
     if true
-       a + b
+      a + b
 else if
 "
       (let (if-indent)
@@ -199,7 +199,7 @@ else if
     (with-coffee-temp-buffer
       "
 if true
-   a + b
+  a + b
 else
 "
       (forward-cursor-on "else")
@@ -213,7 +213,7 @@ else
     (with-coffee-temp-buffer
       "
   if true
-     a + b
+    a + b
   else
 "
       (let (if-indent)
