@@ -171,7 +171,23 @@ else
        (setq if-indent (current-indentation))
        (forward-cursor-on "else")
        (call-interactively 'indent-for-tab-command)
-       (should (= if-indent (current-indentation)))))))
+       (should (= if-indent (current-indentation)))))
+
+    (let ((coffee-tab-width 2))
+      (with-coffee-temp-buffer
+        "
+for a in [1]
+  for b in [2]
+    if true
+      a + b
+      else
+"
+        (let (if-indent)
+          (forward-cursor-on "if")
+          (setq if-indent (current-indentation))
+          (forward-cursor-on "else")
+          (call-interactively 'indent-for-tab-command)
+          (should (= if-indent (current-indentation))))))))
 
 (ert-deftest indent-if-else-else-if-line ()
   "Indent for `else-if' line"
