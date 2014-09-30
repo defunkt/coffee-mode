@@ -368,14 +368,14 @@ called `coffee-compiled-buffer-name'."
               (forward-line 1) ;; 1st line is comment
               (run-hook-with-args 'coffee-after-compile-hook props))))))))
 
-(defun coffee-start-compile-process (curbuf)
+(defun coffee-start-compile-process (curbuf line column)
   (lambda (start end)
     (let ((proc (apply 'start-process "coffee-mode"
                        (get-buffer-create coffee-compiled-buffer-name)
                        coffee-command (append coffee-args-compile '("-s" "-p"))))
           (curfile (buffer-file-name curbuf)))
       (set-process-query-on-exit-flag proc nil)
-      (set-process-sentinel proc (coffee-compile-sentinel curfile))
+      (set-process-sentinel proc (coffee-compile-sentinel curfile line column))
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-eof proc))))
@@ -384,7 +384,10 @@ called `coffee-compiled-buffer-name'."
   (let* ((file (buffer-file-name))
          (sourcemap-buf (get-buffer-create "*coffee-sourcemap*"))
          (proc (start-process "coffee-sourcemap" sourcemap-buf
-                              coffee-command "-m" file)))
+                              coffee-command "-m" file))
+         (curbuf (current-buffer))
+         (line (line-number-at-pos))
+         (column (current-column)))
     (set-process-query-on-exit-flag proc nil)
     (set-process-sentinel
      proc
@@ -393,7 +396,7 @@ called `coffee-compiled-buffer-name'."
          (if (not (= (process-exit-status proc) 0))
              (message "Error: generating sourcemap file")
            (kill-buffer sourcemap-buf)
-           (funcall (coffee-start-compile-process (current-buffer)) start end)))))))
+           (funcall (coffee-start-compile-process curbuf line column) start end)))))))
 
 (defun coffee-cleanup-compile-buffer ()
   (let ((buffer (get-buffer coffee-compiled-buffer-name)))
@@ -409,7 +412,9 @@ called `coffee-compiled-buffer-name'."
   (coffee-cleanup-compile-buffer)
   (if (coffee-generate-sourcemap-p)
       (coffee-start-generate-sourcemap-process start end)
-    (funcall (coffee-start-compile-process (current-buffer)) start end)))
+    (funcall (coffee-start-compile-process
+              (current-buffer) (line-number-at-pos) (current-column))
+             start end)))
 
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
