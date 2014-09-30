@@ -660,25 +660,101 @@ output in a compilation buffer."
 
 ;;; The theory is explained in the README.
 
+(defsubst coffee--in-string-or-comment-p ()
+  (nth 8 (syntax-ppss)))
+
+(defun coffee--block-type ()
+  (save-excursion
+    (back-to-indentation)
+    (unless (coffee--in-string-or-comment-p)
+      (cond ((looking-at-p "else\\(\\s-+if\\)?\\_>") 'if-else)
+            ((looking-at-p "\\(?:catch\\|finally\\)\\_>") 'try-catch)))))
+
+(defun coffee--closed-if-else-p (curindent if-indent)
+  (let (else-if-p else-p)
+    (when (looking-at "else\\(?:\\s-+\\(if\\)\\)?\\_>")
+      (if (string= (match-string 1) "if")
+          (setq else-if-p t)
+        (setq else-p t)))
+    (or (and (not (or else-p else-if-p)) (<= curindent if-indent))
+        (and else-p (= curindent if-indent)))))
+
+(defun coffee--closed-try-catch-p (curindent if-indent)
+  (and (not (looking-at-p "\\(?:finally\\|catch\\)\\_>"))
+       (<= curindent if-indent)))
+
+(defun coffee--closed-block-p (type if-indent limit)
+  (let ((limit-line (line-number-at-pos limit))
+        (closed-pred (cl-case type
+                       (if-else 'coffee--closed-if-else-p)
+                       (try-catch 'coffee--closed-try-catch-p)))
+        finish)
+    (save-excursion
+      (while (and (not finish) (< (point) limit))
+        (forward-line 1)
+        (when (< (line-number-at-pos) limit-line)
+          (let ((curindent (current-indentation)))
+            (unless (coffee--in-string-or-comment-p)
+              (back-to-indentation)
+              (when (funcall closed-pred curindent if-indent)
+                (setq finish t))))))
+      finish)))
+
+(defun coffee--find-if-else-indents (limit cmpfn)
+  (let (indents)
+    (while (re-search-forward "^\\s-*if\\_>" limit t)
+      (let ((indent (current-indentation)))
+        (unless (coffee--closed-block-p 'if-else indent limit)
+          (push indent indents))))
+    (sort indents cmpfn)))
+
+(defun coffee--find-try-catch-indents (limit cmpfn)
+  (let (indents)
+    (while (re-search-forward "^\\s-*try\\_>" limit t)
+      (let ((indent (current-indentation)))
+        (unless (coffee--closed-block-p 'try-catch indent limit)
+          (push indent indents))))
+    (sort indents cmpfn)))
+
+(defun coffee--find-indents (type limit cmpfn)
+  (save-excursion
+    (coffee-beginning-of-defun 1)
+    (cl-case type
+      (if-else (coffee--find-if-else-indents limit cmpfn))
+      (try-catch (coffee--find-try-catch-indents limit cmpfn)))))
+
+(defsubst coffee--decide-indent (curindent if-indents cmpfn)
+  (cl-loop for if-indent in if-indents
+           when (funcall cmpfn if-indent curindent)
+           return if-indent
+           finally
+           return (car if-indents)))
+
+(defun coffee--indent-insert-spaces (indent-size)
+  (unless (= (current-indentation) indent-size)
+    (save-excursion
+      (goto-char (line-beginning-position))
+      (delete-horizontal-space)
+      (coffee-insert-spaces indent-size)))
+  (when (< (current-column) (current-indentation))
+    (back-to-indentation)))
+
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript."
   (interactive)
-
-  (if (= (point) (line-beginning-position))
-      (coffee-insert-spaces coffee-tab-width)
-    (save-excursion
-      (let ((prev-indent (coffee-previous-indent)))
-        ;; Shift one column to the left
-        (beginning-of-line)
-        (coffee-insert-spaces coffee-tab-width)
-
-        (when (= (point-at-bol) (point))
-          (forward-char coffee-tab-width))
-
-        ;; We're too far, remove all indentation.
-        (when (> (- (current-indentation) prev-indent) coffee-tab-width)
-          (backward-to-indentation 0)
-          (delete-region (point-at-bol) (point)))))))
+  (let* ((curindent (current-indentation))
+         (limit (+ (line-beginning-position) curindent))
+         (type (coffee--block-type))
+         indent-size
+         begin-indents)
+    (if (and type (setq begin-indents (coffee--find-indents type limit '<)))
+        (setq indent-size (coffee--decide-indent curindent begin-indents '>))
+      (let ((prev-indent (coffee-previous-indent))
+            (next-indent-size (+ curindent coffee-tab-width)))
+        (if (> (- next-indent-size prev-indent) coffee-tab-width)
+            (setq indent-size 0)
+          (setq indent-size (+ curindent coffee-tab-width)))))
+    (coffee--indent-insert-spaces indent-size)))
 
 (defun coffee-previous-indent ()
   "Return the indentation level of the previous non-blank line."
