@@ -336,7 +336,22 @@ called `coffee-compiled-buffer-name'."
 (defsubst coffee-generate-sourcemap-p ()
   (cl-find-if (lambda (opt) (member opt '("-m" "--map"))) coffee-args-compile))
 
-(defun coffee-compile-sentinel (file)
+(defun coffee--coffeescript-version ()
+  (with-temp-buffer
+    (unless (zerop (process-file coffee-command nil t nil "--version"))
+      (error "Failed: 'coffee --version'"))
+    (goto-char (point-min))
+    (let ((line (buffer-substring-no-properties (point) (line-end-position))))
+      (when (string-match "[0-9.]+\\'" line)
+        (string-to-number (match-string-no-properties 0 line))))))
+
+(defun coffee--map-file-name (coffee-file)
+  (let* ((version (coffee--coffeescript-version))
+         (extension (if (>= version 1.8) ".js.map" ".map")))
+    ;; foo.js: foo.js.map(>= 1.8), foo.map(< 1.8)
+    (concat (file-name-sans-extension coffee-file) extension)))
+
+(defun coffee-compile-sentinel (file line column)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
       (save-selected-window
@@ -345,9 +360,8 @@ called `coffee-compiled-buffer-name'."
         (goto-char (point-min))
         (if (not (= (process-exit-status proc) 0))
             (message "Failed: compiling to JavaScript")
-          (let ((props (list :sourcemap (concat (file-name-sans-extension file) ".map")
-                             :line (line-number-at-pos) :column (current-column)
-                             :source file)))
+          (let ((props (list :sourcemap (coffee--map-file-name file)
+                             :line line :column column :source file)))
             (let ((buffer-file-name "tmp.js"))
               (setq buffer-read-only t)
               (set-auto-mode)
