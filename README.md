@@ -1,4 +1,4 @@
-CoffeeScript Major Mode
+CoffeeScript Major Mode [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
 =======================
 
 An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
@@ -161,3 +161,7 @@ Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 [im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
 [elpa]: http://elpa.gnu.org/
 [melpa]: http://melpa.milkbox.net/
+[melpa-link]: http://melpa.milkbox.net/#/coffee-mode
+[melpa-stable-link]: http://melpa-stable.milkbox.net/#/coffee-mode
+[melpa-badge]: http://melpa.milkbox.net/packages/coffee-mode-badge.svg
+[melpa-stable-badge]: http://melpa-stable.milkbox.net/packages/coffee-mode-badge.svg
