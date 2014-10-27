@@ -160,8 +160,8 @@ Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 [tm]: http://github.com/defunkt/textmate.el
 [im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
 [elpa]: http://elpa.gnu.org/
-[melpa]: http://melpa.milkbox.net/
-[melpa-link]: http://melpa.milkbox.net/#/coffee-mode
-[melpa-stable-link]: http://melpa-stable.milkbox.net/#/coffee-mode
-[melpa-badge]: http://melpa.milkbox.net/packages/coffee-mode-badge.svg
-[melpa-stable-badge]: http://melpa-stable.milkbox.net/packages/coffee-mode-badge.svg
+[melpa]: http://melpa.org/
+[melpa-link]: http://melpa.org/#/coffee-mode
+[melpa-stable-link]: http://stable.melpa.org/#/coffee-mode
+[melpa-badge]: http://melpa.org/packages/coffee-mode-badge.svg
+[melpa-stable-badge]: http://stable.melpa.org/packages/coffee-mode-badge.svg
