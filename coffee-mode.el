@@ -503,7 +503,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-assign-regexp "\\(@?[[:word:].$]+?\\)\\s-*:")
 
 ;; Local Assignment
-(defvar coffee-local-assign-regexp "\\s-*\\([[:word:].$]+\\)\\s-*=\\(?:[^>=]\\|$\\)")
+(defvar coffee-local-assign-regexp "\\s-*\\([_[:word:].$]+\\)\\s-*=\\(?:[^>=]\\|$\\)")
 
 ;; Lambda
 (defvar coffee-lambda-regexp "\\(?:(.*)\\)?\\s-*\\(->\\|=>\\)")
@@ -625,7 +625,7 @@ output in a compilation buffer."
           "\\|"
           coffee-namespace-regexp ; $4
           "\\|"
-          "\\(@?[[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
+          "\\(@?[_[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
           "\\(?:" "\\s-*" "\\(" coffee-lambda-regexp "\\)" "\\)?" ; $6
           "\\)"))
 
@@ -1193,9 +1193,6 @@ comments such as the following:
 
   ;; code for syntax highlighting
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
-
-  ;; treat "_" as part of a word
-  (modify-syntax-entry ?_ "w" coffee-mode-syntax-table)
 
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
