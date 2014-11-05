@@ -625,7 +625,7 @@ output in a compilation buffer."
           "\\|"
           coffee-namespace-regexp ; $4
           "\\|"
-          "\\(@?[[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
+          "\\(@?[_[:word:]:.$]+\\)\\s-*=\\(?:[^>]\\|$\\)" ; $5 match prototype access too
           "\\(?:" "\\s-*" "\\(" coffee-lambda-regexp "\\)" "\\)?" ; $6
           "\\)"))
 

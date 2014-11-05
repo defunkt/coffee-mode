@@ -25,16 +25,26 @@
 (require 'coffee-mode)
 
 ;;
-;; Treat "_" as `word'
+;; Treat variables with "_" as word delimiters
 ;;
-(ert-deftest treat-underscore-as-word ()
-  "Treat \"_\" as word"
+(ert-deftest treat-underscores-within-variables-as-symbols ()
+  "Treat '_' within variable names as word delimiters"
   (with-coffee-temp-buffer
     "foo_bar"
+    (forward-word 1)
+    (forward-cursor-on "_")
+    (should (not (eobp)))
+
     (forward-word 1)
     (should (eobp))
 
     (backward-word 1)
+    (should (not (bobp)))
+    (forward-cursor-on "bar")
+    (backward-cursor-on "foo")
+
+    (backward-word 1)
+    (forward-cursor-on "foo")
     (should (bobp))))
 
 ;;
