@@ -1,5 +1,14 @@
 Revision history for coffee-mode.el
 
+Revision v0.5.6 2014/11/06
+   - Fix not pop-up compiled buffer issue
+   - Support sending multiple line to REPL
+   - Improve else, catch, finally indentation
+   - Support newer coffeescript sourmap generation
+   - Fix passing parameter to sourcemap.el
+   - Heighlight 'yield' as keyword
+   - Correct '_'(underscore) syntax property and remove work-around(Thanks dotemacs)
+
 Revision v0.5.5 2014/08/04
    - Improve compiling command(Thanks Gunnar Wrobel)
 
