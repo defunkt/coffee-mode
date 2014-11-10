@@ -370,7 +370,7 @@ called `coffee-compiled-buffer-name'."
 
 (defun coffee-start-compile-process (curbuf line column)
   (lambda (start end)
-    (let ((proc (apply 'start-process "coffee-mode"
+    (let ((proc (apply 'start-file-process "coffee-mode"
                        (get-buffer-create coffee-compiled-buffer-name)
                        coffee-command (append coffee-args-compile '("-s" "-p"))))
           (curfile (buffer-file-name curbuf)))
@@ -383,8 +383,8 @@ called `coffee-compiled-buffer-name'."
 (defun coffee-start-generate-sourcemap-process (start end)
   (let* ((file (buffer-file-name))
          (sourcemap-buf (get-buffer-create "*coffee-sourcemap*"))
-         (proc (start-process "coffee-sourcemap" sourcemap-buf
-                              coffee-command "-m" file))
+         (proc (start-file-process "coffee-sourcemap" sourcemap-buf
+                                   coffee-command "-m" file))
          (curbuf (current-buffer))
          (line (line-number-at-pos))
          (column (current-column)))
