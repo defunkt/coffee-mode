@@ -1213,4 +1213,18 @@ value = 10
    (coffee-end-of-block)
    (should (eobp))))
 
+(ert-deftest deactive-mark-after-coffee-comment-dwim ()
+  "Regression test for #270"
+
+  (with-coffee-temp-buffer
+   "
+a = 10
+b = 20
+"
+   (forward-cursor-on "a")
+   (call-interactively 'set-mark-command)
+   (goto-char (point-max))
+   (call-interactively 'coffee-comment-dwim)
+   (should (not mark-active))))
+
 ;;; coffee-command.el end here

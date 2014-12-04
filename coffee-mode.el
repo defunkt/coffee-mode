@@ -581,7 +581,8 @@ For details, see `comment-dwim'."
   (interactive "*P")
   (require 'newcomment)
   (let ((deactivate-mark nil) (comment-start "#") (comment-end ""))
-    (comment-dwim arg)))
+    (comment-dwim arg)
+    (deactivate-mark t)))
 
 (defsubst coffee-command-compile-arg-as-string (output)
   (mapconcat 'identity
