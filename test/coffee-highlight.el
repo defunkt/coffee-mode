@@ -65,6 +65,21 @@
     (forward-cursor-on "bar")
     (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
 
+(ert-deftest prototype-access-with-underscore ()
+  "Prototype which includes underscore access"
+
+  (with-coffee-temp-buffer
+    "Foo_Bar::baz"
+
+    (forward-cursor-on "Foo")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "Bar")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "baz")
+    (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
+
 (ert-deftest prototype-access-nested-access ()
   "Prototype access"
 
