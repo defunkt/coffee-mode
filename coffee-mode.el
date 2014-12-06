@@ -500,7 +500,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-prototype-regexp "[[:word:].$]+?::")
 
 ;; Assignment
-(defvar coffee-assign-regexp "\\(@?[[:word:].$]+?\\)\\s-*:")
+(defvar coffee-assign-regexp "\\(@?[_[:word:].$]+?\\)\\s-*:")
 
 ;; Local Assignment
 (defvar coffee-local-assign-regexp "\\s-*\\([_[:word:].$]+\\)\\s-*=\\(?:[^>=]\\|$\\)")
