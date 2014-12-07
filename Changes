@@ -1,5 +1,11 @@
 Revision history for coffee-mode.el
 
+Revision v0.5.7 2014/12/07
+   - Improve for tramp
+   - Fix coffee-comment-dwim same as other major-mode
+   - Fix highlighting class attribute issue(#272 Thanks no0)
+   - Fix highlighting issue similar to #272
+
 Revision v0.5.6 2014/11/06
    - Fix not pop-up compiled buffer issue
    - Support sending multiple line to REPL
