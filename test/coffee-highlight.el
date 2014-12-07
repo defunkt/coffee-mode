@@ -65,6 +65,21 @@
     (forward-cursor-on "bar")
     (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
 
+(ert-deftest prototype-access-with-underscore ()
+  "Prototype which includes underscore access"
+
+  (with-coffee-temp-buffer
+    "Foo_Bar::baz"
+
+    (forward-cursor-on "Foo")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "Bar")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "baz")
+    (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
+
 (ert-deftest prototype-access-nested-access ()
   "Prototype access"
 
@@ -923,5 +938,18 @@ block-strings-end
     (forward-cursor-on "block-strings-end")
     (should-not (face-at-cursor-p 'font-lock-string-face))
     (should (or (face-at-cursor-p nil)  (face-at-cursor-p 'default)))))
+
+(ert-deftest highlight-class-attribute-which-includes-underscore ()
+  "Regression test for #272"
+  (with-coffee-temp-buffer
+    "
+class Foo
+  BAR_BAZ: 'foo'
+"
+    (forward-cursor-on "BAR")
+    (should (face-at-cursor-p 'font-lock-type-face))
+
+    (forward-cursor-on "BAZ")
+    (should (face-at-cursor-p 'font-lock-type-face))))
 
 ;;; coffee-highlight.el end here
