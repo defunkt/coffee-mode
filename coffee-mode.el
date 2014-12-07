@@ -497,7 +497,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-this-regexp "\\(?:@\\w+\\|\\<this\\)\\>")
 
 ;; Prototype::access
-(defvar coffee-prototype-regexp "[[:word:].$]+?::")
+(defvar coffee-prototype-regexp "[_[:word:].$]+?::")
 
 ;; Assignment
 (defvar coffee-assign-regexp "\\(@?[_[:word:].$]+?\\)\\s-*:")
@@ -964,7 +964,7 @@ comments such as the following:
           "\\|"
           coffee-namespace-regexp
           "\\|"
-          "@?[[:word:]:.$]+\\s-*=\\(?:[^>]\\|$\\)"
+          "@?[_[:word:]:.$]+\\s-*=\\(?:[^>]\\|$\\)"
           "\\s-*"
           coffee-lambda-regexp
           "\\)"))
@@ -990,7 +990,7 @@ comments such as the following:
 (defun coffee-current-line-is-assignment ()
   (save-excursion
     (goto-char (line-end-position))
-    (re-search-backward "^[[:word:].$]+\\s-*=\\(?:[^>]\\|$\\)"
+    (re-search-backward "^[_[:word:].$]+\\s-*=\\(?:[^>]\\|$\\)"
                         (line-beginning-position) t)))
 
 (defun coffee-curline-defun-type (parent-indent start-is-defun)
