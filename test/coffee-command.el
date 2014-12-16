@@ -526,6 +526,26 @@ catch
       (call-interactively 'indent-for-tab-command)
       (should (= try-indent (current-indentation))))))
 
+(ert-deftest first-line-indentation ()
+  "First line indentation"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "    if true
+console.log 'foo'
+"
+      (goto-char (point-min))
+      (let ((first-line-indentation (current-indentation)))
+        (forward-line 1)
+        (call-interactively 'indent-for-tab-command)
+        (should (= (current-indentation) 2))
+        (call-interactively 'indent-for-tab-command)
+        (should (= (current-indentation) 4))
+        (call-interactively 'indent-for-tab-command)
+        (should (= (current-indentation) 6))
+        (call-interactively 'indent-for-tab-command)
+        (should (= (current-indentation) 0))))))
+
 ;;
 ;; enable coffee-indent-tabs-mode
 ;;
