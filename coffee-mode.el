@@ -513,9 +513,10 @@ called `coffee-compiled-buffer-name'."
 
 ;; Booleans
 (defvar coffee-boolean-regexp
-  (concat "\\(?:^\\|[^.]\\)"
-          (regexp-opt '("true" "false" "yes" "no" "on" "off" "null" "undefined")
-                      'words)))
+  (rx (or bol (not (any ".")))
+      (group symbol-start
+             (or "true" "false" "yes" "no" "on" "off" "null" "undefined")
+             symbol-end)))
 
 ;; Regular expressions
 (eval-and-compile
@@ -566,7 +567,7 @@ called `coffee-compiled-buffer-name'."
     (,coffee-prototype-regexp . font-lock-type-face)
     (,coffee-assign-regexp . font-lock-type-face)
     (,coffee-local-assign-regexp 1 font-lock-variable-name-face)
-    (,coffee-boolean-regexp . font-lock-constant-face)
+    (,coffee-boolean-regexp 1 font-lock-constant-face)
     (,coffee-lambda-regexp 1 font-lock-function-name-face)
     (,coffee-keywords-regexp 1 font-lock-keyword-face)
     (,coffee-string-interpolation-regexp 0 font-lock-variable-name-face t)))
