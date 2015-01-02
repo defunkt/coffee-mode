@@ -939,7 +939,7 @@ block-strings-end
     (should-not (face-at-cursor-p 'font-lock-string-face))
     (should (or (face-at-cursor-p nil)  (face-at-cursor-p 'default)))))
 
-(ert-deftest highlight-class-attribute-which-includes-underscore ()
+(ert-deftest regression-272 ()
   "Regression test for #272"
   (with-coffee-temp-buffer
     "
