@@ -952,4 +952,19 @@ class Foo
     (forward-cursor-on "BAZ")
     (should (face-at-cursor-p 'font-lock-type-face))))
 
+(ert-deftest regression-281 ()
+  "Regression test for #281"
+  (with-coffee-temp-buffer
+    "
+if bar
+  callback(true, foo)
+else
+  callback(false)
+"
+    (forward-cursor-on "(true")
+    (should-not (face-at-cursor-p 'font-lock-constant-face))
+
+    (forward-cursor-on "(false")
+    (should-not (face-at-cursor-p 'font-lock-constant-face))))
+
 ;;; coffee-highlight.el end here
