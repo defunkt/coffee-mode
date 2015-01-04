@@ -1,5 +1,9 @@
 Revision history for coffee-mode.el
 
+Revision v0.5.8 2015/01/04
+   - Fix highlighting boolean keyword(#281 Thanks Wilfred)
+   - Fix first line indentation
+
 Revision v0.5.7 2014/12/07
    - Improve for tramp
    - Fix coffee-comment-dwim same as other major-mode
