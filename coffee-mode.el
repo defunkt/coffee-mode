@@ -1164,6 +1164,19 @@ comments such as the following:
         (put-text-property (- curpoint 3) curpoint
                            'syntax-table (string-to-syntax "!"))))))
 
+(defun coffee-syntax-string-interpolation ()
+  (let ((end (match-end 0))
+        finish)
+    (goto-char (match-beginning 0))
+    (while (not finish)
+      (skip-chars-forward "^\"")
+      (if (or (eobp) (>= (point) end))
+          (setq finish t)
+        (put-text-property (point) (1+ (point))
+                           'syntax-table (string-to-syntax "_"))
+        (forward-char 1)))
+    (goto-char end)))
+
 (defun coffee-syntax-propertize-function (start end)
   (goto-char start)
   (funcall
@@ -1179,6 +1192,8 @@ comments such as the following:
              (put-text-property (match-beginning 1) (match-end 1)
                                 'syntax-table (string-to-syntax "_")))))))
     (coffee-regexp-regexp (1 (string-to-syntax "_")))
+    (coffee-string-interpolation-regexp
+     (0 (ignore (coffee-syntax-string-interpolation))))
     ("###"
      (0 (ignore (coffee-syntax-propertize-block-comment)))))
    (point) end))
