@@ -967,4 +967,11 @@ else
     (forward-cursor-on "(false")
     (should-not (face-at-cursor-p 'font-lock-constant-face))))
 
+(ert-deftest regression-285 ()
+  "Regression test for #285"
+  (with-coffee-temp-buffer
+    "foo = \"#{ '\"' }\" bar"
+    (forward-cursor-on "bar")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
 ;;; coffee-highlight.el end here
