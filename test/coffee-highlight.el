@@ -974,4 +974,19 @@ else
     (forward-cursor-on "bar")
     (should-not (face-at-cursor-p 'font-lock-string-face))))
 
+(ert-deftest regression-287 ()
+  "Regression test for #287"
+  (with-coffee-temp-buffer
+    "
+testMethod = (id) ->
+  req = request.post(\"/api/methods/#{id}/test/\")
+  promise = reqPromise req
+  promise.then (v) ->
+    console.log v
+    Stores.method.testResultAdded.dispatch(v)
+  true
+"
+    (forward-cursor-on "promise")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
 ;;; coffee-highlight.el end here
