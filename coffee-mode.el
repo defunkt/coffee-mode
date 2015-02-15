@@ -1166,9 +1166,10 @@ comments such as the following:
                            'syntax-table (string-to-syntax "!"))))))
 
 (defun coffee-syntax-string-interpolation ()
-  (let ((end (point))
+  (let ((start (match-beginning 0))
+        (end (point))
         finish)
-    (goto-char (match-beginning 0))
+    (goto-char start)
     (while (not finish)
       (skip-chars-forward "^\"")
       (if (or (eobp) (>= (point) end))
@@ -1176,7 +1177,7 @@ comments such as the following:
         (put-text-property (point) (1+ (point))
                            'syntax-table (string-to-syntax "_"))
         (forward-char 1)))
-    (goto-char (1+ end))))
+    (goto-char (1+ start))))
 
 (defun coffee-syntax-propertize-function (start end)
   (goto-char start)
