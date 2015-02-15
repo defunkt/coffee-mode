@@ -835,7 +835,7 @@ Delete ARG spaces if ARG!=1."
 ;; line starts with `class', for instance, you're probably going to
 ;; want to indent the next line.
 
-(defvar coffee-indenters-bol '("class" "for" "if" "else" "while" "until"
+(defvar coffee-indenters-bol '("class" "for" "if" "else" "unless" "while" "until"
                                "try" "catch" "finally" "switch")
   "Keywords or syntax whose presence at the start of a line means the
 next line should probably be indented.")
