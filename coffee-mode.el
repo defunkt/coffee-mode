@@ -930,6 +930,28 @@ END lie."
                   (coffee-indent-shift-amount start end 'right))))
     (indent-rigidly start end amount)))
 
+(defun coffee-indent-region (start end)
+  (interactive "r")
+  (save-excursion
+    (goto-char start)
+    (forward-line 1)
+    (while (and (not (eobp)) (< (point) end))
+      (let ((prev-indent (coffee-previous-indent))
+            (curindent (current-indentation))
+            indent-size)
+        (if (coffee-line-wants-indent)
+            (let ((expected (+ prev-indent coffee-tab-width)))
+              (when (/= curindent expected)
+                (setq indent-size expected)))
+          (when (> curindent prev-indent)
+            (setq indent-size prev-indent)))
+        (when indent-size
+          (save-excursion
+            (goto-char (line-beginning-position))
+            (delete-horizontal-space)
+            (coffee-insert-spaces indent-size))))
+      (forward-line 1))))
+
 ;;
 ;; Fill
 ;;
@@ -1227,6 +1249,7 @@ comments such as the following:
   (make-local-variable 'coffee-tab-width)
   (make-local-variable 'coffee-indent-tabs-mode)
   (set (make-local-variable 'indent-line-function) 'coffee-indent-line)
+  (set (make-local-variable 'indent-region-function) 'coffee-indent-region)
   (set (make-local-variable 'tab-width) coffee-tab-width)
 
   (set (make-local-variable 'syntax-propertize-function)
