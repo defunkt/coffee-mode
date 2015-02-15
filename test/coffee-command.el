@@ -1233,7 +1233,7 @@ value = 10
    (coffee-end-of-block)
    (should (eobp))))
 
-(ert-deftest deactive-mark-after-coffee-comment-dwim ()
+(ert-deftest regression-test-270 ()
   "Regression test for #270"
 
   (with-coffee-temp-buffer
