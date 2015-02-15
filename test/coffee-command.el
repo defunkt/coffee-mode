@@ -976,6 +976,72 @@ bar
         (should (= (current-column) 5))))))
 
 ;;
+;; indent region
+;;
+
+(ert-deftest indent-region-zero-indent ()
+  "Indent region for no indentation case"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+    aa = 10
+    bb = 20
+    cc = 30
+"
+      (coffee-indent-region (point-min) (point-max))
+
+      (goto-char (point-min))
+
+      (forward-line 1)
+      (should (= (current-indentation) 0))
+
+      (forward-line 1)
+      (should (= (current-indentation) 0))
+
+      (forward-line 1)
+      (should (= (current-indentation) 0)))))
+
+(ert-deftest indent-region-wants-indent ()
+  "Indent region for indent case"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+if true
+foo
+"
+      (coffee-indent-region (point-min) (point-max))
+
+      (goto-char (point-min))
+      (forward-cursor-on "foo")
+      (should (= (current-indentation) coffee-tab-width)))))
+
+(ert-deftest indent-region-wants-indent-nest ()
+  "Indent region for nested indent case"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+if true
+      foo
+          unless false
+                 bar
+"
+      (coffee-indent-region (point-min) (point-max))
+
+      (goto-char (point-min))
+      (forward-cursor-on "foo")
+      (should (= (current-indentation) coffee-tab-width))
+
+      (forward-cursor-on "unless")
+      (should (= (current-indentation) coffee-tab-width))
+
+      (let ((cur-block-indent (current-indentation)))
+        (forward-cursor-on "bar")
+        (should (= (current-indentation) (+ cur-block-indent coffee-tab-width)))))))
+
+;;
 ;; fill paragraph
 ;;
 
