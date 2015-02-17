@@ -996,4 +996,11 @@ testMethod = (id) ->
     (forward-cursor-on "neat")
     (should-not (face-at-cursor-p 'font-lock-string-face))))
 
+(ert-deftest regression-292 ()
+  "Regression test for #292"
+  (with-coffee-temp-buffer
+    "\"#{\"#{seriously?}\"}\""
+    (forward-cursor-on "}" 2)
+    (should (face-at-cursor-p 'font-lock-variable-name-face))))
+
 ;;; coffee-highlight.el end here
