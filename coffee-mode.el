@@ -1213,19 +1213,17 @@ comments such as the following:
       (goto-char start)
       (let (finish res)
         (while (and (not finish) (search-forward "}" nil t))
-          (if (not (coffee--in-string-p))
-              (setq finish t)
-            (let ((end (match-end 0)))
-              (save-excursion
-                (when (and (ignore-errors (backward-list 1))
-                           (= start (1- (point))))
-                  (setq res end finish t))))))
+          (let ((end-pos (match-end 0)))
+            (save-excursion
+              (when (and (ignore-errors (backward-list 1))
+                         (= start (1- (point))))
+                (setq res end-pos finish t)))))
         (goto-char end)
         (when res
           (while (re-search-forward "[\"'#]" res t)
             (put-text-property (match-beginning 0) (match-end 0)
-                               'syntax-table (string-to-syntax "_"))))
-        (goto-char (1+ start))))))
+                               'syntax-table (string-to-syntax "_")))
+          (goto-char (1- res)))))))
 
 (defun coffee-syntax-propertize-function (start end)
   (goto-char start)
