@@ -1001,6 +1001,10 @@ testMethod = (id) ->
   (with-coffee-temp-buffer
     "\"#{\"#{seriously?}\"}\""
     (forward-cursor-on "}" 2)
-    (should (face-at-cursor-p 'font-lock-variable-name-face))))
+    (should (face-at-cursor-p 'font-lock-variable-name-face))
+
+    (forward-cursor-on "\"")
+    (should-not (face-at-cursor-p 'font-lock-comment-face))
+    (should (face-at-cursor-p 'font-lock-string-face))))
 
 ;;; coffee-highlight.el end here
