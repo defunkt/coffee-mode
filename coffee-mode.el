@@ -1140,16 +1140,16 @@ comments such as the following:
   (defconst coffee-block-strings-delimiter
     (rx (and
          ;; Match even number of backslashes.
-         (or (not (any ?\\ ?\' ?\"))
+         (or (not (any ?\\ ?\' ?\" ?/))
              point
              ;; Quotes might be preceded by a escaped quote.
              (and (or (not (any ?\\)) point)
                   ?\\
                   (* ?\\ ?\\)
-                  (any ?\' ?\")))
+                  (any ?\' ?\" ?/)))
          (* ?\\ ?\\)
          ;; Match single or triple quotes of any kind.
-         (group (or "'''" "\"\"\""))))))
+         (group (or "'''" "\"\"\"" "///"))))))
 
 (defsubst coffee-syntax-count-quotes (quote-char start-point limit)
   (let ((i 0))
