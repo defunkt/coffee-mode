@@ -939,6 +939,32 @@ block-strings-end
     (should-not (face-at-cursor-p 'font-lock-string-face))
     (should (or (face-at-cursor-p nil)  (face-at-cursor-p 'default)))))
 
+(ert-deftest block-regex ()
+  "Multiple line regex"
+  (with-coffee-temp-buffer
+    "
+OPERATOR = /// ^ (
+  ?: [-=]>             # function
+   | [-+*/%<>&|^!?=]=  # compound assign / compare
+   | >>>=?             # zero-fill right shift
+   | ([-+:])\1         # doubles
+   | ([&|<>])\2=?      # logic / shift
+   | \?\.              # soak access
+   | \.{2,3}           # range or splat
+) ///
+after = 1
+"
+    (forward-cursor-on "\\^ ")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "\\?:")
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "after")
+    (should-not (face-at-cursor-p 'font-lock-string-face))))
+
+;;; Regression test
+
 (ert-deftest regression-272 ()
   "Regression test for #272"
   (with-coffee-temp-buffer
