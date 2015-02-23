@@ -1,5 +1,13 @@
 Revision history for coffee-mode.el
 
+Revision v0.5.9 2015/02/23
+   - Implement highlighting multiple lines regexp literal(Experimental)
+   - Re-implement string interpolation for string nested string interpolation
+   - Implement indent region command
+   - Fix indent command for 'unless' block
+   - Fix #287, #289(slash after string interpolation breaks syntax highlighting)
+   - Fix #285(double quote in string interpolation breaks syntax highlighting)
+
 Revision v0.5.8 2015/01/04
    - Fix highlighting boolean keyword(#281 Thanks Wilfred)
    - Fix first line indentation
