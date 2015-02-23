@@ -6,7 +6,7 @@ An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
 Provides syntax highlighting, indentation support, imenu support,
 a menu bar, and a few cute commands.
 
-![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png)
+<!-- ![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png) doesn't work (anymore? private?) -->
 
 
 ## Requirement
@@ -18,8 +18,15 @@ a menu bar, and a few cute commands.
 
 You can install `coffee-mode` from [MELPA][melpa] with package.el.
 
+```
+M-x package-install
+Input coffee-mode
+```
+See also https://github.com/defunkt/coffee-mode/issues/296#issuecomment-75564961
+
 **Please do not install [GNU Emacs Lisp Package Archive][elpa] version.**
-It's too old and many features(triple quote etc) are not implemented.
+It's too old and many features (triple quote etc.) are not implemented.
+
 
 ## Whitespace
 
