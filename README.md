@@ -6,7 +6,7 @@ An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
 Provides syntax highlighting, indentation support, imenu support,
 a menu bar, and a few cute commands.
 
-![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png)
+![Screenshot](image/coffee-mode.png)
 
 
 ## Requirement
@@ -14,12 +14,17 @@ a menu bar, and a few cute commands.
 - Emacs 24.1 or higher
 
 
-## Installation
+## Installation via package.el
 
-You can install `coffee-mode` from [MELPA][melpa] with package.el.
+`coffee-mode` is available on [MELPA][melpa] or [MELPA-STABLE][melpa-stable].
+
+You can install `coffee-mode` with the following command.
+
+<kbd>M-x package-install [RET] coffee-mode [RET]</kbd>
 
 **Please do not install [GNU Emacs Lisp Package Archive][elpa] version.**
-It's too old and many features(triple quote etc) are not implemented.
+
+It's too old and many features(Block string, block comment etc) are not implemented.
 
 ## Whitespace
 
@@ -64,7 +69,9 @@ Set `coffee-indent-tabs-mode` t if you want to use **TAB** instead of spaces.
 ### Move to corresponding point in JavaScript file after compiling
 
 You can archive this with [sourcemap](https://github.com/syohex/emacs-sourcemap) and
-following configuration. You can install `sourcemap` package from [MELPA](melpa).
+following configuration.
+
+You can install `sourcemap` package from [MELPA][melpa].
 
 ```lisp
 (setq coffee-args-compile '("-c" "-m")) ;; generating sourcemap
@@ -161,6 +168,7 @@ Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
 [im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
 [elpa]: http://elpa.gnu.org/
 [melpa]: http://melpa.org/
+[melpa-stable]: http://stable.melpa.org/
 [travis-badge]: https://travis-ci.org/syohex/coffee-mode.svg
 [travis-link]: https://travis-ci.org/syohex/coffee-mode
 [melpa-link]: http://melpa.org/#/coffee-mode
