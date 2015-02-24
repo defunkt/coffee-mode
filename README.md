@@ -6,7 +6,7 @@ An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
 Provides syntax highlighting, indentation support, imenu support,
 a menu bar, and a few cute commands.
 
-![Screenshot](http://img.skitch.com/20100308-fcr622c95ibey4m474d5m1m1qt.png)
+![Screenshot](image/coffee-mode.png)
 
 
 ## Requirement
