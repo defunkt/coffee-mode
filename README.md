@@ -64,7 +64,7 @@ Set `coffee-indent-tabs-mode` t if you want to use **TAB** instead of spaces.
 ### Move to corresponding point in JavaScript file after compiling
 
 You can archive this with [sourcemap](https://github.com/syohex/emacs-sourcemap) and
-following configuration. You can install `sourcemap` package from [MELPA](melpa).
+following configuration. You can install `sourcemap` package from [MELPA][melpa].
 
 ```lisp
 (setq coffee-args-compile '("-c" "-m")) ;; generating sourcemap
