@@ -1231,14 +1231,16 @@ comments such as the following:
    (syntax-propertize-rules
     (coffee-block-strings-delimiter
      (0 (ignore (coffee-syntax-block-strings-stringify))))
-    ("\\(?:[^\\]\\)\\(/\\)"
-     (1 (ignore
-         (let ((ppss (progn
-                       (goto-char (match-beginning 1))
+    ("/"
+     (0 (ignore
+         (let ((curpoint (point))
+               (ppss (progn
+                       (goto-char (match-beginning 0))
                        (syntax-ppss))))
            (when (nth 8 ppss)
-             (put-text-property (match-beginning 1) (match-end 1)
-                                'syntax-table (string-to-syntax "_")))))))
+             (put-text-property (match-beginning 0) (match-end 0)
+                                'syntax-table (string-to-syntax "_")))
+           (goto-char curpoint)))))
     (coffee-regexp-regexp (1 (string-to-syntax "_")))
     ("#{" (0 (ignore (coffee-syntax-string-interpolation))))
     ("###"
