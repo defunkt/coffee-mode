@@ -1033,4 +1033,12 @@ testMethod = (id) ->
     (should-not (face-at-cursor-p 'font-lock-comment-face))
     (should (face-at-cursor-p 'font-lock-string-face))))
 
+(ert-deftest regression-299 ()
+  "Broken syntax highlighting inside strings with slashes."
+  (with-coffee-temp-buffer
+    "'http:\/\/' if true"
+
+    (forward-cursor-on "if")
+    (should (face-at-cursor-p 'font-lock-keyword-face))))
+
 ;;; coffee-highlight.el end here
