@@ -1041,4 +1041,19 @@ testMethod = (id) ->
     (forward-cursor-on "if")
     (should (face-at-cursor-p 'font-lock-keyword-face))))
 
+(ert-deftest regression-302 ()
+  "Broken syntax highlighting if regexp has single quote."
+  (with-coffee-temp-buffer
+    "/Brok'n/  # Broken"
+
+    (forward-cursor-on "n")
+    (should (face-at-cursor-p 'font-lock-constant-face))
+
+    (forward-cursor-on "#")
+    (message "## %s" (thing-at-point 'word))
+    (should (face-at-cursor-p 'font-lock-comment-face))
+
+    (forward-cursor-on "Broken")
+    (should (face-at-cursor-p 'font-lock-comment-face))))
+
 ;;; coffee-highlight.el end here
