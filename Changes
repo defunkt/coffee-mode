@@ -1,5 +1,9 @@
 Revision history for coffee-mode.el
 
+Revision v0.6.0 2015/03/19
+   - Fix highlighting regexp literal issue(#302)
+   - Fix highlighting class member issue(#304)
+
 Revision v0.5.9 2015/02/23
    - Implement highlighting multiple lines regexp literal(Experimental)
    - Re-implement string interpolation for string nested string interpolation
