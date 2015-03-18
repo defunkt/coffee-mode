@@ -1056,4 +1056,12 @@ testMethod = (id) ->
     (forward-cursor-on "Broken")
     (should (face-at-cursor-p 'font-lock-comment-face))))
 
+(ert-deftest regression-304 ()
+  "Broken syntax highlighting if class member name contains underscore"
+  (with-coffee-temp-buffer
+    "@proto_classes = builder.build"
+
+    (forward-cursor-on "classes")
+    (should (face-at-cursor-p 'font-lock-variable-name-face))))
+
 ;;; coffee-highlight.el end here

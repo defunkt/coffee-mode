@@ -494,7 +494,7 @@ called `coffee-compiled-buffer-name'."
 ;;
 
 ;; Instance variables (implicit this)
-(defvar coffee-this-regexp "\\(?:@\\w+\\|\\<this\\)\\>")
+(defvar coffee-this-regexp "\\(?:@[_[:word:]]+\\|\\<this\\)\\>")
 
 ;; Prototype::access
 (defvar coffee-prototype-regexp "[_[:word:].$]+?::")
