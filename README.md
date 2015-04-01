@@ -17,7 +17,7 @@ a menu bar, and a few cute commands.
 
 ## Installation via package.el
 
-`coffee-mode` is available on [MELPA][melpa] or [MELPA-STABLE][melpa-stable].
+`coffee-mode` is available on [MELPA][melpa] and [MELPA-STABLE][melpa-stable].
 
 You can install `coffee-mode` with the following command.
 
