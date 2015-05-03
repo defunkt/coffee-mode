@@ -973,7 +973,7 @@ comments such as the following:
         (setq next-indent (current-indentation))))
     (coffee-skip-forward-lines -1)
     (let ((start-indent (or next-indent (current-indentation))))
-      (when (and (not (eq this-command 'coffee-mark-defun)) (looking-back "^\\s-*"))
+      (when (and (not (eq this-command 'coffee-mark-defun)) (looking-back "^\\s-*" (line-beginning-position)))
         (forward-line -1))
       (let ((finish nil))
         (goto-char (line-end-position))
@@ -1097,7 +1097,7 @@ comments such as the following:
            (ppss (prog2
                      (backward-char 3)
                      (syntax-ppss)
-                   (setq valid-comment-start (looking-back "^\\s-*"))
+                   (setq valid-comment-start (looking-back "^\\s-*" (line-beginning-position)))
                    (forward-char 3)))
            (in-comment (nth 4 ppss))
            (in-string (nth 3 ppss)))
