@@ -1179,6 +1179,7 @@ comments such as the following:
 
   ;; single quote strings
   (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
+  (modify-syntax-entry ?` "\"" coffee-mode-syntax-table)
 
   ;; indentation
   (make-local-variable 'coffee-tab-width)

@@ -963,6 +963,16 @@ after = 1
     (forward-cursor-on "after")
     (should-not (face-at-cursor-p 'font-lock-string-face))))
 
+;;; Literal Javascript
+
+(ert-deftest literal-javascript-highlighting ()
+  "Literal Javascript should be highlighted as string"
+  (with-coffee-temp-buffer
+    "foo = `function () { console.log(\"in literal javascript\"); }`"
+
+    (forward-cursor-on "literal")
+    (should (face-at-cursor-p 'font-lock-string-face))))
+
 ;;; Regression test
 
 (ert-deftest regression-272 ()
