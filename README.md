@@ -13,6 +13,7 @@ a menu bar, and a few cute commands.
 ## Requirement
 
 - Emacs 24.1 or higher
+- CoffeeScript 1.9.3 or higher
 
 
 ## Installation via package.el
