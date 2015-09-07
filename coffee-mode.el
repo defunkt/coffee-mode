@@ -157,7 +157,9 @@ with CoffeeScript."
 
 (defun coffee-comint-filter (string)
   (ansi-color-apply
-   (replace-regexp-in-string "\x1b\\[.[GJK]" "" string)))
+   (replace-regexp-in-string
+    "\uFF00" "\n"
+    (replace-regexp-in-string "\x1b\\[.[GJK]" "" string))))
 
 (defun coffee-repl ()
   "Launch a CoffeeScript REPL using `coffee-command' as an inferior mode."
