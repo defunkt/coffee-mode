@@ -293,4 +293,17 @@ finally
     (forward-cursor-on "finally")
     (should (eq (coffee--block-type) 'try-catch))))
 
+(ert-deftest map-file-name ()
+  "Source map file name is changed since CoffeeScript 1.8"
+  (cl-letf (((symbol-function 'coffee--coffeescript-version)
+             (lambda () "1.7")))
+    (let ((got (coffee--map-file-name "/foo/bar.coffee")))
+      (should (string= got "/foo/bar.map"))))
+
+  (cl-letf (((symbol-function 'coffee--coffeescript-version)
+             (lambda () "1.10.0")))
+    (let ((got (coffee--map-file-name "/foo/bar.coffee")))
+      (should (string= got "/foo/bar.js.map")))))
+
+
 ;;; coffee-private.el end here

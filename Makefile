@@ -35,5 +35,5 @@ test-imenu:
 
 test-private:
 	$(CASK) exec $(EMACS) -Q -batch $(LOADPATH) $(LOAD_HELPER) \
-		-l test/coffee-private.el
+		-l test/coffee-private.el \
 		-f ert-run-tests-batch-and-exit

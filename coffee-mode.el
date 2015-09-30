@@ -247,11 +247,11 @@ called `coffee-compiled-buffer-name'."
     (goto-char (point-min))
     (let ((line (buffer-substring-no-properties (point) (line-end-position))))
       (when (string-match "[0-9.]+\\'" line)
-        (string-to-number (match-string-no-properties 0 line))))))
+        (match-string-no-properties 0 line)))))
 
 (defun coffee--map-file-name (coffee-file)
   (let* ((version (coffee--coffeescript-version))
-         (extension (if (>= version 1.8) ".js.map" ".map")))
+         (extension (if (version<= "1.8" version) ".js.map" ".map")))
     ;; foo.js: foo.js.map(>= 1.8), foo.map(< 1.8)
     (concat (file-name-sans-extension coffee-file) extension)))
 
