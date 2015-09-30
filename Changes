@@ -1,5 +1,10 @@
 Revision history for coffee-mode.el
 
+Revision v0.6.1 2015/10/01
+   - Fix byte-compile warning(#308)
+   - Improve sending multiple lines to REPL(#316, #318 Thanks Danny McClanaha)
+   - Fix version comparison issue(#321 Reported by crackhopper)
+
 Revision v0.6.0 2015/03/19
    - Fix highlighting regexp literal issue(#302)
    - Fix highlighting class member issue(#304)
