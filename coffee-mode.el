@@ -126,6 +126,11 @@ with CoffeeScript."
   :type 'hook
   :group 'coffee)
 
+(defcustom coffee-indent-like-python-mode nil
+  "Indent like python-mode."
+  :type 'boolean
+  :group 'coffee)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -670,6 +675,15 @@ output in a compilation buffer."
   (when (< (current-column) (current-indentation))
     (back-to-indentation)))
 
+(defun coffee--indent-line-like-python-mode (prev-indent repeated)
+  (let ((next-indent (- (current-indentation) coffee-tab-width))
+        (indent-p (coffee-line-wants-indent)))
+    (if repeated
+        (if (< next-indent 0)
+            (+ prev-indent (if indent-p coffee-tab-width 0))
+          next-indent)
+      (+ prev-indent (if indent-p coffee-tab-width 0)))))
+
 (defun coffee-indent-line ()
   "Indent current line as CoffeeScript."
   (interactive)
@@ -680,11 +694,15 @@ output in a compilation buffer."
          begin-indents)
     (if (and type (setq begin-indents (coffee--find-indents type limit '<)))
         (setq indent-size (coffee--decide-indent curindent begin-indents '>))
-      (let ((prev-indent (coffee-previous-indent))
-            (next-indent-size (+ curindent coffee-tab-width)))
-        (if (> (- next-indent-size prev-indent) coffee-tab-width)
-            (setq indent-size 0)
-          (setq indent-size (+ curindent coffee-tab-width)))))
+      (if coffee-indent-like-python-mode
+          (setq indent-size
+                (coffee--indent-line-like-python-mode
+                 (coffee-previous-indent) (eq last-command this-command)))
+        (let ((prev-indent (coffee-previous-indent))
+              (next-indent-size (+ curindent coffee-tab-width)))
+          (if (> (- next-indent-size prev-indent) coffee-tab-width)
+              (setq indent-size 0)
+            (setq indent-size (+ curindent coffee-tab-width))))))
     (coffee--indent-insert-spaces indent-size)))
 
 (defun coffee-previous-indent ()
