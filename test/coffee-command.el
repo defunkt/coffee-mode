@@ -1313,4 +1313,59 @@ b = 20
    (call-interactively 'coffee-comment-dwim)
    (should (not mark-active))))
 
+(ert-deftest indent-same-as-python-mode ()
+  "Move defun commands with toplevel assignmentsprototype access"
+
+  (with-coffee-temp-buffer
+   "
+if 1 == 1
+  if 2 == 2
+    if 3 == 3
+      if 4 == 4
+        if 5 == 5
+foo
+"
+   (let ((coffee-tab-width 2)
+         (coffee-indent-like-python-mode t))
+     (forward-cursor-on "foo")
+     (call-interactively 'indent-for-tab-command)
+     (let ((prev-indent (save-excursion
+                          (forward-line -1)
+                          (current-indentation))))
+       (should (= (current-indentation) (+ prev-indent coffee-tab-width)))
+       (let ((curindent (current-indentation)))
+         (call-interactively 'beginning-of-line)
+         (call-interactively 'delete-horizontal-space)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (should (= (current-indentation) (- curindent coffee-tab-width)))
+
+         ;; wrap around
+         (call-interactively 'beginning-of-line)
+         (call-interactively 'delete-horizontal-space)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (call-interactively 'coffee-indent-line)
+         (should (= (current-indentation) curindent))))))
+
+  (with-coffee-temp-buffer
+   "
+if 1 == 1
+  if 2 == 2
+    a = 10
+foo
+"
+   (let ((coffee-tab-width 2)
+         (coffee-indent-like-python-mode t))
+     (forward-cursor-on "foo")
+     (call-interactively 'indent-for-tab-command)
+     (let ((prev-indent (save-excursion
+                          (forward-line -1)
+                          (current-indentation))))
+       (should (= prev-indent (current-indentation)))))))
+
 ;;; coffee-command.el end here
