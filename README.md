@@ -175,18 +175,18 @@ works as you expect with this option.
 
 ## Bugs
 
-Please file bugs at <http://github.com/defunkt/coffee-mode/issues>
+Please file bugs at <https://github.com/defunkt/coffee-mode/issues>
 
 [cs]: http://jashkenas.github.com/coffee-script/
 [ics]: http://maxtaco.github.com/coffee-script/
-[tm]: http://github.com/defunkt/textmate.el
+[tm]: https://github.com/defunkt/textmate.el
 [im]: http://chopmo.blogspot.com/2008/09/quickly-jumping-to-symbols.html
-[elpa]: http://elpa.gnu.org/
-[melpa]: http://melpa.org/
-[melpa-stable]: http://stable.melpa.org/
+[elpa]: https://elpa.gnu.org/
+[melpa]: https://melpa.org/
+[melpa-stable]: https://stable.melpa.org/
 [travis-badge]: https://travis-ci.org/syohex/coffee-mode.svg
 [travis-link]: https://travis-ci.org/syohex/coffee-mode
-[melpa-link]: http://melpa.org/#/coffee-mode
-[melpa-stable-link]: http://stable.melpa.org/#/coffee-mode
-[melpa-badge]: http://melpa.org/packages/coffee-mode-badge.svg
-[melpa-stable-badge]: http://stable.melpa.org/packages/coffee-mode-badge.svg
+[melpa-link]: https://melpa.org/#/coffee-mode
+[melpa-stable-link]: https://stable.melpa.org/#/coffee-mode
+[melpa-badge]: https://melpa.org/packages/coffee-mode-badge.svg
+[melpa-stable-badge]: https://stable.melpa.org/packages/coffee-mode-badge.svg
