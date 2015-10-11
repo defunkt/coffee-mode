@@ -145,6 +145,19 @@ Run `coffee` with the `--watch` flag on a directory or file.
 Minor mode for compiling to JavaScript at save file.
 
 
+## Customization
+
+### Indent like python-mode
+
+When `coffee-indent-like-python-mode` is non-nil, indent command works like `python-mode`.
+I suppose that [Evil](https://bitbucket.org/lyro/evil/wiki/Home)'s `o` and `O` commands
+works as you expect with this option.
+
+```lisp
+(custom-set-variables
+ '(coffee-indent-like-python-mode t))
+```
+
 ## Sample Configuration
 
 ```lisp
