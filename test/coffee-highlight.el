@@ -232,6 +232,16 @@ foo =
     (forward-cursor-on "foo")
     (should-not (face-at-cursor-p 'font-lock-variable-name-face))))
 
+(ert-deftest local-assignment-question-equal ()
+  "Highlight question equal assignment"
+
+  (with-coffee-temp-buffer
+    "foo = 10
+foo ?= 20"
+
+    (forward-cursor-on "foo" 2)
+    (should (face-at-cursor-p 'font-lock-variable-name-face))))
+
 ;;
 ;; Lambda expression
 ;;
