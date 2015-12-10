@@ -1,5 +1,10 @@
 Revision history for coffee-mode.el
 
+Revision v0.6.2 2015/12/10
+   - Implement python like indentation(#323)
+   - Fix assignment highlight issue(#326)
+   - Add toggle arrow function command(#329 Thanksjasonm23)
+
 Revision v0.6.1 2015/10/01
    - Fix byte-compile warning(#308)
    - Improve sending multiple lines to REPL(#316, #318 Thanks Danny McClanaha)

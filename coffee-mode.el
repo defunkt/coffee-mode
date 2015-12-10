@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2010 Chris Wanstrath
 
-;; Version: 0.6.1
+;; Version: 0.6.2
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
 ;; URL: http://github.com/defunkt/coffee-mode
