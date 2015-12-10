@@ -1368,4 +1368,24 @@ foo
                           (current-indentation))))
        (should (= prev-indent (current-indentation)))))))
 
+(ert-deftest toggle-arrow-function ()
+  "Toggle arrow function between '-' and '='"
+
+  (with-coffee-temp-buffer
+   "
+foo = () ->
+  console.log 'hello'
+"
+   (forward-cursor-on "hello")
+   (coffee-toggle-fatness)
+   (forward-line -1)
+   (goto-char (line-end-position))
+   (should (looking-back "=>"))
+
+   (forward-cursor-on "hello")
+   (coffee-toggle-fatness)
+   (forward-line -1)
+   (goto-char (line-end-position))
+   (should (looking-back "->"))))
+
 ;;; coffee-command.el end here
