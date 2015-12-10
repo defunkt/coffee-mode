@@ -42,7 +42,7 @@
 ;; Customizable Variables
 ;;
 
-(defconst coffee-mode-version "0.6.1"
+(defconst coffee-mode-version "0.6.2"
   "The version of `coffee-mode'.")
 
 (defgroup coffee nil
