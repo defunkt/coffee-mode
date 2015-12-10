@@ -529,6 +529,14 @@ output in a compilation buffer."
            (generate-new-buffer-name coffee-compiled-buffer-name))))
     (compile (concat coffee-command " " args))))
 
+(defun coffee-toggle-fatness ()
+  "Toggle fatness of a coffee function arrow."
+  (interactive)
+  (save-excursion
+    (when (re-search-backward "[-=]>" nil t)
+      (cond ((looking-at "=") (replace-match "-"))
+            ((looking-at "-") (replace-match "="))))))
+
 ;;
 ;; imenu support
 ;;
