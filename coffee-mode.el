@@ -845,7 +845,7 @@ indented less than COUNT columns."
    (if (use-region-p)
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
-  (let ((amount (if count (prefix-numeric-value count)
+  (let ((amount (if count (* coffee-tab-width (prefix-numeric-value count))
                   (coffee-indent-shift-amount start end 'left))))
     (when (> amount 0)
       (let (deactivate-mark)
@@ -872,7 +872,7 @@ END lie."
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
   (let (deactivate-mark
-        (amount (if count (prefix-numeric-value count)
+        (amount (if count (* coffee-tab-width (prefix-numeric-value count))
                   (coffee-indent-shift-amount start end 'right))))
     (indent-rigidly start end amount)))
 
