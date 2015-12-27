@@ -131,6 +131,12 @@ with CoffeeScript."
   :type 'boolean
   :group 'coffee)
 
+(defcustom coffee-switch-to-compile-buffer nil
+  "Switch to compilation buffer `coffee-compiled-buffer-name' after compiling
+a buffer or region."
+  :type 'boolean
+  :group 'coffee)
+
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
     ;; key bindings
@@ -260,10 +266,14 @@ called `coffee-compiled-buffer-name'."
     ;; foo.js: foo.js.map(>= 1.8), foo.map(< 1.8)
     (concat (file-name-sans-extension coffee-file) extension)))
 
+(defmacro coffee-save-window-if (bool &rest body)
+  `(if ,bool (save-selected-window ,@body) ,@body))
+(put 'coffee-save-window-if 'lisp-indent-function 1)
+
 (defun coffee-compile-sentinel (file line column)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
-      (save-selected-window
+      (coffee-save-window-if (not coffee-switch-to-compile-buffer)
         (pop-to-buffer (get-buffer coffee-compiled-buffer-name))
         (ansi-color-apply-on-region (point-min) (point-max))
         (goto-char (point-min))
