@@ -273,7 +273,7 @@ called `coffee-compiled-buffer-name'."
   `(if ,bool (save-selected-window ,@body) ,@body))
 (put 'coffee-save-window-if 'lisp-indent-function 1)
 
-(defun coffee-compile-sentinel (file line column)
+(defun coffee-compile-sentinel (buffer file line column)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
       (coffee-save-window-if (not coffee-switch-to-compile-buffer)
@@ -281,7 +281,9 @@ called `coffee-compiled-buffer-name'."
         (ansi-color-apply-on-region (point-min) (point-max))
         (goto-char (point-min))
         (if (not (= (process-exit-status proc) 0))
-            (message "Failed: compiling to JavaScript")
+            (let ((compile-output (buffer-string)))
+              (with-current-buffer buffer
+                (coffee-parse-error-output compile-output)))
           (let ((props (list :sourcemap (coffee--map-file-name file)
                              :line line :column column :source file)))
             (let ((buffer-file-name "tmp.js"))
@@ -296,7 +298,8 @@ called `coffee-compiled-buffer-name'."
                        coffee-command (append coffee-args-compile '("-s" "-p"))))
           (curfile (buffer-file-name curbuf)))
       (set-process-query-on-exit-flag proc nil)
-      (set-process-sentinel proc (coffee-compile-sentinel curfile line column))
+      (set-process-sentinel
+       proc (coffee-compile-sentinel curbuf curfile line column))
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-eof proc))))
