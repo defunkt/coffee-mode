@@ -305,6 +305,8 @@ called `coffee-compiled-buffer-name'."
       (process-send-eof proc))))
 
 (defun coffee-start-generate-sourcemap-process (start end)
+  ;; so that sourcemap generation reads from the current buffer
+  (save-buffer)
   (let* ((file (buffer-file-name))
          (sourcemap-buf (get-buffer-create "*coffee-sourcemap*"))
          (proc (start-file-process "coffee-sourcemap" sourcemap-buf
@@ -318,7 +320,10 @@ called `coffee-compiled-buffer-name'."
      (lambda (proc _event)
        (when (eq (process-status proc) 'exit)
          (if (not (= (process-exit-status proc) 0))
-             (message "Error: generating sourcemap file")
+             (let ((sourcemap-output
+                    (with-current-buffer sourcemap-buf (buffer-string))))
+               (with-current-buffer curbuf
+                 (coffee-parse-error-output sourcemap-output)))
            (kill-buffer sourcemap-buf)
            (funcall (coffee-start-compile-process curbuf line column) start end)))))))
 
