@@ -78,7 +78,7 @@ be compiled."
   :type 'list
   :group 'coffee)
 
-(defcustom coffee-args-compile '("-c")
+(defcustom coffee-args-compile '("-c" "--no-header")
   "The arguments to pass to `coffee-command' to compile a file."
   :type 'list
   :group 'coffee)
