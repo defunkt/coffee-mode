@@ -29,7 +29,7 @@
   (let ((coffee-command "coffee"))
     (let* ((got (coffee-command-compile "foo.coffee"))
            (output-dir (expand-file-name default-directory))
-           (expected (format "coffee -c -o %s %s"
+           (expected (format "coffee -c --no-header -o %s %s"
                              output-dir (concat output-dir "foo.coffee"))))
       (should (string= got expected)))))
 
@@ -38,7 +38,7 @@
   (let ((coffee-command "coffee"))
     (let* ((got (coffee-command-compile "foo.coffee" "bar.js"))
            (output-dir (expand-file-name default-directory))
-           (expected (format "coffee -c -j bar.js -o %s %s"
+           (expected (format "coffee -c --no-header -j bar.js -o %s %s"
                              output-dir (concat output-dir "foo.coffee"))))
       (should (string= got expected)))))
 

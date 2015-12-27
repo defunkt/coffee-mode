@@ -78,7 +78,7 @@ be compiled."
   :type 'list
   :group 'coffee)
 
-(defcustom coffee-args-compile '("-c")
+(defcustom coffee-args-compile '("-c" "--no-header")
   "The arguments to pass to `coffee-command' to compile a file."
   :type 'list
   :group 'coffee)
@@ -128,6 +128,12 @@ with CoffeeScript."
 
 (defcustom coffee-indent-like-python-mode nil
   "Indent like python-mode."
+  :type 'boolean
+  :group 'coffee)
+
+(defcustom coffee-switch-to-compile-buffer nil
+  "Switch to compilation buffer `coffee-compiled-buffer-name' after compiling
+a buffer or region."
   :type 'boolean
   :group 'coffee)
 
@@ -260,10 +266,14 @@ called `coffee-compiled-buffer-name'."
     ;; foo.js: foo.js.map(>= 1.8), foo.map(< 1.8)
     (concat (file-name-sans-extension coffee-file) extension)))
 
+(defmacro coffee-save-window-if (bool &rest body)
+  `(if ,bool (save-selected-window ,@body) ,@body))
+(put 'coffee-save-window-if 'lisp-indent-function 1)
+
 (defun coffee-compile-sentinel (file line column)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
-      (save-selected-window
+      (coffee-save-window-if (not coffee-switch-to-compile-buffer)
         (pop-to-buffer (get-buffer coffee-compiled-buffer-name))
         (ansi-color-apply-on-region (point-min) (point-max))
         (goto-char (point-min))
@@ -274,7 +284,6 @@ called `coffee-compiled-buffer-name'."
             (let ((buffer-file-name "tmp.js"))
               (setq buffer-read-only t)
               (set-auto-mode)
-              (forward-line 1) ;; 1st line is comment
               (run-hook-with-args 'coffee-after-compile-hook props))))))))
 
 (defun coffee-start-compile-process (curbuf line column)

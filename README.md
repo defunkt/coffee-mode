@@ -76,7 +76,8 @@ following configuration.
 You can install `sourcemap` package from [MELPA][melpa].
 
 ```lisp
-(setq coffee-args-compile '("-c" "-m")) ;; generating sourcemap
+;; generating sourcemap by '-m' option. And you must set '--no-header' option
+(setq coffee-args-compile '("-c" "--no-header" "-m"))
 (add-hook 'coffee-after-compile-hook 'sourcemap-goto-corresponding-point)
 
 ;; If you want to remove sourcemap file after jumping corresponding point
@@ -164,7 +165,7 @@ works as you expect with this option.
 ;; coffeescript
 (custom-set-variables
  '(coffee-tab-width 2)
- '(coffee-args-compile '("-c" "--bare")))
+ '(coffee-args-compile '("-c" "--no-header" "--bare")))
 
 (eval-after-load "coffee-mode"
   '(progn
