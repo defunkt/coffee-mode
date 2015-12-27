@@ -762,17 +762,19 @@ called from first non-blank char of line.
 
 Delete ARG spaces if ARG!=1."
   (interactive "*p")
-  (if (and (= 1 arg)
-           (= (point) (save-excursion
-                        (back-to-indentation)
-                        (point)))
-           (not (bolp)))
-      (let* ((extra-space-count (% (current-column) coffee-tab-width))
-             (deleted-chars (if (zerop extra-space-count)
-                                coffee-tab-width
-                              extra-space-count)))
-        (backward-delete-char-untabify deleted-chars))
-    (backward-delete-char-untabify arg)))
+  (if (use-region-p)
+      (delete-region (region-beginning) (region-end))
+    (if (and (= 1 arg)
+             (= (point) (save-excursion
+                          (back-to-indentation)
+                          (point)))
+             (not (bolp)))
+        (let* ((extra-space-count (% (current-column) coffee-tab-width))
+               (deleted-chars (if (zerop extra-space-count)
+                                  coffee-tab-width
+                                extra-space-count)))
+          (backward-delete-char-untabify deleted-chars))
+      (backward-delete-char-untabify arg))))
 
 ;; Indenters help determine whether the current line should be
 ;; indented further based on the content of the previous line. If a
