@@ -209,6 +209,22 @@ a buffer or region."
       (with-current-buffer buffer
         (revert-buffer nil t)))))
 
+(defun coffee-parse-error-output (compiler-errstr)
+  (let* ((msg (car (split-string compiler-errstr "[\n\r]+")))
+         line column)
+    (message msg)
+    (when (or (string-match "on line \\([0-9]+\\)" msg)
+              (string-match ":\\([0-9]+\\):\\([0-9]+\\): error:" msg))
+      (setq line (string-to-number (match-string 1 msg)))
+      (when (match-string 2 msg)
+        (setq column (string-to-number (match-string 2 msg))))
+
+      (when coffee-compile-jump-to-error
+        (goto-char (point-min))
+        (forward-line (1- line))
+        (when column
+          (move-to-column (1- column)))))))
+
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk in a file of the same
 base name, with extension `.js'.  Subsequent runs will overwrite the
@@ -227,20 +243,7 @@ See `coffee-compile-jump-to-error'."
         (let ((file-name (coffee-compiled-file-name (buffer-file-name))))
           (message "Compiled and saved %s" (or output (concat basename ".js")))
           (coffee-revert-buffer-compiled-file file-name))
-      (let* ((msg (car (split-string compiler-output "[\n\r]+")))
-             line column)
-        (message msg)
-        (when (or (string-match "on line \\([0-9]+\\)" msg)
-                  (string-match ":\\([0-9]+\\):\\([0-9]+\\): error:" msg))
-          (setq line (string-to-number (match-string 1 msg)))
-          (when (match-string 2 msg)
-            (setq column (string-to-number (match-string 2 msg))))
-
-          (when coffee-compile-jump-to-error
-            (goto-char (point-min))
-            (forward-line (1- line))
-            (when column
-              (move-to-column (1- column)))))))))
+      (coffee-parse-error-output compiler-output))))
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JavaScript in a buffer
