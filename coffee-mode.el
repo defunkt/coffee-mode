@@ -336,7 +336,9 @@ called `coffee-compiled-buffer-name'."
 
 (defun coffee-get-repl-proc ()
   (unless (comint-check-proc coffee-repl-buffer)
-    (coffee-repl))
+    (coffee-repl)
+    ;; see issue #332
+    (sleep-for 0 100))
   (get-buffer-process coffee-repl-buffer))
 
 (defun coffee-send-line ()
