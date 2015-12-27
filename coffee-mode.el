@@ -842,7 +842,7 @@ shifted. The shifted region includes the lines in which START and
 END lie. An error is signaled if any lines in the region are
 indented less than COUNT columns."
   (interactive
-   (if mark-active
+   (if (use-region-p)
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
   (let ((amount (if count (prefix-numeric-value count)
@@ -868,7 +868,7 @@ if COUNT is not given, indents to the closest increment of
 shifted. The shifted region includes the lines in which START and
 END lie."
   (interactive
-   (if mark-active
+   (if (use-region-p)
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
   (let (deactivate-mark
