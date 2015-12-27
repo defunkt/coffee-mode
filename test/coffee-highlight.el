@@ -1060,7 +1060,6 @@ testMethod = (id) ->
     (should (face-at-cursor-p 'font-lock-constant-face))
 
     (forward-cursor-on "#")
-    (message "## %s" (thing-at-point 'word))
     (should (face-at-cursor-p 'font-lock-comment-face))
 
     (forward-cursor-on "Broken")
@@ -1073,5 +1072,13 @@ testMethod = (id) ->
 
     (forward-cursor-on "classes")
     (should (face-at-cursor-p 'font-lock-variable-name-face))))
+
+(ert-deftest regression-330 ()
+  "Multiple anonymous function expressions"
+  (with-coffee-temp-buffer
+    "a = (f = (b) ->) ->"
+
+    (forward-cursor-on "->")
+    (should (face-at-cursor-p 'font-lock-function-name-face))))
 
 ;;; coffee-highlight.el end here
