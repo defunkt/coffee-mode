@@ -284,7 +284,6 @@ called `coffee-compiled-buffer-name'."
             (let ((buffer-file-name "tmp.js"))
               (setq buffer-read-only t)
               (set-auto-mode)
-              (forward-line 1) ;; 1st line is comment
               (run-hook-with-args 'coffee-after-compile-hook props))))))))
 
 (defun coffee-start-compile-process (curbuf line column)
