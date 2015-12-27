@@ -406,7 +406,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-local-assign-regexp "\\s-*\\([_[:word:].$]+\\)\\s-*\\??=\\(?:[^>=]\\|$\\)")
 
 ;; Lambda
-(defvar coffee-lambda-regexp "\\(?:(.*)\\)?\\s-*\\(->\\|=>\\)")
+(defvar coffee-lambda-regexp "\\(?:([^)]*)\\)?\\s-*\\(->\\|=>\\)")
 
 ;; Namespaces
 (defvar coffee-namespace-regexp "\\b\\(?:class\\s-+\\(\\S-+\\)\\)\\b")
