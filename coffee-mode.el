@@ -762,17 +762,19 @@ called from first non-blank char of line.
 
 Delete ARG spaces if ARG!=1."
   (interactive "*p")
-  (if (and (= 1 arg)
-           (= (point) (save-excursion
-                        (back-to-indentation)
-                        (point)))
-           (not (bolp)))
-      (let* ((extra-space-count (% (current-column) coffee-tab-width))
-             (deleted-chars (if (zerop extra-space-count)
-                                coffee-tab-width
-                              extra-space-count)))
-        (backward-delete-char-untabify deleted-chars))
-    (backward-delete-char-untabify arg)))
+  (if (use-region-p)
+      (delete-region (region-beginning) (region-end))
+    (if (and (= 1 arg)
+             (= (point) (save-excursion
+                          (back-to-indentation)
+                          (point)))
+             (not (bolp)))
+        (let* ((extra-space-count (% (current-column) coffee-tab-width))
+               (deleted-chars (if (zerop extra-space-count)
+                                  coffee-tab-width
+                                extra-space-count)))
+          (backward-delete-char-untabify deleted-chars))
+      (backward-delete-char-untabify arg))))
 
 ;; Indenters help determine whether the current line should be
 ;; indented further based on the content of the previous line. If a
@@ -840,10 +842,10 @@ shifted. The shifted region includes the lines in which START and
 END lie. An error is signaled if any lines in the region are
 indented less than COUNT columns."
   (interactive
-   (if mark-active
+   (if (use-region-p)
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
-  (let ((amount (if count (prefix-numeric-value count)
+  (let ((amount (if count (* coffee-tab-width (prefix-numeric-value count))
                   (coffee-indent-shift-amount start end 'left))))
     (when (> amount 0)
       (let (deactivate-mark)
@@ -866,11 +868,11 @@ if COUNT is not given, indents to the closest increment of
 shifted. The shifted region includes the lines in which START and
 END lie."
   (interactive
-   (if mark-active
+   (if (use-region-p)
        (list (region-beginning) (region-end) current-prefix-arg)
      (list (line-beginning-position) (line-end-position) current-prefix-arg)))
   (let (deactivate-mark
-        (amount (if count (prefix-numeric-value count)
+        (amount (if count (* coffee-tab-width (prefix-numeric-value count))
                   (coffee-indent-shift-amount start end 'right))))
     (indent-rigidly start end amount)))
 

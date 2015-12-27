@@ -815,12 +815,12 @@ foo
 "
   (let ((coffee-tab-width 2))
     (with-coffee-temp-buffer
-      "    foo"
+      "      foo"
 
       (coffee-indent-shift-left (line-beginning-position) (line-end-position) 3)
 
       (back-to-indentation)
-      (should (= (current-column) 1)))))
+      (should (= (current-column) 0)))))
 
 (ert-deftest left-indent-with-region ()
   "
@@ -874,10 +874,10 @@ bar
 
         (goto-char (point-min))
         (forward-cursor-on "foo")
-        (should (= (current-column) 3))
+        (should (= (current-column) 2))
 
         (forward-cursor-on "bar")
-        (should (= (current-column) 4))))))
+        (should (= (current-column) 3))))))
 
 ;;
 ;; indent right
@@ -914,7 +914,7 @@ foo
     (coffee-indent-shift-right (line-beginning-position) (line-end-position) 3)
 
     (back-to-indentation)
-    (should (= (current-column) 3))))
+    (should (= (current-column) (* 3 coffee-tab-width)))))
 
 (ert-deftest right-indent-with-region ()
   "
@@ -970,10 +970,10 @@ bar
 
         (goto-char (point-min))
         (forward-cursor-on "foo")
-        (should (= (current-column) 6))
+        (should (= (current-column) (+ 3 (* 3 coffee-tab-width))))
 
         (forward-cursor-on "bar")
-        (should (= (current-column) 5))))))
+        (should (= (current-column) (+ 2 (* 3 coffee-tab-width))))))))
 
 ;;
 ;; indent region
