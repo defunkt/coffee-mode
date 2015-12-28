@@ -209,6 +209,22 @@ a buffer or region."
       (with-current-buffer buffer
         (revert-buffer nil t)))))
 
+(defun coffee-parse-error-output (compiler-errstr)
+  (let* ((msg (car (split-string compiler-errstr "[\n\r]+")))
+         line column)
+    (message msg)
+    (when (or (string-match "on line \\([0-9]+\\)" msg)
+              (string-match ":\\([0-9]+\\):\\([0-9]+\\): error:" msg))
+      (setq line (string-to-number (match-string 1 msg)))
+      (when (match-string 2 msg)
+        (setq column (string-to-number (match-string 2 msg))))
+
+      (when coffee-compile-jump-to-error
+        (goto-char (point-min))
+        (forward-line (1- line))
+        (when column
+          (move-to-column (1- column)))))))
+
 (defun coffee-compile-file ()
   "Compiles and saves the current file to disk in a file of the same
 base name, with extension `.js'.  Subsequent runs will overwrite the
@@ -227,20 +243,7 @@ See `coffee-compile-jump-to-error'."
         (let ((file-name (coffee-compiled-file-name (buffer-file-name))))
           (message "Compiled and saved %s" (or output (concat basename ".js")))
           (coffee-revert-buffer-compiled-file file-name))
-      (let* ((msg (car (split-string compiler-output "[\n\r]+")))
-             line column)
-        (message msg)
-        (when (or (string-match "on line \\([0-9]+\\)" msg)
-                  (string-match ":\\([0-9]+\\):\\([0-9]+\\): error:" msg))
-          (setq line (string-to-number (match-string 1 msg)))
-          (when (match-string 2 msg)
-            (setq column (string-to-number (match-string 2 msg))))
-
-          (when coffee-compile-jump-to-error
-            (goto-char (point-min))
-            (forward-line (1- line))
-            (when column
-              (move-to-column (1- column)))))))))
+      (coffee-parse-error-output compiler-output))))
 
 (defun coffee-compile-buffer ()
   "Compiles the current buffer and displays the JavaScript in a buffer
@@ -270,7 +273,7 @@ called `coffee-compiled-buffer-name'."
   `(if ,bool (save-selected-window ,@body) ,@body))
 (put 'coffee-save-window-if 'lisp-indent-function 1)
 
-(defun coffee-compile-sentinel (file line column)
+(defun coffee-compile-sentinel (buffer file line column)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
       (coffee-save-window-if (not coffee-switch-to-compile-buffer)
@@ -278,7 +281,9 @@ called `coffee-compiled-buffer-name'."
         (ansi-color-apply-on-region (point-min) (point-max))
         (goto-char (point-min))
         (if (not (= (process-exit-status proc) 0))
-            (message "Failed: compiling to JavaScript")
+            (let ((compile-output (buffer-string)))
+              (with-current-buffer buffer
+                (coffee-parse-error-output compile-output)))
           (let ((props (list :sourcemap (coffee--map-file-name file)
                              :line line :column column :source file)))
             (let ((buffer-file-name "tmp.js"))
@@ -293,12 +298,15 @@ called `coffee-compiled-buffer-name'."
                        coffee-command (append coffee-args-compile '("-s" "-p"))))
           (curfile (buffer-file-name curbuf)))
       (set-process-query-on-exit-flag proc nil)
-      (set-process-sentinel proc (coffee-compile-sentinel curfile line column))
+      (set-process-sentinel
+       proc (coffee-compile-sentinel curbuf curfile line column))
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-eof proc))))
 
 (defun coffee-start-generate-sourcemap-process (start end)
+  ;; so that sourcemap generation reads from the current buffer
+  (save-buffer)
   (let* ((file (buffer-file-name))
          (sourcemap-buf (get-buffer-create "*coffee-sourcemap*"))
          (proc (start-file-process "coffee-sourcemap" sourcemap-buf
@@ -312,7 +320,10 @@ called `coffee-compiled-buffer-name'."
      (lambda (proc _event)
        (when (eq (process-status proc) 'exit)
          (if (not (= (process-exit-status proc) 0))
-             (message "Error: generating sourcemap file")
+             (let ((sourcemap-output
+                    (with-current-buffer sourcemap-buf (buffer-string))))
+               (with-current-buffer curbuf
+                 (coffee-parse-error-output sourcemap-output)))
            (kill-buffer sourcemap-buf)
            (funcall (coffee-start-compile-process curbuf line column) start end)))))))
 
