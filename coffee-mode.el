@@ -1205,11 +1205,11 @@ comments such as the following:
       (save-excursion
         (if (string=
              "###" (buffer-substring (- comment-start 2) (1+ comment-start)))
-            (list :type 'multiple-line :start (- comment-start 2))
-          (list :type 'single-line :start comment-start))))))
+            'multiple-line
+          'single-line)))))
 
 (defun coffee-comment-line-break-fn (&optional _)
-  (let ((comment-type (plist-get (coffee-get-comment-info) :type)))
+  (let ((comment-type (coffee-get-comment-info)))
     (comment-indent-new-line)
     (cond ((eq comment-type 'multiple-line)
            (save-excursion
@@ -1220,7 +1220,7 @@ comments such as the following:
            (coffee-indent-line)))))
 
 (defun coffee-auto-fill-fn ()
-  (let* ((comment-type (plist-get (coffee-get-comment-info) :type))
+  (let ((comment-type (coffee-get-comment-info))
          (fill-result (do-auto-fill)))
     (when (and fill-result (eq comment-type 'single-line))
       (save-excursion
@@ -1241,8 +1241,9 @@ comments such as the following:
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
 
   ;; fix comment filling function
-  (setq-local comment-line-break-function #'coffee-comment-line-break-fn)
-  (setq-local auto-fill-function #'coffee-auto-fill-fn)
+  (setq (make-local-variable 'comment-line-break-function)
+        #'coffee-comment-line-break-fn)
+  (setq (make-local-variable 'auto-fill-function) #'coffee-auto-fill-fn)
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
