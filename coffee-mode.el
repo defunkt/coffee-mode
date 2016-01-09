@@ -1241,9 +1241,9 @@ comments such as the following:
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
 
   ;; fix comment filling function
-  (setq (make-local-variable 'comment-line-break-function)
+  (set (make-local-variable 'comment-line-break-function)
         #'coffee-comment-line-break-fn)
-  (setq (make-local-variable 'auto-fill-function) #'coffee-auto-fill-fn)
+  (set (make-local-variable 'auto-fill-function) #'coffee-auto-fill-fn)
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
