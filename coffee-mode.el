@@ -1212,7 +1212,8 @@ comments such as the following:
           'single-line)))))
 
 (defun coffee-comment-line-break-fn (&optional _)
-  (let ((comment-type (coffee-get-comment-info)))
+  (let ((comment-type (coffee-get-comment-info))
+        (coffee-indent-like-python-mode t))
     (comment-indent-new-line)
     (cond ((eq comment-type 'multiple-line)
            (save-excursion
@@ -1224,7 +1225,8 @@ comments such as the following:
 
 (defun coffee-auto-fill-fn ()
   (let ((comment-type (coffee-get-comment-info))
-         (fill-result (do-auto-fill)))
+        (fill-result (do-auto-fill))
+        (coffee-indent-like-python-mode t))
     (when (and fill-result (eq comment-type 'single-line))
       (save-excursion
         (beginning-of-line)

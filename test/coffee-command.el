@@ -786,6 +786,115 @@ if true
       (coffee-newline-and-indent)
       (should (= (current-indentation) coffee-tab-width)))))
 
+;; #337
+(ert-deftest multiline-dont-add-hash ()
+  "Ensure no hash or other characters are inserted when filling multi-line
+comments."
+  (let ((str "
+###
+very very very very very very very very very very very very very long test comment
+###
+")
+        (fill-column 70))
+    (with-coffee-temp-buffer
+      str
+      (re-search-forward "comment$")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should-not (looking-at-p "^#"))
+      (should (looking-at-p "^test comment")))
+    ;; test with point not at end of line
+    (with-coffee-temp-buffer
+      str
+      (re-search-forward "test")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should-not (looking-at-p "^#"))
+      (should (looking-at-p "^test comment"))))
+  ;; test with existing indentation
+  (let ((fill-column 70))
+    (with-coffee-temp-buffer
+      "
+if someTest
+  do something
+  ###
+  this is a multiline comment which spans a lot of text. it is also indented here
+  ###
+"
+      (re-search-forward "here$")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should-not (looking-at-p "^#"))
+      (should (looking-at-p "indented here"))
+      (should (string=
+               (buffer-substring-no-properties (point-at-bol) (point)) "  ")))))
+
+;; #337
+(ert-deftest indent-inline-comment-fill ()
+  "Test auto-filling of inline comments; the comment on the next line should
+have a hash at the same column as where the above line of code begins."
+  (let ((str "
+if test
+  someFunction someArgument # inline comment that spans a very very long string of text
+")
+        (fill-column 70))
+    (with-coffee-temp-buffer
+      str
+      (re-search-forward "text$")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should (looking-at-p "# long string of text"))
+      (let ((cur-col (current-column)))
+        (forward-line -1)
+        (move-to-column cur-col)
+        (should (looking-at-p "someFunction"))))
+    ;; test with point not at end of line
+    (with-coffee-temp-buffer
+      str
+      (re-search-forward "string ")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should (looking-at-p "# long string of text"))
+      (let ((cur-col (current-column)))
+        (forward-line -1)
+        (move-to-column cur-col)
+        (should (looking-at-p "someFunction"))))))
+
+;; #337
+(ert-deftest indent-full-line-comment-fill ()
+  "Test auto-filling of line comments; the comment on the next line should
+have a hash at the same column as where the above line of code begins."
+  (let ((str "
+# inline comment that spans a very very very very very very very long string of text
+")
+        (fill-column 70))
+    (with-coffee-temp-buffer
+      str
+      (re-search-forward "text$")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should (looking-at-p "# string of text"))
+      (should (= (current-column) 0)))
+    (with-coffee-temp-buffer
+      str
+      (re-search-forward "string of")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should (looking-at-p "# string of text"))
+      (should (= (current-column) 0))))
+  ;; ensure indentation is maintained
+  (let ((coffee-tab-width 2) (fill-column 70))
+    (with-coffee-temp-buffer
+      "
+if test
+  # test comment that goes on for a very very very very very very very very long time
+"
+      (re-search-forward "time$")
+      (funcall auto-fill-function)
+      (back-to-indentation)
+      (should (looking-at-p "# very long time"))
+      (should (= (current-column) 2)))))
+
 ;;
 ;; indent left
 ;;
