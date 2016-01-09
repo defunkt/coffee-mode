@@ -1200,11 +1200,14 @@ comments such as the following:
 (defun coffee-get-comment-info ()
   (let* ((syntax (syntax-ppss))
          (commentp (nth 4 syntax))
-         (comment-start (nth 8 syntax)))
+         (comment-start-kinda (nth 8 syntax)))
     (when commentp
       (save-excursion
-        (if (string=
-             "###" (buffer-substring (- comment-start 2) (1+ comment-start)))
+        (if (and
+             (> comment-start-kinda 2) (< comment-start-kinda (point-max))
+             (string=
+              "###" (buffer-substring
+                     (- comment-start-kinda 2) (1+ comment-start-kinda))))
             'multiple-line
           'single-line)))))
 
