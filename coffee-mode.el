@@ -803,7 +803,7 @@ next line should probably be indented.")
   "Builds a regexp out of `coffee-indenters-bol' words."
   (regexp-opt coffee-indenters-bol 'words))
 
-(defvar coffee-indenters-eol '(?> ?{ ?\[)
+(defvar coffee-indenters-eol '(?> ?{ ?\[ ?:)
   "Single characters at the end of a line that mean the next line
 should probably be indented.")
 
