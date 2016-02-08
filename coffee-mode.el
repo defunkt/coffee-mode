@@ -795,7 +795,7 @@ Delete ARG spaces if ARG!=1."
 ;; want to indent the next line.
 
 (defvar coffee-indenters-bol '("class" "for" "if" "else" "unless" "while" "until"
-                               "try" "catch" "finally" "switch")
+                               "try" "catch" "finally" "switch" "when")
   "Keywords or syntax whose presence at the start of a line means the
 next line should probably be indented.")
 
