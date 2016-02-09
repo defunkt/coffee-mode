@@ -605,6 +605,20 @@ class Animal"
           (call-interactively 'coffee-newline-and-indent)
           (should (= (current-column) (+ cur-indent coffee-tab-width))))))))
 
+(ert-deftest newline-and-indent-indenters-eol ()
+  "indenters eol characters"
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+kids =
+  brother:
+"
+      (forward-cursor-on "brother:")
+      (let ((prev-indent (current-indentation)))
+        (goto-char (line-end-position))
+        (call-interactively 'coffee-newline-and-indent)
+        (should (= (current-indentation) (+ prev-indent coffee-tab-width)))))))
+
 (ert-deftest newline-and-indent-not-indenters-bol ()
   "indenters bol keywords"
   (let ((coffee-tab-width 4))
