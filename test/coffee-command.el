@@ -597,7 +597,7 @@ class Animal"
   "indenters bol keywords"
   (let ((coffee-tab-width 4))
     (dolist (keyword '("class" "for" "if" "else" "while" "until"
-                       "try" "catch" "finally" "switch"))
+                       "try" "catch" "finally" "switch" "when"))
       (with-coffee-temp-buffer
         (format "\n    %s" keyword)
         (goto-char (point-max))
