@@ -1248,7 +1248,7 @@ comments such as the following:
   ;; fix comment filling function
   (set (make-local-variable 'comment-line-break-function)
         #'coffee-comment-line-break-fn)
-  (set (make-local-variable 'auto-fill-function) #'coffee-auto-fill-fn)
+  (set (make-local-variable 'normal-auto-fill-function) #'coffee-auto-fill-fn)
   ;; perl style comment: "# ..."
   (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
   (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
