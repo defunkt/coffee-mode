@@ -812,6 +812,7 @@ very very very very very very very very very very very very very long test comme
         (fill-column 70))
     (with-coffee-temp-buffer
       str
+      (auto-fill-mode +1)
       (re-search-forward "comment$")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -820,6 +821,7 @@ very very very very very very very very very very very very very long test comme
     ;; test with point not at end of line
     (with-coffee-temp-buffer
       str
+      (auto-fill-mode +1)
       (re-search-forward "test")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -835,6 +837,7 @@ if someTest
   this is a multiline comment which spans a lot of text. it is also indented here
   ###
 "
+      (auto-fill-mode +1)
       (re-search-forward "here$")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -854,6 +857,7 @@ if test
         (fill-column 70))
     (with-coffee-temp-buffer
       str
+      (auto-fill-mode +1)
       (re-search-forward "text$")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -865,6 +869,7 @@ if test
     ;; test with point not at end of line
     (with-coffee-temp-buffer
       str
+      (auto-fill-mode +1)
       (re-search-forward "string ")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -884,6 +889,7 @@ have a hash at the same column as where the above line of code begins."
         (fill-column 70))
     (with-coffee-temp-buffer
       str
+      (auto-fill-mode +1)
       (re-search-forward "text$")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -891,6 +897,7 @@ have a hash at the same column as where the above line of code begins."
       (should (= (current-column) 0)))
     (with-coffee-temp-buffer
       str
+      (auto-fill-mode +1)
       (re-search-forward "string of")
       (funcall auto-fill-function)
       (back-to-indentation)
@@ -903,6 +910,7 @@ have a hash at the same column as where the above line of code begins."
 if test
   # test comment that goes on for a very very very very very very very very long time
 "
+      (auto-fill-mode +1)
       (re-search-forward "time$")
       (funcall auto-fill-function)
       (back-to-indentation)
