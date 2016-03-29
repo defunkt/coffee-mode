@@ -302,6 +302,7 @@ called `coffee-compiled-buffer-name'."
        proc (coffee-compile-sentinel curbuf curfile line column))
       (with-current-buffer curbuf
         (process-send-region proc start end))
+      (process-send-string proc "\n")
       (process-send-eof proc))))
 
 (defun coffee-start-generate-sourcemap-process (start end)
