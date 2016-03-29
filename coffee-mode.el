@@ -71,11 +71,11 @@ be compiled."
 
 (defcustom coffee-args-repl '("-i")
   "The arguments to pass to `coffee-command' to start a REPL."
-  :type 'list)
+  :type '(repeat string))
 
 (defcustom coffee-args-compile '("-c" "--no-header")
   "The arguments to pass to `coffee-command' to compile a file."
-  :type 'list)
+  :type '(repeat string))
 
 (defcustom coffee-compiled-buffer-name "*coffee-compiled*"
   "The name of the scratch buffer used for compiled CoffeeScript."
