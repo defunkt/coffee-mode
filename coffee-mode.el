@@ -52,59 +52,49 @@
 (defcustom coffee-tab-width tab-width
   "The tab width to use when indenting."
   :type 'integer
-  :group 'coffee
   :safe 'integerp)
 
 (defcustom coffee-command "coffee"
   "The CoffeeScript command used for evaluating code."
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (defcustom coffee-js-directory ""
   "The directory for compiled JavaScript files output. This can
 be an absolute path starting with a `/`, or it can be path
 relative to the directory containing the coffeescript sources to
 be compiled."
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (defcustom js2coffee-command "js2coffee"
   "The js2coffee command used for evaluating code."
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (defcustom coffee-args-repl '("-i")
   "The arguments to pass to `coffee-command' to start a REPL."
-  :type 'list
-  :group 'coffee)
+  :type 'list)
 
 (defcustom coffee-args-compile '("-c" "--no-header")
   "The arguments to pass to `coffee-command' to compile a file."
-  :type 'list
-  :group 'coffee)
+  :type 'list)
 
 (defcustom coffee-compiled-buffer-name "*coffee-compiled*"
   "The name of the scratch buffer used for compiled CoffeeScript."
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (defcustom coffee-repl-buffer "*CoffeeREPL*"
   "The name of the CoffeeREPL buffer."
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (defcustom coffee-compile-jump-to-error t
   "Whether to jump to the first error if compilation fails.
 Since the coffee compiler does not always include a line number in
 its error messages, this is not always possible."
-  :type 'boolean
-  :group 'coffee)
+  :type 'boolean)
 
 (defcustom coffee-watch-buffer-name "*coffee-watch*"
   "The name of the scratch buffer used when using the --watch flag
 with CoffeeScript."
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (defcustom coffee-mode-hook nil
   "Hook called by `coffee-mode'.  Examples:
@@ -113,29 +103,24 @@ with CoffeeScript."
       (and (file-exists-p (buffer-file-name))
            (file-exists-p (coffee-compiled-file-name))
            (coffee-cos-mode t)))"
-  :type 'hook
-  :group 'coffee)
+  :type 'hook)
 
 (defcustom coffee-indent-tabs-mode nil
   "Indentation can insert tabs if this is t."
-  :group 'coffee
   :type 'boolean)
 
 (defcustom coffee-after-compile-hook nil
   "Hook called after compile to Javascript"
-  :type 'hook
-  :group 'coffee)
+  :type 'hook)
 
 (defcustom coffee-indent-like-python-mode nil
   "Indent like python-mode."
-  :type 'boolean
-  :group 'coffee)
+  :type 'boolean)
 
 (defcustom coffee-switch-to-compile-buffer nil
   "Switch to compilation buffer `coffee-compiled-buffer-name' after compiling
 a buffer or region."
-  :type 'boolean
-  :group 'coffee)
+  :type 'boolean)
 
 (defvar coffee-mode-map
   (let ((map (make-sparse-keymap)))
@@ -1298,15 +1283,14 @@ comments such as the following:
 
 (defcustom coffee-cos-mode-line " CoS"
   "Lighter of `coffee-cos-mode'"
-  :type 'string
-  :group 'coffee)
+  :type 'string)
 
 (define-minor-mode coffee-cos-mode
   "Toggle compile-on-save for coffee-mode.
 
 Add `'(lambda () (coffee-cos-mode t))' to `coffee-mode-hook' to turn
 it on by default."
-  :group 'coffee :lighter coffee-cos-mode-line
+  :lighter coffee-cos-mode-line
   (if coffee-cos-mode
       (add-hook 'after-save-hook 'coffee-compile-file nil t)
     (remove-hook 'after-save-hook 'coffee-compile-file t)))
