@@ -1,4 +1,4 @@
-;;; coffee-mode.el --- Major mode to edit CoffeeScript files in Emacs -*- lexical-binding: t; -*-
+;;; coffee-mode.el --- Major mode for CoffeeScript code -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2010 Chris Wanstrath
 
@@ -24,7 +24,7 @@
 ;; along with this program; if not, write to the Free Software
 ;; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-;;; Commentary
+;;; Commentary:
 
 ;; Provides syntax highlighting, indentation support, imenu support,
 ;; compiling to JavaScript, REPL, a menu bar, and a few cute commands.
