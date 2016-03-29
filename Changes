@@ -1,9 +1,19 @@
 Revision history for coffee-mode.el
 
+Revision v0.6.3 2016/03/29
+   - Refactoring attributes(#345)
+   - Improve package comment and meta comment(#344 Thanks Steve Purcell)
+   - Fix coffee-compile command if buffer/region don't end with newline case(#343)
+   - Implement auto-fill function(#337, #342 Thanks Danny McClanahan)
+   - Better indentation(#335, #338)
+   - Set '--no-header' by default in compiling commands
+   - Add custom variable for switching compile buffer(#331 Thanks Danny McClanahan)
+   - Fix lambda expression regexp(#330 Thanks Danny McClanahan)
+
 Revision v0.6.2 2015/12/10
    - Implement python like indentation(#323)
    - Fix assignment highlight issue(#326)
-   - Add toggle arrow function command(#329 Thanksjasonm23)
+   - Add toggle arrow function command(#329 Thanks jasonm23)
 
 Revision v0.6.1 2015/10/01
    - Fix byte-compile warning(#308)
