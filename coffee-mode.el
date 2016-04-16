@@ -288,7 +288,8 @@ called `coffee-compiled-buffer-name'."
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-string proc "\n")
-      (process-send-eof proc))))
+      (process-send-eof proc)
+      proc)))
 
 (defun coffee-start-generate-sourcemap-process (start end)
   ;; so that sourcemap generation reads from the current buffer
@@ -1294,6 +1295,32 @@ it on by default."
   (if coffee-cos-mode
       (add-hook 'after-save-hook 'coffee-compile-file nil t)
     (remove-hook 'after-save-hook 'coffee-compile-file t)))
+
+;;
+;; iCompile minor mode
+;;
+
+(defvar icomp-proc nil)
+
+(defun coffee-icomp (&rest args)
+  "Interactively compile coffee script"
+  (when (or (not icomp-proc)
+             (not (string-equal
+                   "run"
+                   (symbol-name (process-status icomp-proc)))))
+    (setq icomp-proc
+          (call-interactively 'coffee-compile-buffer))))
+
+(defcustom coffee-icomp-mode-line " iCS"
+  "Lighter of `coffee-icomp-mode'"
+  :type 'string)
+
+(define-minor-mode coffee-icomp-mode
+  "Compile coffeescript code interactively"
+  :lighter coffee-icomp-mode-line
+  (if coffee-icomp-mode
+      (add-hook 'after-change-functions 'coffee-icomp nil t)
+    (remove-hook 'after-change-functions 'coffee-icomp t)))
 
 (provide 'coffee-mode)
 
