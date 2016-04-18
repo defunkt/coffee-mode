@@ -1297,30 +1297,30 @@ it on by default."
     (remove-hook 'after-save-hook 'coffee-compile-file t)))
 
 ;;
-;; iCompile minor mode
+;; Live compile minor mode
 ;;
 
-(defvar icomp-proc nil)
+(defvar comp-proc nil)
 
-(defun coffee-icomp (&rest args)
-  "Interactively compile coffee script"
-  (when (or (not icomp-proc)
+(defun coffee-live-comp (&rest args)
+  "Check that no compile process is running then compile coffee script buffer"
+  (when (or (not comp-proc)
              (not (string-equal
                    "run"
-                   (symbol-name (process-status icomp-proc)))))
-    (setq icomp-proc
+                   (symbol-name (process-status comp-proc)))))
+    (setq comp-proc
           (call-interactively 'coffee-compile-buffer))))
 
-(defcustom coffee-icomp-mode-line " iCS"
-  "Lighter of `coffee-icomp-mode'"
+(defcustom coffee-live-comp-mode-line " LiveCS"
+  "Lighter of `coffee-live-comp-mode'"
   :type 'string)
 
-(define-minor-mode coffee-icomp-mode
-  "Compile coffeescript code interactively"
-  :lighter coffee-icomp-mode-line
-  (if coffee-icomp-mode
-      (add-hook 'after-change-functions 'coffee-icomp nil t)
-    (remove-hook 'after-change-functions 'coffee-icomp t)))
+(define-minor-mode coffee-live-comp-mode
+  "Compile coffeescript code in real time"
+  :lighter coffee-live-comp-mode-line
+  (if coffee-live-comp-mode
+      (add-hook 'after-change-functions 'coffee-live-comp nil t)
+    (remove-hook 'after-change-functions 'coffee-live-comp t)))
 
 (provide 'coffee-mode)
 
