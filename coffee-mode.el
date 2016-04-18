@@ -38,6 +38,9 @@
 
 (require 'cl-lib)
 
+(declare-function tramp-file-name-localname "tramp")
+(declare-function tramp-dissect-file-name "tramp")
+
 ;;
 ;; Customizable Variables
 ;;
@@ -222,8 +225,11 @@ See `coffee-compile-jump-to-error'."
          (basename (file-name-sans-extension input))
          (output (when (string-match-p "\\.js\\'" basename) ;; for Rails '.js.coffee' file
                    basename))
-         (compile-cmd (coffee-command-compile input output))
-         (compiler-output (shell-command-to-string compile-cmd)))
+         (compile-args (coffee-command-compile input output))
+         (compiler-output (with-temp-buffer
+                            (unless (zerop (apply #'process-file coffee-command nil t nil compile-args))
+                              (error "Failed: %s %s" coffee-command compile-args))
+                            (buffer-substring-no-properties (point-min) (point-max)))))
     (if (string= compiler-output "")
         (let ((file-name (coffee-compiled-file-name (buffer-file-name))))
           (message "Compiled and saved %s" (or output (concat basename ".js")))
@@ -508,25 +514,24 @@ For details, see `comment-dwim'."
     (comment-dwim arg)
     (deactivate-mark t)))
 
-(defsubst coffee-command-compile-arg-as-string (output)
-  (mapconcat 'identity
-             (or (and output (append coffee-args-compile (list "-j" output)))
-                 coffee-args-compile)
-             " "))
+(defsubst coffee-command-compile-options (output)
+  (if output
+      (append coffee-args-compile (list "-j" output))
+    coffee-args-compile))
 
-(defun coffee-command-compile (input &optional output)
+(defun coffee-command-compile (input output)
   "Run `coffee-command' to compile FILE-NAME to file with default
 .js output file, or optionally to OUTPUT-FILE-NAME."
-  (let* ((full-file-name (expand-file-name input))
-         (output-file (coffee-compiled-file-name full-file-name))
+  (let* ((expanded (expand-file-name input))
+         (filename (if (file-remote-p expanded)
+                       (tramp-file-name-localname (tramp-dissect-file-name expanded))
+                     (file-truename expanded)))
+         (output-file (coffee-compiled-file-name filename))
          (output-dir (file-name-directory output-file)))
     (unless (file-directory-p output-dir)
       (make-directory output-dir t))
-    (format "%s %s -o %s %s"
-            (shell-quote-argument coffee-command)
-            (coffee-command-compile-arg-as-string output)
-            (shell-quote-argument output-dir)
-            (shell-quote-argument full-file-name))))
+    (append (coffee-command-compile-options output)
+            (list "-o" output-dir filename))))
 
 (defun coffee-run-cmd (args)
   "Run `coffee-command' with the given arguments, and display the
