@@ -294,7 +294,8 @@ called `coffee-compiled-buffer-name'."
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-string proc "\n")
-      (process-send-eof proc))))
+      (process-send-eof proc)
+      proc)))
 
 (defun coffee-start-generate-sourcemap-process (start end)
   ;; so that sourcemap generation reads from the current buffer
@@ -1299,6 +1300,32 @@ it on by default."
   (if coffee-cos-mode
       (add-hook 'after-save-hook 'coffee-compile-file nil t)
     (remove-hook 'after-save-hook 'coffee-compile-file t)))
+
+;;
+;; Live compile minor mode
+;;
+
+(defvar comp-proc nil)
+
+(defun coffee-live-comp (&rest args)
+  "Check that no compile process is running then compile coffee script buffer"
+  (when (or (not comp-proc)
+             (not (string-equal
+                   "run"
+                   (symbol-name (process-status comp-proc)))))
+    (setq comp-proc
+          (call-interactively 'coffee-compile-buffer))))
+
+(defcustom coffee-live-comp-mode-line " LiveCS"
+  "Lighter of `coffee-live-comp-mode'"
+  :type 'string)
+
+(define-minor-mode coffee-live-comp-mode
+  "Compile coffeescript code in real time"
+  :lighter coffee-live-comp-mode-line
+  (if coffee-live-comp-mode
+      (add-hook 'after-change-functions 'coffee-live-comp nil t)
+    (remove-hook 'after-change-functions 'coffee-live-comp t)))
 
 (provide 'coffee-mode)
 
