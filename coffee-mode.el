@@ -150,6 +150,8 @@ a buffer or region."
     map)
   "Keymap for CoffeeScript major mode.")
 
+(defvar coffee--process nil)
+
 ;;
 ;; Commands
 ;;
@@ -267,6 +269,7 @@ called `coffee-compiled-buffer-name'."
 (defun coffee-compile-sentinel (buffer file line column)
   (lambda (proc _event)
     (when (eq (process-status proc) 'exit)
+      (setq coffee--process nil)
       (coffee-save-window-if (not coffee-switch-to-compile-buffer)
         (pop-to-buffer (get-buffer coffee-compiled-buffer-name))
         (ansi-color-apply-on-region (point-min) (point-max))
@@ -294,7 +297,8 @@ called `coffee-compiled-buffer-name'."
       (with-current-buffer curbuf
         (process-send-region proc start end))
       (process-send-string proc "\n")
-      (process-send-eof proc))))
+      (process-send-eof proc)
+      (setq coffee--process proc))))
 
 (defun coffee-start-generate-sourcemap-process (start end)
   ;; so that sourcemap generation reads from the current buffer
@@ -306,11 +310,13 @@ called `coffee-compiled-buffer-name'."
          (curbuf (current-buffer))
          (line (line-number-at-pos))
          (column (current-column)))
+    (setq coffee--process proc)
     (set-process-query-on-exit-flag proc nil)
     (set-process-sentinel
      proc
      (lambda (proc _event)
        (when (eq (process-status proc) 'exit)
+         (setq coffee--process nil)
          (if (not (= (process-exit-status proc) 0))
              (let ((sourcemap-output
                     (with-current-buffer sourcemap-buf (buffer-string))))
@@ -1299,6 +1305,26 @@ it on by default."
   (if coffee-cos-mode
       (add-hook 'after-save-hook 'coffee-compile-file nil t)
     (remove-hook 'after-save-hook 'coffee-compile-file t)))
+
+;;
+;; Live compile minor mode
+;;
+
+(defun coffee--live-compile (&rest _unused)
+  (when (or (not coffee--process)
+            (not (eq (process-status coffee--process) 'run)))
+    (coffee-compile-buffer)))
+
+(defcustom coffee-live-compile-mode-line " LiveCS"
+  "Lighter of `coffee-live-compile-mode'"
+  :type 'string)
+
+(define-minor-mode coffee-live-compile-mode
+  "Compile current buffer in real time"
+  :lighter coffee-live-comp-mode-line
+  (if coffee-live-compile-mode
+      (add-hook 'after-change-functions 'coffee--live-compile nil t)
+    (remove-hook 'after-change-functions 'coffee--live-compile t)))
 
 (provide 'coffee-mode)
 
