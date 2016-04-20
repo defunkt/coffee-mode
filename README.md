@@ -145,6 +145,10 @@ Run `coffee` with the `--watch` flag on a directory or file.
 
 Minor mode for compiling to JavaScript at save file.
 
+### coffee-live-compile-mode
+
+Minor mode for compiling buffer in real time.
+
 
 ## Customization
 
