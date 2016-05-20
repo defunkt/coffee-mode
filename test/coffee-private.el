@@ -27,20 +27,20 @@
 (ert-deftest coffee-command-compile-without-output-argument ()
   "`coffee-command-compile' without output argument"
   (let ((coffee-command "coffee"))
-    (let* ((got (coffee-command-compile "foo.coffee"))
+    (let* ((got (coffee-command-compile "foo.coffee" nil))
            (output-dir (expand-file-name default-directory))
-           (expected (format "coffee -c --no-header -o %s %s"
-                             output-dir (concat output-dir "foo.coffee"))))
-      (should (string= got expected)))))
+           (expected (list "-c" "--no-header"
+                           "-o" output-dir (concat output-dir "foo.coffee"))))
+      (should (equal got expected)))))
 
 (ert-deftest coffee-command-compile-with-output-argument ()
   "`coffee-command-compile' with output argument"
   (let ((coffee-command "coffee"))
     (let* ((got (coffee-command-compile "foo.coffee" "bar.js"))
            (output-dir (expand-file-name default-directory))
-           (expected (format "coffee -c --no-header -j bar.js -o %s %s"
-                             output-dir (concat output-dir "foo.coffee"))))
-      (should (string= got expected)))))
+           (expected (list "-c" "--no-header" "-j" "bar.js"
+                           "-o" output-dir (concat output-dir "foo.coffee"))))
+      (should (equal got expected)))))
 
 (ert-deftest coffee-compiled-file-name ()
   "`coffee-compiled-file-name' with file name"
