@@ -1519,4 +1519,27 @@ foo = () ->
    (goto-char (line-end-position))
    (should (looking-back "->"))))
 
+(ert-deftest regression-350-if-then-oneline ()
+  "https://github.com/defunkt/coffee-mode/issues/350"
+
+  (let ((coffee-tab-width 2))
+    (with-coffee-temp-buffer
+      "
+if x then y
+
+switch x
+  when y then z
+new_line = 'here'
+"
+      (forward-cursor-on "if")
+      (goto-char (line-end-position))
+      (call-interactively #'coffee-newline-and-indent)
+      (should (= (current-indentation) 0))
+
+      (forward-cursor-on "when")
+      (let ((prev-indent (current-indentation)))
+        (goto-char (line-end-position))
+        (call-interactively #'coffee-newline-and-indent)
+        (should (= (current-indentation) prev-indent))))))
+
 ;;; coffee-command.el end here
