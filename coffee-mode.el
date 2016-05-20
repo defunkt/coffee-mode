@@ -1236,6 +1236,19 @@ comments such as the following:
 ;; Define Major Mode
 ;;
 
+(defvar coffee-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    ;; perl style comment: "# ..."
+    (modify-syntax-entry ?# "< b" table)
+    (modify-syntax-entry ?\n "> b" table)
+
+    ;; Treat slashes as paired delimiters; useful for finding regexps.
+    (modify-syntax-entry ?/ "/" table)
+
+    ;; single quote strings
+    (modify-syntax-entry ?' "\"" table)
+    table))
+
 ;;;###autoload
 (define-derived-mode coffee-mode prog-mode "Coffee"
   "Major mode for editing CoffeeScript."
@@ -1247,17 +1260,8 @@ comments such as the following:
   (set (make-local-variable 'comment-line-break-function)
         #'coffee-comment-line-break-fn)
   (set (make-local-variable 'normal-auto-fill-function) #'coffee-auto-fill-fn)
-  ;; perl style comment: "# ..."
-  (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
-  (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
-
-  ;; Treat slashes as paired delimiters; useful for finding regexps.
-  (modify-syntax-entry ?/ "/" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
-
-  ;; single quote strings
-  (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
   ;; indentation
   (make-local-variable 'coffee-tab-width)
