@@ -814,7 +814,8 @@ previous line."
       (or (and char-of-eol (memq char-of-eol coffee-indenters-eol))
           (progn
             (back-to-indentation)
-            (looking-at (coffee-indenters-bol-regexp)))))))
+            (and (looking-at (coffee-indenters-bol-regexp))
+                 (not (re-search-forward "\\_<then\\_>" (line-end-position) t))))))))
 
 (defun coffee-previous-line-is-single-line-comment ()
   "Return t if the previous line is a CoffeeScript single line comment."
