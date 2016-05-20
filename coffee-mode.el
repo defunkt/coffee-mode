@@ -736,7 +736,7 @@ output in a compilation buffer."
   "Return the indentation level of the previous non-blank line."
   (save-excursion
     (forward-line -1)
-    (while (and (looking-at "^[ \t]*$") (not (bobp)))
+    (while (and (looking-at-p "^[ \t]*$") (not (bobp)))
       (forward-line -1))
     (current-indentation)))
 
@@ -814,7 +814,7 @@ previous line."
       (or (and char-of-eol (memq char-of-eol coffee-indenters-eol))
           (progn
             (back-to-indentation)
-            (and (looking-at (coffee-indenters-bol-regexp))
+            (and (looking-at-p (coffee-indenters-bol-regexp))
                  (not (re-search-forward "\\_<then\\_>" (line-end-position) t))))))))
 
 (defun coffee-previous-line-is-single-line-comment ()
@@ -822,8 +822,8 @@ previous line."
   (save-excursion
     (forward-line -1)
     (back-to-indentation)
-    (and (looking-at "#")
-         (not (looking-at "###\\(?:\\s-+.*\\)?$"))
+    (and (looking-at-p "#")
+         (not (looking-at-p "###\\(?:\\s-+.*\\)?$"))
          (progn
            (goto-char (line-end-position))
            (nth 4 (syntax-ppss))))))
@@ -865,7 +865,7 @@ indented less than COUNT columns."
           ;; Check that all lines can be shifted enough
           (while (< (point) end)
             (if (and (< (current-indentation) amount)
-                     (not (looking-at "[ \t]*$")))
+                     (not (looking-at-p "[ \t]*$")))
                 (error "Can't shift all lines enough"))
             (forward-line))
           (indent-rigidly start end (- amount)))))))
@@ -927,7 +927,7 @@ comments such as the following:
       ..."
   (let ((ret (forward-paragraph count)))
     (when (and (= count -1)
-               (looking-at "[[:space:]]*###[[:space:]]*$"))
+               (looking-at-p "[[:space:]]*###[[:space:]]*$"))
       (forward-line))
     ret))
 
@@ -1236,6 +1236,19 @@ comments such as the following:
 ;; Define Major Mode
 ;;
 
+(defvar coffee-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    ;; perl style comment: "# ..."
+    (modify-syntax-entry ?# "< b" table)
+    (modify-syntax-entry ?\n "> b" table)
+
+    ;; Treat slashes as paired delimiters; useful for finding regexps.
+    (modify-syntax-entry ?/ "/" table)
+
+    ;; single quote strings
+    (modify-syntax-entry ?' "\"" table)
+    table))
+
 ;;;###autoload
 (define-derived-mode coffee-mode prog-mode "Coffee"
   "Major mode for editing CoffeeScript."
@@ -1247,17 +1260,8 @@ comments such as the following:
   (set (make-local-variable 'comment-line-break-function)
         #'coffee-comment-line-break-fn)
   (set (make-local-variable 'normal-auto-fill-function) #'coffee-auto-fill-fn)
-  ;; perl style comment: "# ..."
-  (modify-syntax-entry ?# "< b" coffee-mode-syntax-table)
-  (modify-syntax-entry ?\n "> b" coffee-mode-syntax-table)
-
-  ;; Treat slashes as paired delimiters; useful for finding regexps.
-  (modify-syntax-entry ?/ "/" coffee-mode-syntax-table)
 
   (set (make-local-variable 'comment-start) "#")
-
-  ;; single quote strings
-  (modify-syntax-entry ?' "\"" coffee-mode-syntax-table)
 
   ;; indentation
   (make-local-variable 'coffee-tab-width)
