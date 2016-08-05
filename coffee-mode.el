@@ -1254,7 +1254,10 @@ comments such as the following:
   "Major mode for editing CoffeeScript."
 
   ;; code for syntax highlighting
-  (setq font-lock-defaults '((coffee-font-lock-keywords)))
+  (setq font-lock-defaults `((coffee-font-lock-keywords)
+                             nil
+                             nil
+                             ((,?_ . "w"))))
 
   ;; fix comment filling function
   (set (make-local-variable 'comment-line-break-function)
