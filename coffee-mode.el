@@ -391,7 +391,7 @@ called `coffee-compiled-buffer-name'."
   "Run `coffee-run-cmd' with the --watch flag on a directory or file."
   (interactive "fDirectory or File: ")
   (let ((coffee-compiled-buffer-name coffee-watch-buffer-name)
-        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (expand-file-name dir-or-file))) " ")))
+        (args (mapconcat 'identity (append coffee-args-compile (list "--watch" (coffee-universal-path dir-or-file))) " ")))
     (coffee-run-cmd args)))
 
 ;;
