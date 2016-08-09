@@ -112,6 +112,10 @@ with CoffeeScript."
   "Indentation can insert tabs if this is t."
   :type 'boolean)
 
+(defcustom coffee-show-mode 'js-mode
+  "Major mode to used to show the compiled Javascript."
+  :type 'function)
+
 (defcustom coffee-after-compile-hook nil
   "Hook called after compile to Javascript"
   :type 'hook)
@@ -280,10 +284,10 @@ called `coffee-compiled-buffer-name'."
                 (coffee-parse-error-output compile-output)))
           (let ((props (list :sourcemap (coffee--map-file-name file)
                              :line line :column column :source file)))
-            (let ((buffer-file-name "tmp.js"))
-              (setq buffer-read-only t)
-              (set-auto-mode)
-              (run-hook-with-args 'coffee-after-compile-hook props))))))))
+            (setq buffer-read-only t)
+            (when (fboundp coffee-show-mode)
+              (funcall coffee-show-mode))
+            (run-hook-with-args 'coffee-after-compile-hook props)))))))
 
 (defun coffee-start-compile-process (curbuf line column)
   (lambda (start end)
