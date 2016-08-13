@@ -115,6 +115,12 @@ file.
 | `C-c C-b`            | Send content of buffer to REPL buffer   |
 | `C-c C-o C-s`        | Enable coffee-cos-mode                  |
 
+`C-m` and `Return` key insert newline and indentation. If you don't want indentation please overwrite it as below.
+
+``` emacs-lisp
+(define-key coffee-mode-map (kbd "C-m") 'newline)
+```
+
 
 ## Commands
 
