@@ -6,7 +6,7 @@
 ;; Keywords: CoffeeScript major mode
 ;; Author: Chris Wanstrath <chris@ozmm.org>
 ;; URL: http://github.com/defunkt/coffee-mode
-;; Package-Requires: ((emacs "24.1") (cl-lib "0.5"))
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -1261,38 +1261,31 @@ comments such as the following:
   (setq font-lock-defaults '((coffee-font-lock-keywords)))
 
   ;; fix comment filling function
-  (set (make-local-variable 'comment-line-break-function)
-        #'coffee-comment-line-break-fn)
-  (set (make-local-variable 'normal-auto-fill-function) #'coffee-auto-fill-fn)
+  (setq-local comment-line-break-function #'coffee-comment-line-break-fn)
+  (setq-local normal-auto-fill-function #'coffee-auto-fill-fn)
 
-  (set (make-local-variable 'comment-start) "#")
+  (setq-local comment-start "#")
 
   ;; indentation
   (make-local-variable 'coffee-tab-width)
   (make-local-variable 'coffee-indent-tabs-mode)
-  (set (make-local-variable 'indent-line-function) 'coffee-indent-line)
-  (set (make-local-variable 'indent-region-function) 'coffee-indent-region)
-  (set (make-local-variable 'tab-width) coffee-tab-width)
+  (setq-local indent-line-function 'coffee-indent-line)
+  (setq-local indent-region-function 'coffee-indent-region)
+  (setq-local tab-width coffee-tab-width)
 
-  (set (make-local-variable 'syntax-propertize-function)
-       'coffee-syntax-propertize-function)
+  (setq-local syntax-propertize-function 'coffee-syntax-propertize-function)
 
   ;; fill
-  (set (make-local-variable 'fill-forward-paragraph-function)
-       'coffee-fill-forward-paragraph-function)
+  (setq-local fill-forward-paragraph-function 'coffee-fill-forward-paragraph-function)
 
-  (set (make-local-variable 'beginning-of-defun-function)
-       'coffee-beginning-of-defun)
-  (set (make-local-variable 'end-of-defun-function)
-       'coffee-end-of-block)
+  (setq-local beginning-of-defun-function 'coffee-beginning-of-defun)
+  (setq-local end-of-defun-function 'coffee-end-of-block)
 
   ;; imenu
-  (set (make-local-variable 'imenu-create-index-function)
-       'coffee-imenu-create-index)
+  (setq-local imenu-create-index-function 'coffee-imenu-create-index)
 
   ;; Don't let electric-indent-mode break coffee-mode.
-  (set (make-local-variable 'electric-indent-functions)
-       (list (lambda (_arg) 'no-indent)))
+  (setq-local electric-indent-functions (list (lambda (_arg) 'no-indent)))
 
   ;; no tabs
   (setq indent-tabs-mode coffee-indent-tabs-mode))
