@@ -46,6 +46,4 @@
 (defun face-at-cursor-p (face)
   (eq (face-at-point) face))
 
-(provide 'test-helper)
-
 ;;; test-helper.el ends here
