@@ -450,7 +450,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-js-keywords
   '("if" "else" "new" "return" "try" "catch"
     "finally" "throw" "break" "continue" "for" "in" "while"
-    "delete" "instanceof" "typeof" "switch" "super" "extends"
+    "delete" "instanceof" "package" "typeof" "switch" "super" "extends"
     "class" "until" "loop" "yield"))
 
 ;; Reserved keywords either by JS or CS.
