@@ -344,7 +344,7 @@ foo ?= 20"
 
   (dolist (js-keyword '("if" "else" "new" "return" "try" "catch"
                         "finally" "throw" "break" "continue" "for" "in" "while"
-                        "delete" "instanceof" "typeof" "switch" "super" "extends"
+                        "delete" "instanceof" "package" "typeof" "switch" "super" "extends"
                         "class" "until" "loop" "yield"))
     (with-coffee-temp-buffer
       js-keyword
