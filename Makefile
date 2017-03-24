@@ -1,6 +1,12 @@
 .PHONY : test test-command test-imenu test-highlight test-syntax test-private
 
-EMACS ?= emacs
+UNAME_S=$(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	EMACS ?= /Applications/Emacs.app/Contents/MacOS/Emacs
+else
+	EMACS ?= emacs
+endif
+
 CASK ?= cask
 
 LOADPATH = -L .
