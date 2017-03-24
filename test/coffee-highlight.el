@@ -324,7 +324,9 @@ foo ?= 20"
   "Highlight lambda expression with thin arrow"
 
   (with-coffee-temp-buffer
-    " \"foo #{var} bar\" "
+    " \"foo #{var} bar\"
+# #{in_comment}
+"
 
     (forward-cursor-on "foo")
     (should (face-at-cursor-p 'font-lock-string-face))
@@ -333,7 +335,11 @@ foo ?= 20"
     (should (face-at-cursor-p 'font-lock-variable-name-face))
 
     (forward-cursor-on "bar")
-    (should (face-at-cursor-p 'font-lock-string-face))))
+    (should (face-at-cursor-p 'font-lock-string-face))
+
+    (forward-cursor-on "in_comment")
+    (should-not (face-at-cursor-p 'font-lock-variable-name-face))
+    (should (face-at-cursor-p 'font-lock-comment-face))))
 
 ;;
 ;; Keywords
