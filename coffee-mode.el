@@ -1140,7 +1140,9 @@ comments such as the following:
            (ppss (prog2
                      (backward-char 3)
                      (syntax-ppss)
-                   (setq valid-comment-start (looking-back "^\\s-*" (line-beginning-position)))
+                   (setq valid-comment-start
+                         (and (looking-back "^\\s-*" (line-beginning-position))
+                              (looking-at-p "###[^#]")))
                    (forward-char 3)))
            (in-comment (nth 4 ppss))
            (in-string (nth 3 ppss)))
