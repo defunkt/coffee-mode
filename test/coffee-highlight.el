@@ -31,17 +31,21 @@
 (ert-deftest this-and-instance-variable ()
   "Highlight `this' and instance variable(`@foo')"
 
-  (dolist (keyword '("this" "@foo" "@foo1234" "@foo_bar" "@FoO"))
+  (dolist (keyword '("this" "@foo" "@foo1234" "@foo_bar" "@FoO" "@foo_"))
     (with-coffee-temp-buffer
       keyword
+      (should (face-at-cursor-p 'font-lock-variable-name-face))
+      (goto-char (1- (point-max)))
       (should (face-at-cursor-p 'font-lock-variable-name-face)))))
 
 (ert-deftest this-and-instance-variable-invalid ()
   "Invalid `this' and instance variable highlighting"
 
-  (dolist (keyword '("thiss" "@-" "@+"))
+  (dolist (keyword '("thiss" "_this" "@-" "@+"))
     (with-coffee-temp-buffer
       keyword
+      (should-not (face-at-cursor-p 'font-lock-variable-name-face))
+      (goto-char (1- (point-max)))
       (should-not (face-at-cursor-p 'font-lock-variable-name-face)))))
 
 ;;
