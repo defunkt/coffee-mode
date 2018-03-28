@@ -1250,8 +1250,17 @@ comments such as the following:
     ;; Treat slashes as paired delimiters; useful for finding regexps.
     (modify-syntax-entry ?/ "/" table)
 
-    ;; = is not a part of a symbol
+    ;; Following chars (=, +, -, ...) should be seemes as operators,
+    ;; instead of a part of a symbol
     (modify-syntax-entry ?= "." table)
+    (modify-syntax-entry ?+ "." table)
+    (modify-syntax-entry ?- "." table)
+    (modify-syntax-entry ?* "." table)
+    (modify-syntax-entry ?& "." table)
+    (modify-syntax-entry ?% "." table)
+    (modify-syntax-entry ?| "." table)
+    (modify-syntax-entry ?> "." table)
+    (modify-syntax-entry ?< "." table)
 
     ;; single quote strings
     (modify-syntax-entry ?' "\"" table)
