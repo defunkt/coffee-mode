@@ -892,6 +892,10 @@ END lie."
                   (coffee-indent-shift-amount start end 'right))))
     (indent-rigidly start end amount)))
 
+(defun indent-for-tab-command ()
+  (interactive
+   (call-interactively 'coffee-indent-shift-right)))
+
 (defun coffee-indent-region (start end)
   (interactive "r")
   (save-excursion
