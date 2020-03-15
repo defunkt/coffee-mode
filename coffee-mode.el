@@ -457,7 +457,7 @@ called `coffee-compiled-buffer-name'."
 (defvar coffee-js-reserved
   '("case" "default" "do" "function" "var" "void" "with"
     "const" "let" "debugger" "enum" "export" "import" "native"
-    "__extends" "__hasProp"))
+    "from" "as" "__extends" "__hasProp"))
 
 ;; CoffeeScript keywords.
 (defvar coffee-cs-keywords
