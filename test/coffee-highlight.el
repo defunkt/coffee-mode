@@ -1066,7 +1066,7 @@ testMethod = (id) ->
     (should (face-at-cursor-p 'font-lock-constant-face))
 
     (forward-cursor-on "#")
-    (should (face-at-cursor-p 'font-lock-comment-face))
+    (should (face-at-cursor-p 'font-lock-comment-delimiter-face))
 
     (forward-cursor-on "Broken")
     (should (face-at-cursor-p 'font-lock-comment-face))))

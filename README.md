@@ -1,6 +1,6 @@
 CoffeeScript Major Mode
 =======================
-[![travis badge][travis-badge]][travis-link] [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
+[![github_actions badge][github-actions-badge]][github-actions-link] [![melpa badge][melpa-badge]][melpa-link] [![melpa stable badge][melpa-stable-badge]][melpa-stable-link]
 
 An Emacs major mode for [CoffeeScript][cs] and [IcedCoffeeScript][ics].
 
@@ -195,8 +195,8 @@ Please file bugs at <https://github.com/defunkt/coffee-mode/issues>
 [elpa]: https://elpa.gnu.org/
 [melpa]: https://melpa.org/
 [melpa-stable]: https://stable.melpa.org/
-[travis-badge]: https://travis-ci.org/syohex/coffee-mode.svg
-[travis-link]: https://travis-ci.org/syohex/coffee-mode
+[github-actions-badge]: https://github.com/defunk/coffee-mode/workflows/CI/badge.svg
+[github-actions-link]: https://github.com/defunk/coffee-mode/actions
 [melpa-link]: https://melpa.org/#/coffee-mode
 [melpa-stable-link]: https://stable.melpa.org/#/coffee-mode
 [melpa-badge]: https://melpa.org/packages/coffee-mode-badge.svg
