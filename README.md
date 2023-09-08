@@ -195,8 +195,8 @@ Please file bugs at <https://github.com/defunkt/coffee-mode/issues>
 [elpa]: https://elpa.gnu.org/
 [melpa]: https://melpa.org/
 [melpa-stable]: https://stable.melpa.org/
-[github-actions-badge]: https://github.com/defunk/coffee-mode/workflows/CI/badge.svg
-[github-actions-link]: https://github.com/defunk/coffee-mode/actions
+[github-actions-badge]: https://github.com/defunkt/coffee-mode/workflows/CI/badge.svg
+[github-actions-link]: https://github.com/defunkt/coffee-mode/actions
 [melpa-link]: https://melpa.org/#/coffee-mode
 [melpa-stable-link]: https://stable.melpa.org/#/coffee-mode
 [melpa-badge]: https://melpa.org/packages/coffee-mode-badge.svg
