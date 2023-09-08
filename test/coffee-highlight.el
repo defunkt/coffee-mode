@@ -1066,7 +1066,9 @@ testMethod = (id) ->
     (should (face-at-cursor-p 'font-lock-constant-face))
 
     (forward-cursor-on "#")
-    (should (face-at-cursor-p 'font-lock-comment-face))
+    (if (version<= "28" emacs-version)
+        (should (face-at-cursor-p 'font-lock-comment-delimiter-face))
+      (should (face-at-cursor-p 'font-lock-comment-face)))
 
     (forward-cursor-on "Broken")
     (should (face-at-cursor-p 'font-lock-comment-face))))
